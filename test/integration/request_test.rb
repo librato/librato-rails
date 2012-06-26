@@ -10,6 +10,13 @@ class RequestTest < ActiveSupport::IntegrationCase
     assert_equal 1, counters['request.total']
     assert_equal 1, counters['request.status.200']
     assert_equal 1, counters['request.status.2xx']
+    
+    visit '/status/204'
+    
+    assert_equal 2, counters['request.total']
+    assert_equal 1, counters['request.status.200']
+    assert_equal 1, counters['request.status.204']
+    assert_equal 2, counters['request.status.2xx']
   end
   
 end
