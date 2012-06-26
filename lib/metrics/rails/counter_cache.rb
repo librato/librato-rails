@@ -14,7 +14,7 @@ module Metrics
         @cache[key.to_s]
       end
       
-      def flush
+      def delete_all
         @cache = {}
       end
     

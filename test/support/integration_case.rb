@@ -4,7 +4,7 @@ class ActiveSupport::IntegrationCase < ActiveSupport::TestCase
   
   setup do
     # remove any accumulated metrics
-    Metrics::Rails.flush
+    Metrics::Rails.delete_all
   end
   
   private
