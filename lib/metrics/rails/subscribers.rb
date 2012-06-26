@@ -17,11 +17,15 @@ module Metrics
       # key = 'request'
       # page_key = "request.#{controller}.#{action}_#{format}."
   
-      increment "request.total"
+      increment 'request.total'
       
       unless status.blank?
         increment "request.status.#{status}"
         increment "request.status.#{status.to_s[0]}xx"
+      end
+      
+      if exception
+        increment 'request.exceptions'
       end
       
     end

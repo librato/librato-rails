@@ -19,4 +19,12 @@ class RequestTest < ActiveSupport::IntegrationCase
     assert_equal 2, counters['request.status.2xx']
   end
   
+  test 'track exceptions' do
+    begin
+      visit exception_path
+    rescue
+    end
+    assert_equal 1, counters['request.exceptions']
+  end
+  
 end
