@@ -20,8 +20,11 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-
-
+# IRB
+desc "Open an irb session preloaded with this library"
+task :console do
+  sh "irb -rubygems -r ./lib/metrics-rails.rb"
+end
 
 Bundler::GemHelper.install_tasks
 
