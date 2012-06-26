@@ -8,8 +8,8 @@ class RequestTest < ActiveSupport::IntegrationCase
     visit root_path
     
     assert_equal 1, counters['request.total']
-    # assert_equal 1, counters['request.status.200']
-    # assert_equal 1, counters['request.status.2xx']
+    assert_equal 1, counters['request.status.200']
+    assert_equal 1, counters['request.status.2xx']
   end
   
 end

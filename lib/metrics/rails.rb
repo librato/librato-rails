@@ -25,26 +25,11 @@ module Metrics
         counters.flush
       end
     
-    end
-
-    ActiveSupport::Notifications.subscribe /process_action.action_controller/ do |*args|
-  
-      event = ActiveSupport::Notifications::Event.new(*args)
-      controller = event.payload[:controller]
-      action = event.payload[:action]
-  
-      format = event.payload[:format] || "all"
-      format = "all" if format == "*/*"
-      status = event.payload[:status]
-      exception = event.payload[:exception]
-  
-      # key = 'request'
-      page_key = "request.#{controller}.#{action}_#{format}."
-  
-      increment "request.total"
-    end
+    end # end class << self
 
   end
 end
 
+# must load last
+require 'metrics/rails/subscribers'
 
