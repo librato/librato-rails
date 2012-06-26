@@ -1,0 +1,19 @@
+.rvmrc
+.bundle
+.DS_Store
+Gemfile.lock
+*.gem
+
+# docs
+rdoc
+doc
+.yardoc
+
+# vim
+*.swp
+
+test_env.sh
+
+# dummy app
+test/dummy/log/*.log
+test/dummy/tmp/
