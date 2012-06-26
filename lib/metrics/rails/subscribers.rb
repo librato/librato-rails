@@ -28,6 +28,10 @@ module Metrics
         increment 'request.exceptions'
       end
       
+      if event.duration > 200.0
+        increment 'request.slow'
+      end
+      
     end
   
   end

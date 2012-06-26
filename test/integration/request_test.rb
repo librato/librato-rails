@@ -20,11 +20,13 @@ class RequestTest < ActiveSupport::IntegrationCase
   end
   
   test 'track exceptions' do
-    begin
-      visit exception_path
-    rescue
-    end
+    visit exception_path rescue nil
     assert_equal 1, counters['request.exceptions']
+  end
+  
+  test 'track slow requests' do
+    visit slow_path
+    assert_equal 1, counters['request.slow']
   end
   
 end

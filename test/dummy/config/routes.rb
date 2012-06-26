@@ -3,6 +3,7 @@ Dummy::Application.routes.draw do
   get "status/:code" => 'status#index'
   
   get 'exception' => 'home#boom', :as => :exception
+  get 'slow'      => 'home#slow', :as => :slow
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
