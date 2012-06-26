@@ -3,7 +3,7 @@ require 'test_helper'
 class MetricsRailsTest < ActiveSupport::TestCase
   
   test 'basic operations' do
-    cc = MetricsRails::CounterCache.new
+    cc = Metrics::Rails::CounterCache.new
     cc.increment :foo
     assert_equal 1, cc[:foo]
     
