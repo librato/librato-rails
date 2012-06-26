@@ -1,9 +1,15 @@
 require 'test_helper'
 
-class NavigationTest < ActiveSupport::IntegrationCase
+class RequestTest < ActiveSupport::IntegrationCase
   
-  test 'visiting page records performance statistics' do
+  # Each request
+  
+  test 'increment total and status' do
     visit root_path
+    
+    assert_equal 1, counters['request.total']
+    # assert_equal 1, counters['request.status.200']
+    # assert_equal 1, counters['request.status.2xx']
   end
   
 end
