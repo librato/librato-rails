@@ -15,5 +15,6 @@ doc
 test_env.sh
 
 # dummy app
+test/dummy/db/*.sqlite3
 test/dummy/log/*.log
 test/dummy/tmp/
