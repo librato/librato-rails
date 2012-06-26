@@ -26,11 +26,19 @@ module Metrics
         counters.delete_all
       end
       
+      # send all current data to Metrics
+      def flush
+        queue = client.new_queue
+        counters.each { |key, value| queue.add key => {:type => :counter, :value => value} }
+        queue.submit
+      end
+      
     private
     
       def prepare_client
         client = Librato::Metrics::Client.new
-        client.authenticate 'matt@librato.com', '02673bee476e872a5c40d4529d98c2cfd2d741882c302c1b7f10ccb1ee9eb45e'
+        client.authenticate 'test@modal.org', 'ff5d710f2b68577d972bbb4c4b97319d6e8a5dabe82c74ee2b964cd9fbc3da83'
+        client.api_endpoint = 'http://0.0.0.0:9292'
         client
       end
     
