@@ -10,6 +10,11 @@ class MetricsRailsTest < ActiveSupport::TestCase
     assert_kind_of Librato::Metrics::Client, Metrics::Rails.client
   end
   
+  test '#increment exists' do
+    assert Metrics::Rails.respond_to?(:increment)
+    Metrics::Rails.increment :baz, 5
+  end
+  
   test 'flush sends data' do
     delete_all_metrics
     Metrics::Rails.increment :foo
@@ -29,6 +34,12 @@ class MetricsRailsTest < ActiveSupport::TestCase
     bar = client.fetch 'rails.bar', :count => 10
     assert_equal 1, bar['unassigned'].length
     assert_equal 2, bar['unassigned'][0]['value']
+  end
+  
+  test 'counters should persist through flush' do
+    Metrics::Rails.increment 'knightrider'
+    Metrics::Rails.flush
+    assert_equal 1, Metrics::Rails.counters['knightrider']
   end
   
   private
