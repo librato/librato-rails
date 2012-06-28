@@ -19,8 +19,25 @@ class RequestTest < ActiveSupport::IntegrationCase
     assert_equal 2, counters['request.status.2xx']
   end
   
+  test 'request times' do
+    visit root_path
+    
+    # common for all paths
+    assert_equal 1, aggregate['request.time.total'][:count], 'should record total time'
+    assert_equal 1, aggregate['request.time.db'][:count], 'should record db time'
+    assert_equal 1, aggregate['request.time.view'][:count], 'should record view time'
+    
+    # status specific
+    assert_equal 1, aggregate['request.status.200.time.total'][:count]
+    assert_equal 1, aggregate['request.status.2xx.time.total'][:count]
+  end
+  
   test 'track exceptions' do
-    visit exception_path rescue nil
+    begin
+      visit exception_path #rescue nil
+    rescue RuntimeError => e
+      raise unless e.message == 'test exception!'
+    end
     assert_equal 1, counters['request.exceptions']
   end
   
