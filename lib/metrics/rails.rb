@@ -50,12 +50,17 @@ module Metrics
       
       # send all current data to Metrics
       def flush
+        logger.info ' >> flushing'
         queue = client.new_queue
         counters.each do |key, value| 
           queue.add "#{prefix}.#{key}" => {:type => :counter, :value => value}
         end
         aggregate.flush_to(queue, :prefix => prefix)
         queue.submit unless queue.empty?
+      end
+      
+      def logger
+        @logger ||= ::Rails.logger
       end
       
     private
