@@ -16,6 +16,10 @@ module Metrics
         nil
       end
       
+      def delete_all
+        @cache.clear
+      end
+      
       def timing(event, duration)
         @cache.add event.to_s => duration
       end

@@ -10,8 +10,14 @@ module Metrics
     extend SingleForwardable
     
     def_delegators :counters, :increment
+    def_delegators :aggregate, :timing
 
     class << self
+    
+      # access to internal aggregator object
+      def aggregate
+        @aggregator_cache ||= Aggregator.new
+      end
     
       # access to client
       def client
@@ -25,6 +31,7 @@ module Metrics
       
       # remove any accumulated but unsent metrics
       def delete_all
+        aggregate.delete_all
         counters.delete_all
       end
       
