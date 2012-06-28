@@ -15,7 +15,7 @@ module Metrics
       end
       
       def delete_all
-        @cache = {}
+        @cache.clear
       end
     
       def increment(counter, by=1)
