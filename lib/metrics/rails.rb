@@ -1,3 +1,4 @@
+require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/notifications'
 require 'librato/metrics'
 
@@ -8,6 +9,17 @@ require 'metrics/rails/version'
 module Metrics
   module Rails
     extend SingleForwardable
+    
+    # config options
+    mattr_accessor :api_key
+    mattr_accessor :email
+    mattr_accessor :default_source
+    mattr_accessor :flush_interval
+    mattr_accessor :prefix
+    
+    # config defaults
+    self.flush_interval = 60 # seconds
+    self.prefix = 'rails'
     
     def_delegators :counters, :increment
     def_delegators :aggregate, :timing
@@ -39,14 +51,10 @@ module Metrics
       def flush
         queue = client.new_queue
         counters.each do |key, value| 
-          queue.add "#{metric_prefix}.#{key}" => {:type => :counter, :value => value}
+          queue.add "#{prefix}.#{key}" => {:type => :counter, :value => value}
         end
-        aggregate.flush_to(queue, :prefix => metric_prefix)
+        aggregate.flush_to(queue, :prefix => prefix)
         queue.submit unless queue.empty?
-      end
-      
-      def metric_prefix
-        "rails"
       end
       
     private
