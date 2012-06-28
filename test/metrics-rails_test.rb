@@ -2,6 +2,11 @@ require 'test_helper'
 
 class MetricsRailsTest < ActiveSupport::TestCase
   
+  setup do
+    # delete any generated metrics
+    Metrics::Rails.delete_all
+  end
+  
   test 'is a module' do
     assert_kind_of Module, Metrics::Rails
   end
@@ -13,6 +18,11 @@ class MetricsRailsTest < ActiveSupport::TestCase
   test '#increment exists' do
     assert Metrics::Rails.respond_to?(:increment)
     Metrics::Rails.increment :baz, 5
+  end
+  
+  test '#timing exists' do
+    assert Metrics::Rails.respond_to?(:timing)
+    Metrics::Rails.timing 'request.time.total', 121.2
   end
   
   test 'flush sends data' do
