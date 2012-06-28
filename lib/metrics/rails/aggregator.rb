@@ -32,9 +32,10 @@ module Metrics
         queue.queued[:gauges] += q
       end
       
-      def timing(event, duration)
+      def measure(event, duration)
         @cache.add event.to_s => duration
       end
+      alias :timing :measure
       
     end
   end

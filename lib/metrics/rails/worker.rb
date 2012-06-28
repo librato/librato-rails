@@ -17,6 +17,10 @@ module Metrics
         obj.call
       end
       
+      def log
+        Metrics::Rails.log
+      end
+      
       # run the given block every <period> seconds, looping
       # infinitely unless @interrupt becomes true.
       #

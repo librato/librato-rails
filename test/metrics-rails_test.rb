@@ -20,6 +20,11 @@ class MetricsRailsTest < ActiveSupport::TestCase
     Metrics::Rails.increment :baz, 5
   end
   
+  test '#measure exists' do
+    assert Metrics::Rails.respond_to?(:measure)
+    Metrics::Rails.timing 'queries', 10
+  end
+  
   test '#timing exists' do
     assert Metrics::Rails.respond_to?(:timing)
     Metrics::Rails.timing 'request.time.total', 121.2
@@ -52,34 +57,38 @@ class MetricsRailsTest < ActiveSupport::TestCase
     assert_equal 1, Metrics::Rails.counters['knightrider']
   end
   
-  test 'flush sends timings' do
+  test 'flush sends measures/timings' do
     delete_all_metrics
-    Metrics::Rails.timing 'request.time.total', 122.1
-    Metrics::Rails.timing 'request.time.db', 14.5
-    Metrics::Rails.timing 'request.time.total', 81.3
+    Metrics::Rails.timing  'request.time.total', 122.1
+    Metrics::Rails.measure 'items_bought', 20
+    Metrics::Rails.timing  'request.time.total', 81.3
     Metrics::Rails.flush
     
     client = Metrics::Rails.client
     metric_names = client.list.map { |m| m['name'] }
     assert metric_names.include?('rails.request.time.total'), 
       'rails.request.time.total should be present'
-    assert metric_names.include?('rails.request.time.db'), 
+    assert metric_names.include?('rails.items_bought'), 
       'rails.request.time.db should be present'
     
     total = client.fetch 'rails.request.time.total', :count => 10
     assert_equal 2, total['unassigned'][0]['count']
     assert_in_delta 203.4, total['unassigned'][0]['sum'], 0.1
     
-    db = client.fetch 'rails.request.time.db', :count => 10
-    assert_equal 1, db['unassigned'][0]['count']
-    assert_in_delta 14.5, db['unassigned'][0]['sum'], 0.1
+    items = client.fetch 'rails.items_bought', :count => 10
+    assert_equal 1, items['unassigned'][0]['count']
+    assert_in_delta 20, items['unassigned'][0]['sum'], 0.1
+  end
+  
+  test 'flush should purge measures' do
+    
   end
   
   test 'empty flush should not be sent' do
     delete_all_metrics
     Metrics::Rails.flush
     
-    assert_equal [], Metrics::Rails::Client.list
+    assert_equal [], Metrics::Rails.client.list
   end
   
   private

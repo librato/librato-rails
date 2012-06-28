@@ -23,7 +23,7 @@ module Metrics
     self.prefix = 'rails'
     
     def_delegators :counters, :increment
-    def_delegators :aggregate, :timing
+    def_delegators :aggregate, :measure, :timing
 
     class << self
     
