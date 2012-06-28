@@ -4,6 +4,7 @@ require 'librato/metrics'
 
 require 'metrics/rails/aggregator'
 require 'metrics/rails/counter_cache'
+require 'metrics/rails/worker'
 require 'metrics/rails/version'
 
 module Metrics
@@ -13,9 +14,9 @@ module Metrics
     # config options
     mattr_accessor :api_key
     mattr_accessor :email
-    mattr_accessor :default_source
     mattr_accessor :flush_interval
     mattr_accessor :prefix
+    mattr_accessor :source
     
     # config defaults
     self.flush_interval = 60 # seconds
