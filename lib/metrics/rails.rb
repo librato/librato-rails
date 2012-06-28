@@ -29,8 +29,14 @@ module Metrics
       # send all current data to Metrics
       def flush
         queue = client.new_queue
-        counters.each { |key, value| queue.add key => {:type => :counter, :value => value} }
-        queue.submit
+        counters.each do |key, value| 
+          queue.add "#{metric_prefix}.#{key}" => {:type => :counter, :value => value}
+        end
+        queue.submit unless queue.empty?
+      end
+      
+      def metric_prefix
+        "rails"
       end
       
     private

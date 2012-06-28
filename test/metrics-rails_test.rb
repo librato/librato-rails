@@ -19,14 +19,14 @@ class MetricsRailsTest < ActiveSupport::TestCase
     
     client = Metrics::Rails.client
     metric_names = client.list.map { |m| m['name'] }
-    assert metric_names.include?('foo'), 'foo should be present'
-    assert metric_names.include?('bar'), 'bar should be present'
+    assert metric_names.include?('rails.foo'), 'rails.foo should be present'
+    assert metric_names.include?('rails.bar'), 'rails.bar should be present'
     
-    foo = client.fetch :foo, :count => 10
+    foo = client.fetch 'rails.foo', :count => 10
     assert_equal 1, foo['unassigned'].length
     assert_equal 2, foo['unassigned'][0]['value']
     
-    bar = client.fetch :bar, :count => 10
+    bar = client.fetch 'rails.bar', :count => 10
     assert_equal 1, bar['unassigned'].length
     assert_equal 2, bar['unassigned'][0]['value']
   end
