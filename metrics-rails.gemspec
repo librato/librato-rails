@@ -7,16 +7,18 @@ require "metrics/rails/version"
 Gem::Specification.new do |s|
   s.name        = "metrics-rails"
   s.version     = Metrics::Rails::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of MetricsRails."
-  s.description = "TODO: Description of MetricsRails."
+  
+  s.authors     = ["Matt Sanders"]
+  s.email       = ["matt@librato.com"]
+  s.homepage    = "https://github.com/librato/metrics-rails"
+  
+  s.summary     = "Use Librato Metrics with your Rails 3 app"
+  s.description = "Reports key app statistics to the Librato Metrics service and makes it easy to track your own custom metrics."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "rails", "~> 3.2.6"
+  s.add_dependency "rails", ">= 3.0"
 
   s.add_development_dependency "sqlite3"
 end
