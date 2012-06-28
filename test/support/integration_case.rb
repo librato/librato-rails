@@ -9,6 +9,10 @@ class ActiveSupport::IntegrationCase < ActiveSupport::TestCase
   
   private
   
+  def aggregate
+    Metrics::Rails.aggregate
+  end
+  
   def counters
     Metrics::Rails.counters
   end
