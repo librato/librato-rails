@@ -25,7 +25,7 @@ class MetricsRailsTest < ActiveSupport::TestCase
     Metrics::Rails.timing 'request.time.total', 121.2
   end
   
-  test 'flush sends data' do
+  test 'flush sends counters' do
     delete_all_metrics
     Metrics::Rails.increment :foo
     Metrics::Rails.increment :bar, 2
@@ -50,6 +50,29 @@ class MetricsRailsTest < ActiveSupport::TestCase
     Metrics::Rails.increment 'knightrider'
     Metrics::Rails.flush
     assert_equal 1, Metrics::Rails.counters['knightrider']
+  end
+  
+  test 'flush sends timings' do
+    delete_all_metrics
+    Metrics::Rails.timing 'request.time.total', 122.1
+    Metrics::Rails.timing 'request.time.db', 14.5
+    Metrics::Rails.timing 'request.time.total', 81.3
+    Metrics::Rails.flush
+    
+    client = Metrics::Rails.client
+    metric_names = client.list.map { |m| m['name'] }
+    assert metric_names.include?('rails.request.time.total'), 
+      'rails.request.time.total should be present'
+    assert metric_names.include?('rails.request.time.db'), 
+      'rails.request.time.db should be present'
+    
+    total = client.fetch 'rails.request.time.total', :count => 10
+    assert_equal 2, total['unassigned'][0]['count']
+    assert_in_delta 203.4, total['unassigned'][0]['sum'], 0.1
+    
+    db = client.fetch 'rails.request.time.db', :count => 10
+    assert_equal 1, db['unassigned'][0]['count']
+    assert_in_delta 14.5, db['unassigned'][0]['sum'], 0.1
   end
   
   private

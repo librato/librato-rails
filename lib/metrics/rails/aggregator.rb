@@ -20,6 +20,17 @@ module Metrics
         @cache.clear
       end
       
+      # transfer all measurements to a queue and 
+      # reset internal status
+      def flush_to(queue, options={})
+        queue.queued[:gauges] ||= []
+        q = @cache.queued[:gauges]
+        if options[:prefix]
+          q.map! { |m| m[:name] = "#{options[:prefix]}.#{m[:name]}"; m }
+        end
+        queue.queued[:gauges] += q
+      end
+      
       def timing(event, duration)
         @cache.add event.to_s => duration
       end

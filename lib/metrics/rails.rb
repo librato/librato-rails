@@ -41,6 +41,7 @@ module Metrics
         counters.each do |key, value| 
           queue.add "#{metric_prefix}.#{key}" => {:type => :counter, :value => value}
         end
+        aggregate.flush_to(queue, :prefix => metric_prefix)
         queue.submit unless queue.empty?
       end
       
