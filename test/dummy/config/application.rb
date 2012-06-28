@@ -54,6 +54,9 @@ module Dummy
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+    
+    # set metrics_rails prefix
+    # config.metrics_rails.prefix = 'dummy'
   end
 end
 

@@ -71,6 +71,6 @@ module Metrics
   end
 end
 
-# must load last
+# must load after all module setup
+require 'metrics/rails/railtie'
 require 'metrics/rails/subscribers'
-
