@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/librato/metrics-rails"
   
   s.summary     = "Use Librato Metrics with your Rails 3 app"
-  s.description = "Reports key app statistics to the Librato Metrics service and makes it easy to track your own custom metrics."
+  s.description = "Report key app statistics to the Librato Metrics service and easily track your own custom metrics."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
