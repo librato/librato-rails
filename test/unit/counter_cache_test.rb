@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MetricsRailsTest < ActiveSupport::TestCase
+class MetricsRailsCounterCacheTest < ActiveSupport::TestCase
   
   test 'basic operations' do
     cc = Metrics::Rails::CounterCache.new

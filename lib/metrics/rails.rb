@@ -1,5 +1,7 @@
 require 'active_support/notifications'
+require 'librato/metrics'
 
+require 'metrics/rails/aggregator'
 require 'metrics/rails/counter_cache'
 require 'metrics/rails/version'
 
