@@ -23,6 +23,7 @@ module Metrics
       # transfer all measurements to a queue and 
       # reset internal status
       def flush_to(queue, options={})
+        return if @cache.empty?
         queue.queued[:gauges] ||= []
         q = @cache.queued[:gauges]
         if options[:prefix]

@@ -75,6 +75,13 @@ class MetricsRailsTest < ActiveSupport::TestCase
     assert_in_delta 14.5, db['unassigned'][0]['sum'], 0.1
   end
   
+  test 'empty flush should not be sent' do
+    delete_all_metrics
+    Metrics::Rails.flush
+    
+    assert_equal [], Metrics::Rails::Client.list
+  end
+  
   private
   
   def delete_all_metrics
