@@ -80,8 +80,14 @@ class MetricsRailsTest < ActiveSupport::TestCase
     assert_in_delta 20, items['unassigned'][0]['sum'], 0.1
   end
   
-  test 'flush should purge measures' do
+  test 'flush should purge measures/timings' do
+    delete_all_metrics
     
+    Metrics::Rails.timing  'request.time.total', 122.1
+    Metrics::Rails.measure 'items_bought', 20
+    Metrics::Rails.flush
+    
+    assert Metrics::Rails.aggregate.empty?, 'measures and timings should be cleared with flush'
   end
   
   test 'empty flush should not be sent' do

@@ -1,7 +1,9 @@
 module Metrics
   module Rails
     class Aggregator
-      #extend Forwardable
+      extend Forwardable
+      
+      def_delegators :@cache, :empty?
       
       def initialize
         @cache = Librato::Metrics::Aggregator.new
@@ -29,6 +31,7 @@ module Metrics
         if options[:prefix]
           q.map! { |m| m[:name] = "#{options[:prefix]}.#{m[:name]}"; m }
         end
+        @cache.clear
         queue.queued[:gauges] += q
       end
       
