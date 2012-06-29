@@ -1,3 +1,5 @@
+require 'thread'
+
 require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/notifications'
 require 'librato/metrics'
@@ -50,12 +52,10 @@ module Metrics
       
       # send all current data to Metrics
       def flush
-        logger.info ' >> flushing'
+        logger.info ' >> flushing at ' + Time.now.to_s
         queue = client.new_queue
-        counters.each do |key, value| 
-          queue.add "#{prefix}.#{key}" => {:type => :counter, :value => value}
-        end
-        aggregate.flush_to(queue, :prefix => prefix)
+        counters.flush_to(queue)
+        aggregate.flush_to(queue)
         queue.submit unless queue.empty?
       end
       
@@ -64,7 +64,7 @@ module Metrics
       end
       
       def start_worker
-        logger.info 'starting worker thread'
+        logger.info '[metrics-rails] starting up worker...'
         Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do

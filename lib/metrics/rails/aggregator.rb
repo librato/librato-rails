@@ -30,9 +30,7 @@ module Metrics
         return if @cache.empty?
         queue.queued[:gauges] ||= []
         q = @cache.queued[:gauges]
-        if options[:prefix]
-          q.map! { |m| m[:name] = "#{options[:prefix]}.#{m[:name]}"; m }
-        end
+        q.map! { |m| m[:name] = "rails.#{m[:name]}"; m }
         @cache.clear
         queue.queued[:gauges] += q
       end

@@ -4,7 +4,7 @@ module Metrics
     class CounterCache
       extend Forwardable
     
-      def_delegators :@cache, :each
+      def_delegators :@cache, :each, :empty?
     
       def initialize
         @cache = {}
@@ -17,6 +17,14 @@ module Metrics
       
       def delete_all
         @lock.synchronize { @cache.clear }
+      end
+      
+      def flush_to(queue)
+        @lock.synchronize do
+          @cache.each do |key, value| 
+            queue.add "rails.#{key}" => {:type => :counter, :value => value}
+          end
+        end
       end
     
       def increment(counter, by=1)
