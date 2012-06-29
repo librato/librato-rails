@@ -63,6 +63,16 @@ module Metrics
         @logger ||= ::Rails.logger
       end
       
+      def start_worker
+        logger.info 'starting worker thread'
+        Thread.new do
+          worker = Worker.new
+          worker.run_periodically(self.flush_interval) do
+            flush
+          end
+        end
+      end
+      
     private
     
       def prepare_client
