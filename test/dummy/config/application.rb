@@ -57,6 +57,8 @@ module Dummy
     
     # set metrics_rails prefix
     # config.metrics_rails.prefix = 'dummy'
+    
+    config.metrics_rails.flush_interval = 5
   end
 end
 
