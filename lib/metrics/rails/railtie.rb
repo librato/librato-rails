@@ -6,7 +6,9 @@ module Metrics
       config.metrics_rails = Metrics::Rails
       
       initializer 'metrics_rails.start_worker' do
-        Metrics::Rails.start_worker
+        unless ::Rails.env.test?
+          Metrics::Rails.start_worker 
+        end
       end
       
     end
