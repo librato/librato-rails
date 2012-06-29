@@ -27,11 +27,14 @@ module Metrics
       # transfer all measurements to a queue and 
       # reset internal status
       def flush_to(queue, options={})
-        return if @cache.empty?
-        queue.queued[:gauges] ||= []
-        q = @cache.queued[:gauges]
-        q.map! { |m| m[:name] = "rails.#{m[:name]}"; m }
-        @cache.clear
+        q = []
+        @lock.synchronize do
+          return if @cache.empty?
+          queue.queued[:gauges] ||= []
+          q = @cache.queued[:gauges]
+          q.map! { |m| m[:name] = "rails.#{m[:name]}"; m }
+          @cache.clear
+        end
         queue.queued[:gauges] += q
       end
       

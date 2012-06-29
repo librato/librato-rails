@@ -4,7 +4,7 @@ module Metrics
     class CounterCache
       extend Forwardable
     
-      def_delegators :@cache, :each, :empty?
+      def_delegators :@cache, :empty?
     
       def initialize
         @cache = {}
