@@ -1,13 +1,15 @@
 metrics-rails
 =======
 
-Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/) and easily track your own custom metrics. Currently supports Rails 3 and greater.
+Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/), easily track your own custom metrics. Currently supports Rails 3+.
 
 ## Installation
 
-In your `Gemfile`:
+In your `Gemfile` add:
 
     gem 'metrics-rails'
+    
+Then run `bundle install`.
 
 ## Configuration
 
@@ -19,15 +21,15 @@ Create a `config/metrics.yml` like the following:
       email: <your-email>
       api_key: <your-api-key>
       
-Or provide `METRICS_EMAIL` and `METRICS_API_KEY` environment variables. If both methods are present, environment variables will take precendence.
+OR provide `METRICS_EMAIL` and `METRICS_API_KEY` environment variables. If both env variables and a config file are present, environment variables will take precendence.
 
-Note that the configuration file allows you to specify configuration per-environment, but the environment variables will be used in any environment (including `development` or `test`) if present. 
+Note that using a configuration file allows you to specify configurations per-environment. However, if environment variables are set they will be used in any environment (including `development` or `test`). 
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/metrics-rails/wiki/Configuration).
 
 ## Automatic Measurements
 
-After installing `metrics-rails` and restarting your app and you should see a number of new metrics appear in your Metrics account. These tracking request performance, sql queries and other key stats. All built-in performance metrics start with the prefix `rails` by convention - for example `rails.request.total` which is total number of requests per interval. 
+After installing `metrics-rails` and restarting your app and you should see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. All built-in performance metrics start with the prefix `rails` by convention &mdash; for example `rails.request.total` is the total number of requests received during an interval. 
 
 If you have multiple apps reporting to the same Metrics account you can change this prefix in your [configuration](https://github.com/librato/metrics-rails/wiki/Configuration).
 
