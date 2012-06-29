@@ -23,13 +23,13 @@ class RequestTest < ActiveSupport::IntegrationCase
     visit root_path
     
     # common for all paths
-    assert_equal 1, aggregate['request.time.total'][:count], 'should record total time'
+    assert_equal 1, aggregate['request.time'][:count], 'should record total time'
     assert_equal 1, aggregate['request.time.db'][:count], 'should record db time'
     assert_equal 1, aggregate['request.time.view'][:count], 'should record view time'
     
     # status specific
-    assert_equal 1, aggregate['request.status.200.time.total'][:count]
-    assert_equal 1, aggregate['request.status.2xx.time.total'][:count]
+    assert_equal 1, aggregate['request.status.200.time'][:count]
+    assert_equal 1, aggregate['request.status.2xx.time'][:count]
   end
   
   test 'track exceptions' do
