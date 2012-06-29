@@ -13,7 +13,7 @@ Then run `bundle install`.
 
 ## Configuration
 
-If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you to provide your account credentials to `metrics-rails`. You provide these one of two ways:
+If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you need to provide your account credentials to `metrics-rails`. You can provide these one of two ways:
 
 Create a `config/metrics.yml` like the following:
 
@@ -23,25 +23,25 @@ Create a `config/metrics.yml` like the following:
       
 OR provide `METRICS_EMAIL` and `METRICS_API_KEY` environment variables. If both env variables and a config file are present, environment variables will take precendence.
 
-Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in any environment (including `development` or `test`). 
+Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in all environments. 
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/metrics-rails/wiki/Configuration).
 
 ## Automatic Measurements
 
-After installing `metrics-rails` and restarting your app and you should see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. All built-in performance metrics start with the prefix `rails` by convention &mdash; for example `rails.request.total` is the total number of requests received during an interval. 
+After installing `metrics-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. All built-in performance metrics start with the prefix `rails` by convention &mdash; for example: `rails.request.total` is the total number of requests received during an interval. 
 
 If you have multiple apps reporting to the same Metrics account you can change this prefix in your [configuration](https://github.com/librato/metrics-rails/wiki/Configuration).
 
 ## Custom Measurements
 
-Tracking whatever you're interested in with Metrics is easy. From inside any controller or model there are three primary helpers available:
+Tracking anything that interests you is easy with Metrics. Inside any controller or model there are three primary helpers available:
 
 #### metrics_increment
 
 Use for tracking a running total of something _across_ requests, examples:
 
-	# increment by one
+    # increment the 'sales_completed' metric by one
     metrics_increment 'sales_completed'
     
     # increment by five
@@ -53,21 +53,22 @@ Other things you might track this way: user signups, requests of a certain type 
 
 Use when you want to track an average value _per_-request. Examples:
 
-	metrics_measure 'user.social_graph.nodes', 212
+    metrics_measure 'user.social_graph.nodes', 212
 
     metrics_measure 'jobs.queued', 3
     
 
 #### metrics_timing
 
-Like measure this is per-request, but specialized for timing information:
+Like `metrics_measure` this is per-request, but specialized for timing information:
 
-	metrics_timing 'twitter.lookup.time', 21.2
+    metrics_timing 'twitter.lookup.time', 21.2
 	
-	# block form auto-submits time for contents to execute
-	metrics_timing 'twitter.lookup.time' do
-	  @twitter = Twitter.lookup(user)
-	end
+The block form auto-submits the time it took for its contents to execute as the measurement value:
+
+    metrics_timing 'twitter.lookup.time' do
+      @twitter = Twitter.lookup(user)
+    end
 
 #### metrics_group
 
@@ -79,12 +80,14 @@ There is also a grouping helper, to make managing nested metrics easier. So this
     
 Can also be written as:
 
-	metrics_group 'memcached' do
-	  metrics_measure 'gets', 20
+    metrics_group 'memcached' do
+      metrics_measure 'gets', 20
       metrics_measure 'sets', 2
       metrics_measure 'hits', 18
-	end
-	
+    end
+
+Symbols can be used interchangably with strings for metrics names.
+
 If you want to write custom metrics from outside of your models and controllers you can access the `Metrics::Rails` object directly and drop the `metrics_` from the beginning of the helper name. For example:
 
     Metrics::Rails.timing 'custom_cache.time', 8.2
