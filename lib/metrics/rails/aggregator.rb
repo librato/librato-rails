@@ -7,19 +7,21 @@ module Metrics
       
       def initialize
         @cache = Librato::Metrics::Aggregator.new
+        @lock = Mutex.new
       end
       
       def [](key)
         return nil if @cache.empty?
-        require 'pry'
-        @cache.queued[:gauges].each do |metric|
+        gauges = nil
+        @lock.synchronize { gauges = @cache.queued[:gauges] }
+        gauges.each do |metric|
           return metric if metric[:name] == key.to_s
         end
         nil
       end
       
       def delete_all
-        @cache.clear
+        @lock.synchronize { @cache.clear }
       end
       
       # transfer all measurements to a queue and 
@@ -36,7 +38,9 @@ module Metrics
       end
       
       def measure(event, duration)
-        @cache.add event.to_s => duration
+        @lock.synchronize do
+          @cache.add event.to_s => duration
+        end
       end
       alias :timing :measure
       
