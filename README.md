@@ -13,7 +13,7 @@ Then run `bundle install`.
 
 ## Configuration
 
-In order to send measurements to Metrics you need to set up your account credentials ([sign up](https://metrics.librato.com/) for a Metrics account if you don't have one). You can provide these one of two ways.
+If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you to provide your account credentials to `metrics-rails`. You provide these one of two ways:
 
 Create a `config/metrics.yml` like the following:
 
@@ -23,7 +23,7 @@ Create a `config/metrics.yml` like the following:
       
 OR provide `METRICS_EMAIL` and `METRICS_API_KEY` environment variables. If both env variables and a config file are present, environment variables will take precendence.
 
-Note that using a configuration file allows you to specify configurations per-environment. However, if environment variables are set they will be used in any environment (including `development` or `test`). 
+Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in any environment (including `development` or `test`). 
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/metrics-rails/wiki/Configuration).
 
