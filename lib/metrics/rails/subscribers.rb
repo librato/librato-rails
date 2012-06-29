@@ -16,7 +16,7 @@ module Metrics
       # page_key = "request.#{controller}.#{action}_#{format}."
   
       increment 'request.total'
-      timing    'request.time.total', event.duration
+      timing    'request.time', event.duration
       
       if exception
         increment 'request.exceptions'
@@ -28,8 +28,8 @@ module Metrics
       unless status.blank?
         increment "request.status.#{status}"
         increment "request.status.#{status.to_s[0]}xx"
-        timing "request.status.#{status}.time.total", event.duration
-        timing "request.status.#{status.to_s[0]}xx.time.total", event.duration
+        timing "request.status.#{status}.time", event.duration
+        timing "request.status.#{status.to_s[0]}xx.time", event.duration
       end
       
       if event.duration > 200.0
