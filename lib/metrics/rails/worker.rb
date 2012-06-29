@@ -1,5 +1,3 @@
-require 'thread'
-
 module Metrics
   module Rails
     
@@ -17,8 +15,8 @@ module Metrics
         obj.call
       end
       
-      def log
-        Metrics::Rails.log
+      def logger
+        Metrics::Rails.logger
       end
       
       # run the given block every <period> seconds, looping
