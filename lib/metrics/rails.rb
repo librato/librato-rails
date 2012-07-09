@@ -12,6 +12,9 @@ require 'metrics/rails/version'
 module Metrics
   module Rails
     extend SingleForwardable
+    CONFIG_SETTABLE = %w{api_key email flush_interval prefix source}
+    
+    mattr_accessor :config_file
     
     # config options
     mattr_accessor :api_key
@@ -33,10 +36,28 @@ module Metrics
       def aggregate
         @aggregator_cache ||= Aggregator.new
       end
+      
+      # set custom api endpoint
+      def api_endpoint=(endpoint)
+        @api_endpoint = endpoint
+      end
     
-      # access to client
+      # access to client instance
       def client
         @client ||= prepare_client
+      end
+      
+      # detect / update configuration
+      def check_config
+        if self.config_file && File.exists?(self.config_file)
+          configs = YAML.load_file(config_file)
+          if env_specific = configs[::Rails.env]
+            settable = CONFIG_SETTABLE & env_specific.keys
+            settable.each { |key| self.send("#{key}=", env_specific[key]) }
+          end
+        end
+        self.api_key = ENV['METRICS_API_KEY'] if ENV['METRICS_API_KEY']
+        self.email = ENV['METRICS_EMAIL'] if ENV['METRICS_EMAIL']
       end
   
       # access to internal counters object
@@ -77,9 +98,10 @@ module Metrics
     private
     
       def prepare_client
+        check_config
         client = Librato::Metrics::Client.new
-        client.authenticate 'test@modal.org', 'ff5d710f2b68577d972bbb4c4b97319d6e8a5dabe82c74ee2b964cd9fbc3da83'
-        client.api_endpoint = 'http://0.0.0.0:9292'
+        client.authenticate email, api_key
+        client.api_endpoint = @api_endpoint if @api_endpoint
         client
       end
     

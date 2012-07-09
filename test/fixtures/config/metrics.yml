@@ -1,0 +1,10 @@
+test:
+  email: 'test@bar.com'
+  api_key: 'test api key'
+  prefix: 'dummy'
+  flush_interval: 30
+  source: 'custom-1'
+  
+production:
+  email: live@bar.com
+  api_key: 'live api key'
