@@ -21,7 +21,6 @@ module Metrics
     mattr_accessor :email
     mattr_accessor :flush_interval
     mattr_accessor :prefix
-    mattr_accessor :source
     
     # config defaults
     self.flush_interval = 60 # seconds
@@ -83,6 +82,20 @@ module Metrics
       
       def logger
         @logger ||= ::Rails.logger
+      end
+      
+      # source including process pid
+      def qualified_source
+        "#{source}.#{Process.pid}"
+      end
+      
+      def source
+        @source ||= Socket.gethostname
+      end
+      
+      # set a custom source
+      def source=(src)
+        @source = src
       end
       
       def start_worker

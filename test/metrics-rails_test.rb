@@ -25,4 +25,15 @@ class MetricsRailsTest < ActiveSupport::TestCase
     Metrics::Rails.timing 'request.time.total', 121.2
   end
   
+  test 'source is assignable' do
+    original = Metrics::Rails.source
+    Metrics::Rails.source = 'foobar'
+    assert_equal 'foobar', Metrics::Rails.source
+    Metrics::Rails.source = original
+  end
+  
+  test 'qualified source includes pid' do
+    assert_match /\.\d{2,6}$/, Metrics::Rails.qualified_source
+  end
+  
 end
