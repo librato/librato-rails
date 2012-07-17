@@ -1,3 +1,4 @@
+require 'socket'
 require 'thread'
 
 require 'active_support/core_ext/module/attribute_accessors'
@@ -73,7 +74,7 @@ module Metrics
       # send all current data to Metrics
       def flush
         logger.info ' >> flushing at ' + Time.now.to_s
-        queue = client.new_queue
+        queue = client.new_queue(:source => qualified_source)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
