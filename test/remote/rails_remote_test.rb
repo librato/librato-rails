@@ -31,14 +31,14 @@ class MetricsRailsRemoteTest < ActiveSupport::TestCase
     
       client = Metrics::Rails.client
       metric_names = client.list.map { |m| m['name'] }
-      assert metric_names.include?('rails.foo'), 'rails.foo should be present'
-      assert metric_names.include?('rails.bar'), 'rails.bar should be present'
+      assert metric_names.include?('foo'), 'foo should be present'
+      assert metric_names.include?('bar'), 'bar should be present'
 
-      foo = client.fetch 'rails.foo', :count => 10
+      foo = client.fetch 'foo', :count => 10
       assert_equal 1, foo[source].length
       assert_equal 2, foo[source][0]['value']
     
-      bar = client.fetch 'rails.bar', :count => 10
+      bar = client.fetch 'bar', :count => 10
       assert_equal 1, bar[source].length
       assert_equal 2, bar[source][0]['value']
     end
@@ -60,16 +60,14 @@ class MetricsRailsRemoteTest < ActiveSupport::TestCase
     
       client = Metrics::Rails.client
       metric_names = client.list.map { |m| m['name'] }
-      assert metric_names.include?('rails.request.time.total'), 
-        'rails.request.time.total should be present'
-      assert metric_names.include?('rails.items_bought'), 
-        'rails.request.time.db should be present'
+      assert metric_names.include?('request.time.total'), 'request.time.total should be present'
+      assert metric_names.include?('items_bought'), 'request.time.db should be present'
     
-      total = client.fetch 'rails.request.time.total', :count => 10
+      total = client.fetch 'request.time.total', :count => 10
       assert_equal 2, total[source][0]['count']
       assert_in_delta 203.4, total[source][0]['sum'], 0.1
     
-      items = client.fetch 'rails.items_bought', :count => 10
+      items = client.fetch 'items_bought', :count => 10
       assert_equal 1, items[source][0]['count']
       assert_in_delta 20, items[source][0]['sum'], 0.1
     end
