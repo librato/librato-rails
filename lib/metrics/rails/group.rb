@@ -7,17 +7,17 @@ module Metrics
       end
       
       def group(prefix)
-        prefix = @prefix + prefix
+        prefix = "#{@prefix}#{prefix}"
         yield self.class.new(prefix)
       end
       
       def increment(counter, by=1)
-        counter = @prefix + counter
+        counter = "#{@prefix}#{counter}"
         Metrics::Rails.increment counter, by
       end
       
       def measure(event, duration)
-        event = @prefix + event
+        event = "#{@prefix}#{event}"
         Metrics::Rails.measure event, duration
       end
       alias :timing :measure
