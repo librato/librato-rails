@@ -1,7 +1,7 @@
 test:
   email: 'test@bar.com'
   api_key: 'test api key'
-  prefix: 'dummy'
+  prefix: 'rails-test'
   flush_interval: 30
   source: 'custom-1'
   

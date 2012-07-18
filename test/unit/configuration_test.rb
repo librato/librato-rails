@@ -14,7 +14,7 @@ class MetricsRailsAggregatorTest < ActiveSupport::TestCase
     with_fixture_config do
       assert_equal 'test@bar.com', Metrics::Rails.email
       assert_equal 'test api key', Metrics::Rails.api_key
-      assert_equal 'dummy', Metrics::Rails.prefix
+      assert_equal 'rails-test', Metrics::Rails.prefix
       assert_equal 30, Metrics::Rails.flush_interval
       assert_equal 'custom-1', Metrics::Rails.source
     end
@@ -26,7 +26,7 @@ class MetricsRailsAggregatorTest < ActiveSupport::TestCase
     with_fixture_config do
       assert_equal 'foo@bar.com', Metrics::Rails.email # from env
       assert_equal 'api_key', Metrics::Rails.api_key # from env
-      assert_equal 'dummy', Metrics::Rails.prefix # from config file
+      assert_equal 'rails-test', Metrics::Rails.prefix # from config file
       assert_equal 30, Metrics::Rails.flush_interval # from config file
     end
   end
@@ -42,6 +42,7 @@ class MetricsRailsAggregatorTest < ActiveSupport::TestCase
     previous, Metrics::Rails.config_file = Metrics::Rails.config_file, fixture_config
     Metrics::Rails.check_config
     yield
+  ensure
     Metrics::Rails.config_file = previous
   end
   
