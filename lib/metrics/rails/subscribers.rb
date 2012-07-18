@@ -15,28 +15,31 @@ module Metrics
       exception = event.payload[:exception]
       # page_key = "request.#{controller}.#{action}_#{format}."
   
-      increment 'request.total'
-      timing    'request.time', event.duration
+      group "#{Metrics::Rails.prefix}.request" do |r|
+   
+        r.increment 'total'
+        r.timing    'time', event.duration
       
-      if exception
-        increment 'request.exceptions'
-      else
-        timing 'request.time.db', event.payload[:db_runtime]
-        timing 'request.time.view', event.payload[:view_runtime]
-      end
+        if exception
+          r.increment 'exceptions'
+        else
+          r.timing 'time.db', event.payload[:db_runtime]
+          r.timing 'time.view', event.payload[:view_runtime]
+        end
       
-      unless status.blank?
-        increment "request.status.#{status}"
-        increment "request.status.#{status.to_s[0]}xx"
-        timing "request.status.#{status}.time", event.duration
-        timing "request.status.#{status.to_s[0]}xx.time", event.duration
-      end
+        unless status.blank?
+          r.group 'status' do |s|
+            s.increment status
+            s.increment "#{status.to_s[0]}xx"
+            s.timing "#{status}.time", event.duration
+            s.timing "#{status.to_s[0]}xx.time", event.duration
+          end
+        end
       
-      if event.duration > 200.0
-        increment 'request.slow'
-      end
+        r.increment 'slow' if event.duration > 200.0
+      end # end group
       
-    end
+    end # end subscribe
   
   end
 end
