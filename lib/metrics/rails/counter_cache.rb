@@ -22,7 +22,7 @@ module Metrics
       def flush_to(queue)
         @lock.synchronize do
           @cache.each do |key, value| 
-            queue.add "rails.#{key}" => {:type => :counter, :value => value}
+            queue.add key => {:type => :counter, :value => value}
           end
         end
       end
