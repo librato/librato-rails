@@ -24,6 +24,18 @@ class MetricsRailsGroupTest < ActiveSupport::TestCase
     assert_equal 146.5, aggregate['fruit.grow_time'][:sum]
   end
   
+  test 'nesting' do
+    Metrics::Rails.group 'street' do |s|
+      s.increment 'count'
+      s.group 'market' do |m|
+        m.increment 'tenants', 10
+      end
+    end
+    
+    assert_equal 1, counters['street.count']
+    assert_equal 10, counters['street.market.tenants']
+  end
+  
   private
   
   def aggregate
