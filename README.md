@@ -80,10 +80,10 @@ There is also a grouping helper, to make managing nested metrics easier. So this
     
 Can also be written as:
 
-    metrics_group 'memcached' do
-      metrics_measure 'gets', 20
-      metrics_measure 'sets', 2
-      metrics_measure 'hits', 18
+    metrics_group 'memcached' do |g|
+      g.measure 'gets', 20
+      g.measure 'sets', 2
+      g.measure 'hits', 18
     end
 
 Symbols can be used interchangably with strings for metrics names.

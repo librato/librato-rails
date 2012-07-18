@@ -7,6 +7,7 @@ require 'librato/metrics'
 
 require 'metrics/rails/aggregator'
 require 'metrics/rails/counter_cache'
+require 'metrics/rails/group'
 require 'metrics/rails/worker'
 require 'metrics/rails/version'
 
@@ -79,6 +80,11 @@ module Metrics
         counters.flush_to(queue)
         aggregate.flush_to(queue)
         queue.submit unless queue.empty?
+      end
+      
+      def group(prefix)
+        group = Group.new(prefix)
+        yield group
       end
       
       def logger
