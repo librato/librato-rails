@@ -33,6 +33,16 @@ module Metrics
 
     class << self
     
+      # this should be called after forking in a forked
+      # process - makes needed adjustments to ensure
+      # data is correct and submitted successfully.
+      def after_fork
+        logger.info " >> calling #after_fork in #{Process.pid}"
+        #aggregate.clear
+        #counters.clear
+        start_worker
+      end
+    
       # access to internal aggregator object
       def aggregate
         @aggregator_cache ||= Aggregator.new
@@ -79,6 +89,7 @@ module Metrics
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
+        logger.info queue.queued
         queue.submit unless queue.empty?
       end
       
@@ -94,6 +105,16 @@ module Metrics
       # source including process pid
       def qualified_source
         "#{source}.#{Process.pid}"
+      end
+      
+      # run once during Rails startup sequence
+      def setup
+        logger.info "[metrics-rails] starting up with #{app_server}..."
+        if forking_server?
+          setup_forking_hooks
+        else
+          start_worker
+        end
       end
       
       def source
@@ -116,6 +137,22 @@ module Metrics
       end
       
     private
+
+      def app_server
+        if defined?(::Unicorn) && defined?(::Unicorn::HttpServer)
+          :unicorn
+        elsif defined?(::IN_PHUSION_PASSENGER) || (defined?(::Passenger) && defined?(::Passenger::AbstractServer))
+          :passenger
+        elsif defined?(::Thin) && defined?(::Thin::Server)
+          :thin
+        else
+          :unknown
+        end
+      end
+    
+      def forking_server?
+        %w{unicorn passenger}.include?(app_server.to_s)
+      end
     
       def prepare_client
         check_config
@@ -123,6 +160,19 @@ module Metrics
         client.authenticate email, api_key
         client.api_endpoint = @api_endpoint if @api_endpoint
         client
+      end
+    
+      def setup_forking_hooks
+        case app_server
+        when :passenger
+          logger.info '[metrics-rails] setting up passenger worker hook'
+          # PhusionPassenger.on_event(:starting_worker_process) do |forked|
+          #   start_worker
+          # end
+        when :unicorn
+          logger.info '[metrics-rails] setting up unicorn worker hook'
+          # binding.pry
+        end
       end
     
     end # end class << self

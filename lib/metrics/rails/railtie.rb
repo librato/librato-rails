@@ -5,9 +5,9 @@ module Metrics
       # make configuration proxy for config inside Rails
       config.metrics_rails = Metrics::Rails
       
-      initializer 'metrics_rails.start_worker' do
+      initializer 'metrics_rails.setup' do
         unless ::Rails.env.test?
-          Metrics::Rails.start_worker 
+          Metrics::Rails.setup
         end
       end
       
