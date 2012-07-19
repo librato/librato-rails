@@ -6,6 +6,7 @@ module Metrics
       config.metrics_rails = Metrics::Rails
       
       initializer 'metrics_rails.setup' do
+        # don't start in test mode or in the console
         unless ::Rails.env.test? || defined?(::Rails::Console)
           Metrics::Rails.setup
         end
