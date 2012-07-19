@@ -3,6 +3,7 @@ class HomeController < ApplicationController
   end
   
   def custom
+    # controller helpers
     metrics.group 'custom' do |g|
       g.increment 'visits'
       g.increment 'events', 3
@@ -11,7 +12,13 @@ class HomeController < ApplicationController
       g.timing 'timing', 9
     end
     
-    # User.do_custom_events
+    # test class-level helpers for models
+    User.do_custom_events
+    
+    # test instance-level helpers for models
+    user = User.new
+    user.touch
+    
     render :nothing => true
   end
   
