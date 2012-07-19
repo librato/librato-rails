@@ -84,7 +84,7 @@ module Metrics
       
       # send all current data to Metrics
       def flush
-        logger.info ' >> flushing at ' + Time.now.to_s
+        logger.info " >> flushing #{Process.pid} at " + Time.now.to_s
         queue = client.new_queue(:source => qualified_source)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
@@ -127,16 +127,13 @@ module Metrics
       end
       
       # start the worker thread, one is needed per process.
-      # if this process has been forked from another one that
-      # already has a worker thread running, this will reap
-      # that thread and start a new one.
+      # if this process has been forked from an one with an active
+      # worker thread we don't need to worry about cleanup as only
+      # the forking thread is copied.
       def start_worker
-        if @worker
-          return if @pid == Process.pid # already running
-          @worker.exit # worker from another pid, kill
-        end
-        logger.info '[metrics-rails] starting up worker...'
+        return if @worker # already running
         @pid = Process.pid
+        logger.info "[metrics-rails] starting up worker for pid #{@pid}..."
         @worker = Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
