@@ -56,8 +56,7 @@ module Dummy
     config.assets.version = '1.0'
     
     # set metrics_rails prefix
-    # config.metrics_rails.prefix = 'dummy'
-    
+    config.metrics_rails.prefix = 'dummy'
     config.metrics_rails.flush_interval = 5
   end
 end
