@@ -8,6 +8,7 @@ require 'librato/metrics'
 require 'metrics/rails/aggregator'
 require 'metrics/rails/counter_cache'
 require 'metrics/rails/group'
+require 'metrics/rails/helpers'
 require 'metrics/rails/worker'
 require 'metrics/rails/version'
 
