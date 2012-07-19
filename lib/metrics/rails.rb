@@ -126,9 +126,18 @@ module Metrics
         @source = src
       end
       
+      # start the worker thread, one is needed per process.
+      # if this process has been forked from another one that
+      # already has a worker thread running, this will reap
+      # that thread and start a new one.
       def start_worker
+        if @worker
+          return if @pid == Process.pid # already running
+          @worker.exit # worker from another pid, kill
+        end
         logger.info '[metrics-rails] starting up worker...'
-        Thread.new do
+        @pid = Process.pid
+        @worker = Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
             flush
@@ -162,6 +171,7 @@ module Metrics
         client
       end
     
+      # TODO: this isn't working yet
       def setup_forking_hooks
         case app_server
         when :passenger
