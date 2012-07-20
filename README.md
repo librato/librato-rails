@@ -42,10 +42,10 @@ Tracking anything that interests you is easy with Metrics. Inside any controller
 Use for tracking a running total of something _across_ requests, examples:
 
     # increment the 'sales_completed' metric by one
-    metrics_increment 'sales_completed'
+    metrics.increment 'sales_completed'
     
     # increment by five
-    metrics_increment 'items_purchased', 5
+    metrics.increment 'items_purchased', 5
     
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
 
@@ -53,20 +53,20 @@ Other things you might track this way: user signups, requests of a certain type 
 
 Use when you want to track an average value _per_-request. Examples:
 
-    metrics_measure 'user.social_graph.nodes', 212
+    metrics.measure 'user.social_graph.nodes', 212
 
-    metrics_measure 'jobs.queued', 3
+    metrics.measure 'jobs.queued', 3
     
 
 #### metrics_timing
 
-Like `metrics_measure` this is per-request, but specialized for timing information:
+Like `metrics.measure` this is per-request, but specialized for timing information:
 
-    metrics_timing 'twitter.lookup.time', 21.2
+    metrics.timing 'twitter.lookup.time', 21.2
 	
 The block form auto-submits the time it took for its contents to execute as the measurement value:
 
-    metrics_timing 'twitter.lookup.time' do
+    metrics.timing 'twitter.lookup.time' do
       @twitter = Twitter.lookup(user)
     end
 
@@ -74,13 +74,13 @@ The block form auto-submits the time it took for its contents to execute as the 
 
 There is also a grouping helper, to make managing nested metrics easier. So this:
 
-    metrics_measure 'memcached.gets', 20
-    metrics_measure 'memcached.sets', 2
-    metrics_measure 'memcached.hits', 18
+    metrics.measure 'memcached.gets', 20
+    metrics.measure 'memcached.sets', 2
+    metrics.measure 'memcached.hits', 18
     
 Can also be written as:
 
-    metrics_group 'memcached' do |g|
+    metrics.group 'memcached' do |g|
       g.measure 'gets', 20
       g.measure 'sets', 2
       g.measure 'hits', 18
@@ -88,7 +88,7 @@ Can also be written as:
 
 Symbols can be used interchangably with strings for metrics names.
 
-If you want to write custom metrics from outside of your models and controllers you can access the `Metrics::Rails` object directly and drop the `metrics_` from the beginning of the helper name. For example:
+If you want to write custom metrics from outside of your models and controllers (or are using an ORM other than ActiveRecord)you can access the `Metrics::Rails` object directly and drop the `metrics.` from the beginning of the helper name. For example:
 
     Metrics::Rails.timing 'custom_cache.time', 8.2
     Metrics::Rails.increment 'user.signups'
