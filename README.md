@@ -3,7 +3,7 @@ metrics-rails
 
 [![Build Status](https://secure.travis-ci.org/librato/metrics-rails.png?branch=master)](http://travis-ci.org/librato/metrics-rails)
 
-Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/), easily track your own custom metrics. Currently supports Rails 3+.
+Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/), easily track your own custom metrics. Currently supports Rails 3.0+.
 
 **NOTE: This is currently in alpha development and is not yet officially supported**
 
@@ -39,63 +39,58 @@ If you have multiple apps reporting to the same Metrics account you can change t
 
 ## Custom Measurements
 
-Tracking anything that interests you is easy with Metrics. Inside any controller or model there are three primary helpers available:
+Tracking anything that interests you is easy with Metrics. There are four primary helpers available:
 
-#### metrics_increment
+#### increment
 
 Use for tracking a running total of something _across_ requests, examples:
 
     # increment the 'sales_completed' metric by one
-    metrics.increment 'sales_completed'
+    Metrics.increment 'sales_completed'
     
     # increment by five
-    metrics.increment 'items_purchased', 5
+    Metrics.increment 'items_purchased', 5
     
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
 
-#### metrics_measure
+#### measure
 
 Use when you want to track an average value _per_-request. Examples:
 
-    metrics.measure 'user.social_graph.nodes', 212
+    Metrics.measure 'user.social_graph.nodes', 212
 
-    metrics.measure 'jobs.queued', 3
+    Metrics.measure 'jobs.queued', 3
     
 
-#### metrics_timing
+#### timing
 
-Like `metrics.measure` this is per-request, but specialized for timing information:
+Like `Metrics.measure` this is per-request, but specialized for timing information:
 
-    metrics.timing 'twitter.lookup.time', 21.2
+    Metrics.timing 'twitter.lookup.time', 21.2
 	
 The block form auto-submits the time it took for its contents to execute as the measurement value:
 
-    metrics.timing 'twitter.lookup.time' do
+    Metrics.timing 'twitter.lookup.time' do
       @twitter = Twitter.lookup(user)
     end
 
-#### metrics_group
+#### group
 
 There is also a grouping helper, to make managing nested metrics easier. So this:
 
-    metrics.measure 'memcached.gets', 20
-    metrics.measure 'memcached.sets', 2
-    metrics.measure 'memcached.hits', 18
+    Metrics.measure 'memcached.gets', 20
+    Metrics.measure 'memcached.sets', 2
+    Metrics.measure 'memcached.hits', 18
     
 Can also be written as:
 
-    metrics.group 'memcached' do |g|
+    Metrics.group 'memcached' do |g|
       g.measure 'gets', 20
       g.measure 'sets', 2
       g.measure 'hits', 18
     end
 
-Symbols can be used interchangably with strings for metrics names.
-
-If you want to write custom metrics from outside of your models and controllers (or are using an ORM other than ActiveRecord)you can access the `Metrics::Rails` object directly and drop the `metrics.` from the beginning of the helper name. For example:
-
-    Metrics::Rails.timing 'custom_cache.time', 8.2
-    Metrics::Rails.increment 'user.signups'
+Symbols can be used interchangably with strings for metric names.
 
 ## Contribution
 
