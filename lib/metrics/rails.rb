@@ -66,7 +66,6 @@ module Metrics
       # isn't running yet, if so start it up!
       def check_worker
         if @pid != $$
-          logger.info " >> no worker found in #{$$}, starting..."
           start_worker
           #aggregate.clear
           #counters.clear
@@ -86,12 +85,12 @@ module Metrics
       
       # send all current data to Metrics
       def flush
-        logger.info " >> flushing #{Process.pid} at " + Time.now.to_s
+        logger.debug "[metrics-rails] flushing #{Process.pid} (#{Time.now}):"
         queue = client.new_queue(:source => qualified_source)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
-        logger.info queue.queued
+        logger.debug queue.queued
         queue.submit unless queue.empty?
       rescue Exception => error
         logger.error "[metrics-rails] submission failed permanently, worker exiting: #{error}"
@@ -140,7 +139,7 @@ module Metrics
       def start_worker
         return if @worker # already running
         @pid = $$
-        logger.info "[metrics-rails] starting up worker for pid #{@pid}..."
+        logger.debug "[metrics-rails] >> starting up worker for pid #{@pid}..."
         @worker = Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
