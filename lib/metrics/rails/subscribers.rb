@@ -53,8 +53,8 @@ module Metrics
         sql = event.payload[:sql].strip
         r.increment 'selects' if sql.starts_with?('SELECT')
         r.increment 'inserts' if sql.starts_with?('INSERT')
-        # r.increment 'selects' if sql.starts_with?('SELECT')
-        #         r.increment 'selects' if sql.starts_with?('SELECT')
+        r.increment 'updates' if sql.starts_with?('UPDATE')
+        r.increment 'deletes' if sql.starts_with?('DELETE')
       end
     end
   

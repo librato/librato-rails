@@ -20,6 +20,11 @@ class SQLTest < ActiveSupport::IntegrationCase
     foo.password = 'new password'
     foo.save
     assert_equal 7, counters["#{prefix}.sql.queries"]
+    assert_equal 1, counters["#{prefix}.sql.updates"]
+    
+    foo.destroy
+    assert_equal 10, counters["#{prefix}.sql.queries"]
+    assert_equal 1, counters["#{prefix}.sql.deletes"]
   end
   
 end
