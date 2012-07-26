@@ -93,6 +93,8 @@ module Metrics
         aggregate.flush_to(queue)
         logger.info queue.queued
         queue.submit unless queue.empty?
+      rescue Exception => error
+        logger.error "[metrics-rails] submission failed: #{error}"
       end
       
       def group(prefix)
