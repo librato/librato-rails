@@ -1,6 +1,8 @@
 metrics-rails
 =======
 
+[![Build Status](https://secure.travis-ci.org/librato/metrics-rails.png?branch=master)](http://travis-ci.org/librato/metrics-rails)
+
 Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/), easily track your own custom metrics. Currently supports Rails 3+.
 
 **NOTE: This is currently in alpha development and is not yet supported by the Librato team**
