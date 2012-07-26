@@ -146,14 +146,14 @@ module Metrics
     private
 
       def app_server
-        if defined?(::Unicorn) && defined?(::Unicorn::HttpServer)
+        if defined?(::Unicorn) && defined?(::Unicorn::HttpServer) && !::Unicorn.listener_names.empty?
           :unicorn
         elsif defined?(::IN_PHUSION_PASSENGER) || (defined?(::Passenger) && defined?(::Passenger::AbstractServer))
           :passenger
         elsif defined?(::Thin) && defined?(::Thin::Server)
           :thin
         else
-          :unknown
+          :other
         end
       end
     
