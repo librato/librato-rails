@@ -23,7 +23,7 @@ module Metrics
       # infinitely unless @interrupt becomes true.
       #
       def run_periodically(period, &block)
-        next_run = Time.now + period
+        next_run = start_time(period)
         until @interrupt do
           now = Time.now
           if now >= next_run
@@ -34,6 +34,21 @@ module Metrics
           else
             sleep (next_run - now)
           end
+        end
+      end
+      
+      # Give some structure to worker start times so when possible
+      # they will be in sync.
+      def start_time(period)
+        earliest = Time.now + period
+        # already on a whole minute
+        return earliest if earliest.sec == 0 
+        if period > 30
+          # bump to whole minute
+          earliest + (60-earliest.sec)
+        else
+          # ensure sync to whole minute if minute is evenly divisible
+          earliest + (period-(earliest.sec%period))
         end
       end
       
