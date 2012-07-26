@@ -10,7 +10,7 @@ module Metrics
       end
       
     end
-
+    
     ActionController::Base.send(:include, Helpers)
     
     ActiveRecord::Base.send(:include, Helpers)

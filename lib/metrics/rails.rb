@@ -172,7 +172,20 @@ module Metrics
         client = Librato::Metrics::Client.new
         client.authenticate email, api_key
         client.api_endpoint = @api_endpoint if @api_endpoint
+        client.custom_user_agent = user_agent
         client
+      end
+      
+      def ruby_engine
+        return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
+        RUBY_DESCRIPTION.split[0]
+      end
+      
+      def user_agent
+        ua_chunks = []
+        ua_chunks << "metrics-rails/#{Metrics::Rails::VERSION}"
+        ua_chunks << "(#{ruby_engine}; #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}; #{RUBY_PLATFORM}; #{app_server})"
+        ua_chunks.join(' ')
       end
     
     end # end class << self
