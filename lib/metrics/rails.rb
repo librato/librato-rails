@@ -34,16 +34,6 @@ module Metrics
 
     class << self
     
-      # this should be called after forking in a forked
-      # process - makes needed adjustments to ensure
-      # data is correct and submitted successfully.
-      def after_fork
-        logger.info " >> calling #after_fork in #{$$}"
-        #aggregate.clear
-        #counters.clear
-        start_worker
-      end
-    
       # access to internal aggregator object
       def aggregate
         @aggregator_cache ||= Aggregator.new
@@ -70,6 +60,17 @@ module Metrics
         end
         self.api_key = ENV['METRICS_API_KEY'] if ENV['METRICS_API_KEY']
         self.email = ENV['METRICS_EMAIL'] if ENV['METRICS_EMAIL']
+      end
+      
+      # check to see if we've forked into a process where a worker
+      # isn't running yet, if so start it up!
+      def check_worker
+        if @pid != $$
+          logger.info " >> no worker found in #{$$}, starting..."
+          start_worker
+          #aggregate.clear
+          #counters.clear
+        end
       end
   
       # access to internal counters object
@@ -111,8 +112,14 @@ module Metrics
       # run once during Rails startup sequence
       def setup
         logger.info "[metrics-rails] starting up with #{app_server}..."
-        @process_pid = $$
-        start_worker unless forking_server?
+        @pid = $$
+        if forking_server?
+          ::ApplicationController.prepend_before_filter do |c| 
+            Metrics::Rails.check_worker
+          end
+        else
+          start_worker # start immediately
+        end
       end
       
       def source
@@ -130,7 +137,7 @@ module Metrics
       # the forking thread is copied.
       def start_worker
         return if @worker # already running
-        @pid = Process.pid
+        @pid = $$
         logger.info "[metrics-rails] starting up worker for pid #{@pid}..."
         @worker = Thread.new do
           worker = Worker.new

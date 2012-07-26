@@ -13,5 +13,4 @@ after_fork do |server, worker|
   # the following is *required* for Rails + "preload_app true",
   defined?(ActiveRecord::Base) and
     ActiveRecord::Base.establish_connection
-  Metrics::Rails.after_fork
 end
