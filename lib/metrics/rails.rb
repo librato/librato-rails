@@ -94,7 +94,7 @@ module Metrics
         logger.info queue.queued
         queue.submit unless queue.empty?
       rescue Exception => error
-        logger.error "[metrics-rails] submission failed: #{error}"
+        logger.error "[metrics-rails] submission failed permanently, worker exiting: #{error}"
       end
       
       def group(prefix)
