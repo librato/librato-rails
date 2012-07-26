@@ -18,6 +18,6 @@ gem 'pry'
 # To use debugger
 # gem 'debugger'
 
-gem 'librato-metrics', :path => '/export/chk/librato/librato-metrics'
-gem 'thin'
-gem 'unicorn'
+# servers for testing
+# gem 'thin'
+# gem 'unicorn'
