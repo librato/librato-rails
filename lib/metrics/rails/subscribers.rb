@@ -23,8 +23,8 @@ module Metrics
         if exception
           r.increment 'exceptions'
         else
-          r.timing 'time.db', event.payload[:db_runtime]
-          r.timing 'time.view', event.payload[:view_runtime]
+          r.timing 'time.db', event.payload[:db_runtime] || 0
+          r.timing 'time.view', event.payload[:view_runtime] || 0
         end
       
         unless status.blank?
