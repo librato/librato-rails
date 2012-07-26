@@ -23,7 +23,7 @@ end
 # IRB
 desc "Open an irb session preloaded with this library"
 task :console do
-  sh "irb -rubygems -r ./lib/metrics-rails.rb"
+  sh "pry -rubygems -r rails -r ./lib/metrics-rails.rb"
 end
 
 Bundler::GemHelper.install_tasks
