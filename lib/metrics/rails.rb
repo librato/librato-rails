@@ -13,6 +13,9 @@ require 'metrics/rails/worker'
 require 'metrics/rails/version'
 
 module Metrics
+  extend SingleForwardable
+  def_delegators Metrics::Rails, :increment, :measure, :timing, :group
+  
   module Rails
     extend SingleForwardable
     CONFIG_SETTABLE = %w{api_key email flush_interval prefix source}
