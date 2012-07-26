@@ -38,7 +38,7 @@ module Metrics
       # process - makes needed adjustments to ensure
       # data is correct and submitted successfully.
       def after_fork
-        logger.info " >> calling #after_fork in #{Process.pid}"
+        logger.info " >> calling #after_fork in #{$$}"
         #aggregate.clear
         #counters.clear
         start_worker
@@ -105,17 +105,14 @@ module Metrics
       
       # source including process pid
       def qualified_source
-        "#{source}.#{Process.pid}"
+        "#{source}.#{$$}"
       end
       
       # run once during Rails startup sequence
       def setup
         logger.info "[metrics-rails] starting up with #{app_server}..."
-        if forking_server?
-          setup_forking_hooks
-        else
-          start_worker
-        end
+        @process_pid = $$
+        start_worker unless forking_server?
       end
       
       def source
@@ -167,20 +164,6 @@ module Metrics
         client.authenticate email, api_key
         client.api_endpoint = @api_endpoint if @api_endpoint
         client
-      end
-    
-      # TODO: this isn't working yet
-      def setup_forking_hooks
-        case app_server
-        when :passenger
-          logger.info '[metrics-rails] setting up passenger worker hook'
-          # PhusionPassenger.on_event(:starting_worker_process) do |forked|
-          #   start_worker
-          # end
-        when :unicorn
-          logger.info '[metrics-rails] setting up unicorn worker hook'
-          # binding.pry
-        end
       end
     
     end # end class << self
