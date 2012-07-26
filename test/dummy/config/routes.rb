@@ -5,6 +5,8 @@ Dummy::Application.routes.draw do
   get 'exception' => 'home#boom',   :as => :exception
   get 'slow'      => 'home#slow',   :as => :slow
   get 'custom'    => 'home#custom', :as => :custom
+  
+  get 'user/manipulation' => 'user#manipulation', :as => :user_manipulation
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
