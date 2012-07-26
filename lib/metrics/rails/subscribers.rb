@@ -44,17 +44,32 @@ module Metrics
     # SQL
     
     ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
-      event = ActiveSupport::Notifications::Event.new(*args)
+      payload = args.last
   
-      group "#{Metrics::Rails.prefix}.sql" do |r|
+      group "#{Metrics::Rails.prefix}.sql" do |s|
         # puts (event.payload[:name] || 'nil') + ":" + event.payload[:sql] + "\n"
-        r.increment 'queries'
+        s.increment 'queries'
         
-        sql = event.payload[:sql].strip
-        r.increment 'selects' if sql.starts_with?('SELECT')
-        r.increment 'inserts' if sql.starts_with?('INSERT')
-        r.increment 'updates' if sql.starts_with?('UPDATE')
-        r.increment 'deletes' if sql.starts_with?('DELETE')
+        sql = payload[:sql].strip
+        s.increment 'selects' if sql.starts_with?('SELECT')
+        s.increment 'inserts' if sql.starts_with?('INSERT')
+        s.increment 'updates' if sql.starts_with?('UPDATE')
+        s.increment 'deletes' if sql.starts_with?('DELETE')
+      end
+    end
+    
+    # ActionMailer
+    
+    ActiveSupport::Notifications.subscribe 'deliver.action_mailer' do |*args|
+      # payload[:mailer] => 'UserMailer'
+      group "#{Metrics::Rails.prefix}.mail" do |m|
+        m.increment 'sent'
+      end
+    end
+    
+    ActiveSupport::Notifications.subscribe 'receive.action_mailer' do |*args|
+      group "#{Metrics::Rails.prefix}.mail" do |m|
+        m.increment 'received'
       end
     end
   
