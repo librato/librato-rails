@@ -20,3 +20,4 @@ gem 'pry'
 
 gem 'librato-metrics', :path => '/export/chk/librato/librato-metrics'
 gem 'thin'
+gem 'unicorn'
