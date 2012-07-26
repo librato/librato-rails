@@ -41,5 +41,22 @@ module Metrics
       
     end # end subscribe
   
+    # SQL
+    
+    ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
+      event = ActiveSupport::Notifications::Event.new(*args)
+  
+      group "#{Metrics::Rails.prefix}.sql" do |r|
+        # puts (event.payload[:name] || 'nil') + ":" + event.payload[:sql] + "\n"
+        r.increment 'queries'
+        
+        sql = event.payload[:sql].strip
+        r.increment 'selects' if sql.starts_with?('SELECT')
+        r.increment 'inserts' if sql.starts_with?('INSERT')
+        # r.increment 'selects' if sql.starts_with?('SELECT')
+        #         r.increment 'selects' if sql.starts_with?('SELECT')
+      end
+    end
+  
   end
 end
