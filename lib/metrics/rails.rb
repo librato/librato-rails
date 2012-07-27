@@ -92,9 +92,9 @@ module Metrics
         if request.env.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
           # heroku
           group "#{prefix}.heroku" do |h|
-            h.measure 'queue.depth', request.env['HTTP_X_HEROKU_QUEUE_DEPTH']
-            h.timing 'queue.wait_time', request.env['HTTP_X_HEROKU_QUEUE_WAIT_TIME']
-            h.measure 'queue.dynos', request.env['HTTP_X_HEROKU_DYNOS_IN_USE']
+            h.measure 'queue.depth', request.env['HTTP_X_HEROKU_QUEUE_DEPTH'].to_f
+            h.timing 'queue.wait_time', request.env['HTTP_X_HEROKU_QUEUE_WAIT_TIME'].to_f
+            h.measure 'queue.dynos', request.env['HTTP_X_HEROKU_DYNOS_IN_USE'].to_f
           end
         end
       end
