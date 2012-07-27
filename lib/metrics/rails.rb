@@ -86,6 +86,19 @@ module Metrics
         counters.delete_all
       end
       
+      # catches request-environment specific things we can't
+      # find through another means.
+      def evaluate_request(request)
+        if request.env.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
+          # heroku
+          group "#{prefix}.heroku" do |h|
+            h.measure 'queue.depth', request.env['HTTP_X_HEROKU_QUEUE_DEPTH']
+            h.timing 'queue.wait_time', request.env['HTTP_X_HEROKU_QUEUE_WAIT_TIME']
+            h.measure 'queue.dynos', request.env['HTTP_X_HEROKU_DYNOS_IN_USE']
+          end
+        end
+      end
+      
       # send all current data to Metrics
       def flush
         logger.debug "[metrics-rails] flushing #{Process.pid} (#{Time.now}):"
@@ -115,12 +128,13 @@ module Metrics
       
       # run once during Rails startup sequence
       def setup
+        check_config
+        #return unless self.email && self.api_key
         logger.info "[metrics-rails] starting up with #{app_server}..."
         @pid = $$
+        install_request_evaluator
         if forking_server?
-          ::ApplicationController.prepend_before_filter do |c| 
-            Metrics::Rails.check_worker
-          end
+          install_worker_check
         else
           start_worker # start immediately
         end
@@ -167,6 +181,18 @@ module Metrics
     
       def forking_server?
         %w{unicorn passenger}.include?(app_server.to_s)
+      end
+      
+      def install_worker_check
+        ::ApplicationController.prepend_before_filter do |c| 
+          Metrics::Rails.check_worker
+        end
+      end
+      
+      def install_request_evaluator
+        ::ApplicationController.prepend_before_filter do |c| 
+          Metrics::Rails.evaluate_request(request)
+        end
       end
     
       def prepare_client
