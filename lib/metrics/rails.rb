@@ -20,6 +20,7 @@ module Metrics
   module Rails
     extend SingleForwardable
     CONFIG_SETTABLE = %w{api_key email flush_interval prefix source}
+    FORKING_SERVERS = [:unicorn, :passenger]
 
     mattr_accessor :config_file
 
@@ -167,7 +168,7 @@ module Metrics
       end
 
       def forking_server?
-        %w{unicorn passenger}.include?(app_server.to_s)
+        FORKING_SERVERS.include?(app_server)
       end
 
       def install_worker_check
