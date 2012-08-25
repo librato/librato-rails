@@ -3,14 +3,23 @@ require 'mocha'
 require 'metrics/rails'
 
 class MetricRackMiddlewareTest < MiniTest::Unit::TestCase
+  include Mocha::API
+
   def setup
     Metrics::Rails.stubs(:forking_server?).returns(false)
     Metrics::Rails.stubs(:measure).returns(true)
     Metrics::Rails.stubs(:increment).returns(true)
 
-    Time.stubs(:now).returns(0.1305, 0.20075)
+    Time.stubs(:now).returns(Time.at(0.1305), Time.at(0.20075))
 
-    @middleware = Metrics::Rack::Middleware.new stub(:call => [200, {}, []])
+    @middleware = Metrics::Rack::Middleware.new(
+      stub(:call => [200, {}, []]), Metrics::Rails
+    )
+  end
+
+  def teardown
+    Metrics::Rails.unstub :forking_server?, :measure, :increment
+    Time.unstub :now
   end
 
   def test_logs_header_metrics
