@@ -5,6 +5,7 @@ require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/notifications'
 require 'librato/metrics'
 
+require 'metrics/rack'
 require 'metrics/rails/aggregator'
 require 'metrics/rails/counter_cache'
 require 'metrics/rails/group'
