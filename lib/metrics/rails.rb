@@ -223,5 +223,5 @@ module Metrics
 end
 
 # must load after all module setup
-require 'metrics/rails/railtie'
+require 'metrics/rails/railtie' if defined?(Rails)
 require 'metrics/rails/subscribers'
