@@ -16,43 +16,43 @@ require 'metrics/rails/version'
 module Metrics
   extend SingleForwardable
   def_delegators Metrics::Rails, :increment, :measure, :timing, :group
-  
+
   module Rails
     extend SingleForwardable
     CONFIG_SETTABLE = %w{api_key email flush_interval prefix source}
-    
+
     mattr_accessor :config_file
-    
+
     # config options
     mattr_accessor :api_key
     mattr_accessor :email
     mattr_accessor :flush_interval
     mattr_accessor :prefix
-    
+
     # config defaults
     self.flush_interval = 60 # seconds
     self.prefix = 'rails'
-    
+
     def_delegators :counters, :increment
     def_delegators :aggregate, :measure, :timing
 
     class << self
-    
+
       # access to internal aggregator object
       def aggregate
         @aggregator_cache ||= Aggregator.new
       end
-      
+
       # set custom api endpoint
       def api_endpoint=(endpoint)
         @api_endpoint = endpoint
       end
-    
+
       # access to client instance
       def client
         @client ||= prepare_client
       end
-      
+
       # detect / update configuration
       def check_config
         if self.config_file && File.exists?(self.config_file)
@@ -65,7 +65,7 @@ module Metrics
         self.api_key = ENV['METRICS_API_KEY'] if ENV['METRICS_API_KEY']
         self.email = ENV['METRICS_EMAIL'] if ENV['METRICS_EMAIL']
       end
-      
+
       # check to see if we've forked into a process where a worker
       # isn't running yet, if so start it up!
       def check_worker
@@ -75,31 +75,18 @@ module Metrics
           #counters.clear
         end
       end
-  
+
       # access to internal counters object
       def counters
         @counter_cache ||= CounterCache.new
       end
-      
+
       # remove any accumulated but unsent metrics
       def delete_all
         aggregate.delete_all
         counters.delete_all
       end
-      
-      # catches request-environment specific things we can't
-      # find through another means.
-      def evaluate_request(request)
-        if request.env.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
-          # heroku
-          group "#{prefix}.heroku" do |h|
-            h.measure 'queue.depth', request.env['HTTP_X_HEROKU_QUEUE_DEPTH'].to_f
-            h.timing 'queue.wait_time', request.env['HTTP_X_HEROKU_QUEUE_WAIT_TIME'].to_f
-            h.measure 'queue.dynos', request.env['HTTP_X_HEROKU_DYNOS_IN_USE'].to_f
-          end
-        end
-      end
-      
+
       # send all current data to Metrics
       def flush
         logger.debug "[metrics-rails] flushing #{Process.pid} (#{Time.now}):"
@@ -112,44 +99,43 @@ module Metrics
       rescue Exception => error
         logger.error "[metrics-rails] submission failed permanently, worker exiting: #{error}"
       end
-      
+
       def group(prefix)
         group = Group.new(prefix)
         yield group
       end
-      
+
       def logger
         @logger ||= ::Rails.logger
       end
-      
+
       # source including process pid
       def qualified_source
         "#{source}.#{$$}"
       end
-      
+
       # run once during Rails startup sequence
       def setup
         check_config
         #return unless self.email && self.api_key
         logger.info "[metrics-rails] starting up with #{app_server}..."
         @pid = $$
-        install_request_evaluator
         if forking_server?
           install_worker_check
         else
           start_worker # start immediately
         end
       end
-      
+
       def source
         @source ||= Socket.gethostname
       end
-      
+
       # set a custom source
       def source=(src)
         @source = src
       end
-      
+
       # start the worker thread, one is needed per process.
       # if this process has been forked from an one with an active
       # worker thread we don't need to worry about cleanup as only
@@ -165,7 +151,7 @@ module Metrics
           end
         end
       end
-      
+
     private
 
       def app_server
@@ -179,23 +165,17 @@ module Metrics
           :other
         end
       end
-    
+
       def forking_server?
         %w{unicorn passenger}.include?(app_server.to_s)
       end
-      
+
       def install_worker_check
-        ::ApplicationController.prepend_before_filter do |c| 
+        ::ApplicationController.prepend_before_filter do |c|
           Metrics::Rails.check_worker
         end
       end
-      
-      def install_request_evaluator
-        ::ApplicationController.prepend_before_filter do |c| 
-          Metrics::Rails.evaluate_request(request)
-        end
-      end
-    
+
       def prepare_client
         check_config
         client = Librato::Metrics::Client.new
@@ -204,19 +184,19 @@ module Metrics
         client.custom_user_agent = user_agent
         client
       end
-      
+
       def ruby_engine
         return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
         RUBY_DESCRIPTION.split[0]
       end
-      
+
       def user_agent
         ua_chunks = []
         ua_chunks << "metrics-rails/#{Metrics::Rails::VERSION}"
         ua_chunks << "(#{ruby_engine}; #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}; #{RUBY_PLATFORM}; #{app_server})"
         ua_chunks.join(' ')
       end
-    
+
     end # end class << self
 
   end
