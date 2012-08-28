@@ -36,6 +36,10 @@ module Metrics
     def_delegators :aggregate, :measure, :timing
 
     class << self
+
+      def config_file
+        @@config_file ||= 'config/metrics.yml'
+      end
     
       # access to internal aggregator object
       def aggregate
