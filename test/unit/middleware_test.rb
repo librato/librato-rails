@@ -1,9 +1,6 @@
-require 'minitest/autorun'
-require 'mocha'
-require 'metrics/rails'
+require 'test_helper'
 
 class MetricRackMiddlewareTest < MiniTest::Unit::TestCase
-  include Mocha::API
 
   def setup
     Metrics::Rails.stubs(:forking_server?).returns(false)
