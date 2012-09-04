@@ -13,7 +13,7 @@ class MetricRackMiddlewareTest < MiniTest::Unit::TestCase
     Time.stubs(:now).returns(Time.at(0.1305), Time.at(0.20075))
 
     @middleware = Metrics::Rack::Middleware.new(
-      stub(:call => [200, {}, []]), Metrics::Rails
+      stub(:call => [200, {}, []])
     )
   end
 
