@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class MetricsRailsCounterCacheTest < ActiveSupport::TestCase
+class MetricsRailsCounterCacheTest < MiniTest::Unit::TestCase
   
-  test 'basic operations' do
+  def test_basic_operations
     cc = Metrics::Rails::CounterCache.new
     cc.increment :foo
     assert_equal 1, cc[:foo]

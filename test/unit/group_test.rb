@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class MetricsRailsGroupTest < ActiveSupport::TestCase
+class MetricsRailsGroupTest < MiniTest::Unit::TestCase
   
-  test 'basic grouping' do
+  def test_basic_grouping
     Metrics::Rails.group 'fruit' do |g|
       g.increment 'bites'
       g.increment 'nibbles', 5
@@ -24,7 +24,7 @@ class MetricsRailsGroupTest < ActiveSupport::TestCase
     assert_equal 146.5, aggregate['fruit.grow_time'][:sum]
   end
   
-  test 'nesting' do
+  def test_nesting
     Metrics::Rails.group 'street' do |s|
       s.increment 'count'
       s.group 'market' do |m|

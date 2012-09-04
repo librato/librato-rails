@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class MetricsRailsAggregatorTest < ActiveSupport::TestCase
+class MetricsRailsAggregatorTest < MiniTest::Unit::TestCase
   
-  test 'adding timings' do
+  def test_adding_timings
     agg = Metrics::Rails::Aggregator.new
     
     agg.timing 'request.time.total', 23.7

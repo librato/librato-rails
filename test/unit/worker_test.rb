@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class MetricsRailsWorkerTest < ActiveSupport::TestCase
+class MetricsRailsWorkerTest < MiniTest::Unit::TestCase
   
-  test 'basic use' do
+  def test_basic_use
     worker = Metrics::Rails::Worker.new
     counter = 0
     Thread.new do
@@ -14,7 +14,7 @@ class MetricsRailsWorkerTest < ActiveSupport::TestCase
     assert_equal counter, 4
   end
   
-  test 'start time' do
+  def test_start_time
     worker = Metrics::Rails::Worker.new
     
     time = Time.now

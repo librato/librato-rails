@@ -1,8 +1,14 @@
 require 'test_helper'
 
-class MetricsRailsAggregatorTest < ActiveSupport::TestCase
+class MetricsRailsAggregatorTest < MiniTest::Unit::TestCase
   
-  test 'environmental variable config' do
+  def teardown
+    ENV.delete('METRICS_EMAIL')
+    ENV.delete('METRICS_API_KEY')
+    Metrics::Rails.check_config
+  end
+  
+  def test_environmental_variable_config
     ENV['METRICS_EMAIL'] = 'foo@bar.com'
     ENV['METRICS_API_KEY'] = 'api_key'
     Metrics::Rails.check_config
@@ -10,7 +16,7 @@ class MetricsRailsAggregatorTest < ActiveSupport::TestCase
     assert_equal 'api_key', Metrics::Rails.api_key
   end
   
-  test 'config file config' do
+  def test_config_file_config
     with_fixture_config do
       assert_equal 'test@bar.com', Metrics::Rails.email
       assert_equal 'test api key', Metrics::Rails.api_key
@@ -20,7 +26,7 @@ class MetricsRailsAggregatorTest < ActiveSupport::TestCase
     end
   end
   
-  test 'environmental and config file config' do
+  def test_environmental_and_config_file_config
     ENV['METRICS_EMAIL'] = 'foo@bar.com'
     ENV['METRICS_API_KEY'] = 'api_key'
     with_fixture_config do
@@ -29,12 +35,6 @@ class MetricsRailsAggregatorTest < ActiveSupport::TestCase
       assert_equal 'rails-test', Metrics::Rails.prefix # from config file
       assert_equal 30, Metrics::Rails.flush_interval # from config file
     end
-  end
-  
-  def teardown
-    ENV.delete('METRICS_EMAIL')
-    ENV.delete('METRICS_API_KEY')
-    Metrics::Rails.check_config
   end
   
   def with_fixture_config
