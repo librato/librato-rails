@@ -23,6 +23,7 @@ module Metrics
     FORKING_SERVERS = [:unicorn, :passenger]
 
     mattr_accessor :config_file
+    self.config_file = 'config/metrics.yml'
 
     # config options
     mattr_accessor :api_key
@@ -39,10 +40,6 @@ module Metrics
 
     class << self
 
-      def config_file
-        @@config_file ||= 'config/metrics.yml'
-      end
-    
       # access to internal aggregator object
       def aggregate
         @aggregator_cache ||= Aggregator.new
