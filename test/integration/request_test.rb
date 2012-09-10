@@ -5,7 +5,7 @@ class RequestTest < ActiveSupport::IntegrationCase
   # Each request
   
   test 'increment total and status' do
-    prefix = Metrics::Rails.prefix
+    prefix = Librato::Rails.prefix
     visit root_path
     
     assert_equal 1, counters["#{prefix}.request.total"]
@@ -21,7 +21,7 @@ class RequestTest < ActiveSupport::IntegrationCase
   end
   
   test 'request times' do
-    prefix = Metrics::Rails.prefix
+    prefix = Librato::Rails.prefix
     visit root_path
     
     # common for all paths
@@ -35,7 +35,7 @@ class RequestTest < ActiveSupport::IntegrationCase
   end
   
   test 'track exceptions' do
-    prefix = Metrics::Rails.prefix
+    prefix = Librato::Rails.prefix
     begin
       visit exception_path #rescue nil
     rescue RuntimeError => e
@@ -45,7 +45,7 @@ class RequestTest < ActiveSupport::IntegrationCase
   end
   
   test 'track slow requests' do
-    prefix = Metrics::Rails.prefix
+    prefix = Librato::Rails.prefix
     visit slow_path
     assert_equal 1, counters["#{prefix}.request.slow"]
   end

@@ -5,7 +5,7 @@ class MailTest < ActiveSupport::IntegrationCase
   # Query tests - the numbers specified assume running against SQLite
   
   test 'mail sent' do
-    prefix = Metrics::Rails.prefix
+    prefix = Librato::Rails.prefix
     
     user = User.create!(:email => 'foo@foo.com', :password => 'wow')
     UserMailer.welcome_email(user).deliver

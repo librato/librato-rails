@@ -1,39 +1,39 @@
 require 'test_helper'
 
-class MetricsRailsTest < ActiveSupport::TestCase
+class LibratoRailsTest < ActiveSupport::TestCase
   
   test 'is a module' do
-    assert_kind_of Module, Metrics::Rails
+    assert_kind_of Module, Librato::Rails
   end
   
   test 'client is available' do
-    assert_kind_of Librato::Metrics::Client, Metrics::Rails.client
+    assert_kind_of Librato::Metrics::Client, Librato::Rails.client
   end
   
   test '#increment exists' do
-    assert Metrics::Rails.respond_to?(:increment)
-    Metrics::Rails.increment :baz, 5
+    assert Librato::Rails.respond_to?(:increment)
+    Librato::Rails.increment :baz, 5
   end
   
   test '#measure exists' do
-    assert Metrics::Rails.respond_to?(:measure)
-    Metrics::Rails.timing 'queries', 10
+    assert Librato::Rails.respond_to?(:measure)
+    Librato::Rails.timing 'queries', 10
   end
   
   test '#timing exists' do
-    assert Metrics::Rails.respond_to?(:timing)
-    Metrics::Rails.timing 'request.time.total', 121.2
+    assert Librato::Rails.respond_to?(:timing)
+    Librato::Rails.timing 'request.time.total', 121.2
   end
   
   test 'source is assignable' do
-    original = Metrics::Rails.source
-    Metrics::Rails.source = 'foobar'
-    assert_equal 'foobar', Metrics::Rails.source
-    Metrics::Rails.source = original
+    original = Librato::Rails.source
+    Librato::Rails.source = 'foobar'
+    assert_equal 'foobar', Librato::Rails.source
+    Librato::Rails.source = original
   end
   
   test 'qualified source includes pid' do
-    assert_match /\.\d{2,6}$/, Metrics::Rails.qualified_source
+    assert_match /\.\d{2,6}$/, Librato::Rails.qualified_source
   end
   
 end

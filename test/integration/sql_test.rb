@@ -5,7 +5,7 @@ class SQLTest < ActiveSupport::IntegrationCase
   # Query tests - the numbers specified assume running against SQLite
   
   test 'total queries and query types' do
-    prefix = Metrics::Rails.prefix
+    prefix = Librato::Rails.prefix
     
     # note that modifying queries are wrapped in a transaction which
     # adds 2 to total queries per operation.
