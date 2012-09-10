@@ -1,12 +1,12 @@
 # Helpers included into controllers and models.
 
-module Metrics
+module Librato
   module Rails
     module Helpers
       
       # convenience accessor
       def metrics
-        Metrics::Rails
+        Librato::Rails
       end
       
     end

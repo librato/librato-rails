@@ -1,1 +1,1 @@
-require 'metrics/rails'
+require 'librato/rails'

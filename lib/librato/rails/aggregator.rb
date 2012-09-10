@@ -1,4 +1,4 @@
-module Metrics
+module Librato
   module Rails
     class Aggregator
       extend Forwardable

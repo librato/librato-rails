@@ -1,16 +1,16 @@
-module Metrics
+module Librato
   module Rails
     class Railtie < ::Rails::Railtie
 
       # make configuration proxy for config inside Rails
-      config.metrics_rails = Metrics::Rails
+      config.librato_rails = Librato::Rails
 
-      initializer 'metrics_rails.setup' do |app|
+      initializer 'librato_rails.setup' do |app|
         # don't start in test mode or in the console
         unless ::Rails.env.test? || defined?(::Rails::Console)
-          Metrics::Rails.setup
+          Librato::Rails.setup
 
-          app.middleware.use Metrics::Rack::Middleware
+          app.middleware.use Librato::Rack::Middleware
         end
       end
     end

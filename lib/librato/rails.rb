@@ -5,17 +5,17 @@ require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/notifications'
 require 'librato/metrics'
 
-require 'metrics/rack'
-require 'metrics/rails/aggregator'
-require 'metrics/rails/counter_cache'
-require 'metrics/rails/group'
-require 'metrics/rails/helpers'
-require 'metrics/rails/worker'
-require 'metrics/rails/version'
+require 'librato/rack'
+require 'librato/rails/aggregator'
+require 'librato/rails/counter_cache'
+require 'librato/rails/group'
+require 'librato/rails/helpers'
+require 'librato/rails/worker'
+require 'librato/rails/version'
 
-module Metrics
+module Librato
   extend SingleForwardable
-  def_delegators Metrics::Rails, :increment, :measure, :timing, :group
+  def_delegators Librato::Rails, :increment, :measure, :timing, :group
 
   module Rails
     extend SingleForwardable
@@ -174,7 +174,7 @@ module Metrics
 
       def install_worker_check
         ::ApplicationController.prepend_before_filter do |c|
-          Metrics::Rails.check_worker
+          Librato::Rails.check_worker
         end
       end
 
@@ -194,7 +194,7 @@ module Metrics
 
       def user_agent
         ua_chunks = []
-        ua_chunks << "metrics-rails/#{Metrics::Rails::VERSION}"
+        ua_chunks << "metrics-rails/#{Librato::Rails::VERSION}"
         ua_chunks << "(#{ruby_engine}; #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}; #{RUBY_PLATFORM}; #{app_server})"
         ua_chunks.join(' ')
       end

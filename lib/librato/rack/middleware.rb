@@ -1,5 +1,5 @@
-class Metrics::Rack::Middleware
-  def initialize(app, metrics = Metrics::Rails)
+class Librato::Rack::Middleware
+  def initialize(app, metrics = Librato::Rails)
     @app, @metrics = app, metrics
   end
 

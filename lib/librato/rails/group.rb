@@ -1,4 +1,4 @@
-module Metrics
+module Librato
   module Rails
     class Group
       
@@ -13,12 +13,12 @@ module Metrics
       
       def increment(counter, by=1)
         counter = "#{@prefix}#{counter}"
-        Metrics::Rails.increment counter, by
+        Librato::Rails.increment counter, by
       end
       
       def measure(event, duration)
         event = "#{@prefix}#{event}"
-        Metrics::Rails.measure event, duration
+        Librato::Rails.measure event, duration
       end
       alias :timing :measure
       

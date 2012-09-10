@@ -1,4 +1,4 @@
-module Metrics::Rack
+module Librato::Rack
 end
 
-require 'metrics/rack/middleware'
+require 'librato/rack/middleware'
