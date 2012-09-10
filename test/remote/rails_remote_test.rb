@@ -12,8 +12,8 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
   
     setup do
       # delete any generated Librato::Rails
-      Librato::Rails.email = ENV['LIBRATO_RAILS_TEST_EMAIL']
-      Librato::Rails.api_key = ENV['LIBRATO_RAILS_TEST_API_KEY']
+      Librato::Rails.user = ENV['LIBRATO_RAILS_TEST_EMAIL']
+      Librato::Rails.token = ENV['LIBRATO_RAILS_TEST_API_KEY']
       if ENV['LIBRATO_RAILS_TEST_API_ENDPOINT']
         Librato::Rails.api_endpoint = ENV['LIBRATO_RAILS_TEST_API_ENDPOINT']
       end

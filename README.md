@@ -24,8 +24,8 @@ If you don't have a Metrics account already, [sign up](https://metrics.librato.c
 Create a `config/librato.yml` like the following:
 
     production:
-      email: <your-email>
-      api_key: <your-api-key>
+      user: <your-email>
+      token: <your-api-key>
       
 OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. If both env variables and a config file are present, environment variables will take precendence.
 

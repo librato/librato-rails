@@ -19,15 +19,15 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    CONFIG_SETTABLE = %w{api_key email flush_interval prefix source}
+    CONFIG_SETTABLE = %w{user token flush_interval prefix source}
     FORKING_SERVERS = [:unicorn, :passenger]
 
     mattr_accessor :config_file
     self.config_file = 'config/librato.yml'
 
     # config options
-    mattr_accessor :api_key
-    mattr_accessor :email
+    mattr_accessor :user
+    mattr_accessor :token
     mattr_accessor :flush_interval
     mattr_accessor :prefix
 
@@ -64,8 +64,8 @@ module Librato
             settable.each { |key| self.send("#{key}=", env_specific[key]) }
           end
         end
-        self.api_key = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
-        self.email = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
+        self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
+        self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
       end
 
       # check to see if we've forked into a process where a worker
@@ -181,7 +181,7 @@ module Librato
       def prepare_client
         check_config
         client = Librato::Metrics::Client.new
-        client.authenticate email, api_key
+        client.authenticate user, token
         client.api_endpoint = @api_endpoint if @api_endpoint
         client.custom_user_agent = user_agent
         client

@@ -1,10 +1,10 @@
 test:
-  email: 'test@bar.com'
-  api_key: 'test api key'
+  user: 'test@bar.com'
+  token: 'test api key'
   prefix: 'rails-test'
   flush_interval: 30
   source: 'custom-1'
   
 production:
-  email: live@bar.com
-  api_key: 'live api key'
+  user: 'live@bar.com'
+  token: 'live api key'
