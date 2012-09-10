@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class MetricsRailsWorkerTest < MiniTest::Unit::TestCase
+class LibratoRailsWorkerTest < MiniTest::Unit::TestCase
   
   def test_basic_use
-    worker = Metrics::Rails::Worker.new
+    worker = Librato::Rails::Worker.new
     counter = 0
     Thread.new do
       worker.run_periodically(0.1) do
@@ -15,7 +15,7 @@ class MetricsRailsWorkerTest < MiniTest::Unit::TestCase
   end
   
   def test_start_time
-    worker = Metrics::Rails::Worker.new
+    worker = Librato::Rails::Worker.new
     
     time = Time.now
     start = worker.start_time(60)
