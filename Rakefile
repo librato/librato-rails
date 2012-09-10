@@ -14,7 +14,7 @@ end
 
 RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'MetricsRails'
+  rdoc.title    = 'LibratoRails'
   rdoc.options << '--line-numbers'
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
@@ -23,7 +23,7 @@ end
 # IRB
 desc "Open an irb session preloaded with this library"
 task :console do
-  sh "pry -rubygems -r rails -r ./lib/metrics-rails.rb"
+  sh "pry -rubygems -r rails -r ./lib/librato-rails.rb"
 end
 
 Bundler::GemHelper.install_tasks

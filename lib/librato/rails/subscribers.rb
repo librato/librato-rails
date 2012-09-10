@@ -1,4 +1,4 @@
-module Metrics
+module Librato
   module Rails
   
     # controllers
@@ -15,7 +15,7 @@ module Metrics
       exception = event.payload[:exception]
       # page_key = "request.#{controller}.#{action}_#{format}."
   
-      group "#{Metrics::Rails.prefix}.request" do |r|
+      group "#{Librato::Rails.prefix}.request" do |r|
    
         r.increment 'total'
         r.timing    'time', event.duration
@@ -46,7 +46,7 @@ module Metrics
     ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
       payload = args.last
   
-      group "#{Metrics::Rails.prefix}.sql" do |s|
+      group "#{Librato::Rails.prefix}.sql" do |s|
         # puts (event.payload[:name] || 'nil') + ":" + event.payload[:sql] + "\n"
         s.increment 'queries'
         
@@ -62,13 +62,13 @@ module Metrics
     
     ActiveSupport::Notifications.subscribe 'deliver.action_mailer' do |*args|
       # payload[:mailer] => 'UserMailer'
-      group "#{Metrics::Rails.prefix}.mail" do |m|
+      group "#{Librato::Rails.prefix}.mail" do |m|
         m.increment 'sent'
       end
     end
     
     ActiveSupport::Notifications.subscribe 'receive.action_mailer' do |*args|
-      group "#{Metrics::Rails.prefix}.mail" do |m|
+      group "#{Librato::Rails.prefix}.mail" do |m|
         m.increment 'received'
       end
     end

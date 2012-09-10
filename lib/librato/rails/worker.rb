@@ -1,4 +1,4 @@
-module Metrics
+module Librato
   module Rails
     
     # This class manages the background thread which submits all data
@@ -16,7 +16,7 @@ module Metrics
       end
       
       def logger
-        Metrics::Rails.logger
+        Librato::Rails.logger
       end
       
       # run the given block every <period> seconds, looping

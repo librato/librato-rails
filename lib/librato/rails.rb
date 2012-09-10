@@ -23,7 +23,7 @@ module Librato
     FORKING_SERVERS = [:unicorn, :passenger]
 
     mattr_accessor :config_file
-    self.config_file = 'config/metrics.yml'
+    self.config_file = 'config/librato.yml'
 
     # config options
     mattr_accessor :api_key
@@ -64,8 +64,8 @@ module Librato
             settable.each { |key| self.send("#{key}=", env_specific[key]) }
           end
         end
-        self.api_key = ENV['METRICS_API_KEY'] if ENV['METRICS_API_KEY']
-        self.email = ENV['METRICS_EMAIL'] if ENV['METRICS_EMAIL']
+        self.api_key = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
+        self.email = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
       end
 
       # check to see if we've forked into a process where a worker
@@ -91,7 +91,7 @@ module Librato
 
       # send all current data to Metrics
       def flush
-        logger.debug "[metrics-rails] flushing #{Process.pid} (#{Time.now}):"
+        logger.debug "[librato-rails] flushing #{Process.pid} (#{Time.now}):"
         queue = client.new_queue(:source => qualified_source)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
@@ -99,7 +99,7 @@ module Librato
         logger.debug queue.queued
         queue.submit unless queue.empty?
       rescue Exception => error
-        logger.error "[metrics-rails] submission failed permanently, worker exiting: #{error}"
+        logger.error "[librato-rails] submission failed permanently, worker exiting: #{error}"
       end
 
       def group(prefix)
@@ -120,7 +120,7 @@ module Librato
       def setup
         check_config
         #return unless self.email && self.api_key
-        logger.info "[metrics-rails] starting up with #{app_server}..."
+        logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
         if forking_server?
           install_worker_check
@@ -145,7 +145,7 @@ module Librato
       def start_worker
         return if @worker # already running
         @pid = $$
-        logger.debug "[metrics-rails] >> starting up worker for pid #{@pid}..."
+        logger.debug "[librato-rails] >> starting up worker for pid #{@pid}..."
         @worker = Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
@@ -194,7 +194,7 @@ module Librato
 
       def user_agent
         ua_chunks = []
-        ua_chunks << "metrics-rails/#{Librato::Rails::VERSION}"
+        ua_chunks << "librato-rails/#{Librato::Rails::VERSION}"
         ua_chunks << "(#{ruby_engine}; #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}; #{RUBY_PLATFORM}; #{app_server})"
         ua_chunks.join(' ')
       end
@@ -205,5 +205,5 @@ module Librato
 end
 
 # must load after all module setup
-require 'metrics/rails/railtie' if defined?(Rails)
-require 'metrics/rails/subscribers'
+require 'librato/rails/railtie' if defined?(Rails)
+require 'librato/rails/subscribers'
