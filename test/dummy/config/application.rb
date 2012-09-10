@@ -3,7 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 Bundler.require
-require "metrics-rails"
+require "librato-rails"
 
 module Dummy
   class Application < Rails::Application
@@ -55,9 +55,9 @@ module Dummy
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
-    # set metrics_rails prefix
-    config.metrics_rails.prefix = 'dummy'
-    config.metrics_rails.flush_interval = 5
+    # set librato_rails prefix
+    config.librato_rails.prefix = 'dummy'
+    config.librato_rails.flush_interval = 5
   end
 end
 

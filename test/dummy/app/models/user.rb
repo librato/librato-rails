@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password
   
   def self.do_custom_events
-    Metrics.group 'custom.model' do |g|
+    Librato.group 'custom.model' do |g|
       g.increment 'lookups', 3
       
       g.timing 'search', 12.3
@@ -13,6 +13,6 @@ class User < ActiveRecord::Base
   end
   
   def touch
-    Metrics.increment 'custom.model.touch'
+    Librato.increment 'custom.model.touch'
   end
 end

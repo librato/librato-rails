@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   
   def custom
     # controller helpers
-    Metrics.group 'custom' do |g|
+    Librato.group 'custom' do |g|
       g.increment 'visits'
       g.increment 'events', 3
     

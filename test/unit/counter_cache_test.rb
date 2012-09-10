@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class MetricsRailsCounterCacheTest < MiniTest::Unit::TestCase
+class LibratoRailsCounterCacheTest < MiniTest::Unit::TestCase
   
   def test_basic_operations
-    cc = Metrics::Rails::CounterCache.new
+    cc = Librato::Rails::CounterCache.new
     cc.increment :foo
     assert_equal 1, cc[:foo]
     

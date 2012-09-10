@@ -5,6 +5,6 @@ class ApplicationController < ActionController::Base
   
   # manually flush per request
   def flush_metrics_rails
-    Metrics::Rails.flush
+    Librato::Rails.flush
   end
 end

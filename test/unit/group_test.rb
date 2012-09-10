@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class MetricsRailsGroupTest < MiniTest::Unit::TestCase
+class LibratoRailsGroupTest < MiniTest::Unit::TestCase
   
   def test_basic_grouping
-    Metrics::Rails.group 'fruit' do |g|
+    Librato::Rails.group 'fruit' do |g|
       g.increment 'bites'
       g.increment 'nibbles', 5
       
@@ -25,7 +25,7 @@ class MetricsRailsGroupTest < MiniTest::Unit::TestCase
   end
   
   def test_nesting
-    Metrics::Rails.group 'street' do |s|
+    Librato::Rails.group 'street' do |s|
       s.increment 'count'
       s.group 'market' do |m|
         m.increment 'tenants', 10
@@ -39,11 +39,11 @@ class MetricsRailsGroupTest < MiniTest::Unit::TestCase
   private
   
   def aggregate
-    Metrics::Rails.aggregate
+    Librato::Rails.aggregate
   end
   
   def counters
-    Metrics::Rails.counters
+    Librato::Rails.counters
   end
   
 end

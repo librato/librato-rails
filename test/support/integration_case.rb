@@ -4,16 +4,16 @@ class ActiveSupport::IntegrationCase < ActiveSupport::TestCase
   
   setup do
     # remove any accumulated metrics
-    Metrics::Rails.delete_all
+    Librato::Rails.delete_all
   end
   
   private
   
   def aggregate
-    Metrics::Rails.aggregate
+    Librato::Rails.aggregate
   end
   
   def counters
-    Metrics::Rails.counters
+    Librato::Rails.counters
   end
 end

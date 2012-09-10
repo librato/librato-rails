@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class MetricsRailsAggregatorTest < MiniTest::Unit::TestCase
+class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
   
   def test_adding_timings
-    agg = Metrics::Rails::Aggregator.new
+    agg = Librato::Rails::Aggregator.new
     
     agg.timing 'request.time.total', 23.7
     agg.timing 'request.time.db', 5.3
