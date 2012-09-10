@@ -1,35 +1,35 @@
 require 'test_helper'
 
-class MetricsRailsRemoteTest < ActiveSupport::TestCase
+class LibratoRailsRemoteTest < ActiveSupport::TestCase
   
   # These tests connect to the Metrics server with an account and verify remote
   # functions. They will only run if the below environment variables are set.
   #
-  # BE CAREFUL, running these tests will DELETE ALL METRICS currently in the
+  # BE CAREFUL, running these tests will DELETE ALL metrics currently in the
   # test account.
   #
-  if ENV['METRICS_RAILS_TEST_EMAIL'] && ENV['METRICS_RAILS_TEST_API_KEY']
+  if ENV['LIBRATO_RAILS_TEST_EMAIL'] && ENV['LIBRATO_RAILS_TEST_API_KEY']
   
     setup do
-      # delete any generated metrics
-      Metrics::Rails.email = ENV['METRICS_RAILS_TEST_EMAIL']
-      Metrics::Rails.api_key = ENV['METRICS_RAILS_TEST_API_KEY']
-      if ENV['METRICS_RAILS_TEST_API_ENDPOINT']
-        Metrics::Rails.api_endpoint = ENV['METRICS_RAILS_TEST_API_ENDPOINT']
+      # delete any generated Librato::Rails
+      Librato::Rails.email = ENV['LIBRATO_RAILS_TEST_EMAIL']
+      Librato::Rails.api_key = ENV['LIBRATO_RAILS_TEST_API_KEY']
+      if ENV['LIBRATO_RAILS_TEST_API_ENDPOINT']
+        Librato::Rails.api_endpoint = ENV['LIBRATO_RAILS_TEST_API_ENDPOINT']
       end
-      Metrics::Rails.delete_all
+      Librato::Rails.delete_all
     end
 
     test 'flush sends counters' do
       delete_all_metrics
-      source = Metrics::Rails.qualified_source
+      source = Librato::Rails.qualified_source
       
-      Metrics::Rails.increment :foo
-      Metrics::Rails.increment :bar, 2
-      Metrics::Rails.increment :foo
-      Metrics::Rails.flush
+      Librato::Rails.increment :foo
+      Librato::Rails.increment :bar, 2
+      Librato::Rails.increment :foo
+      Librato::Rails.flush
     
-      client = Metrics::Rails.client
+      client = Librato::Rails.client
       metric_names = client.list.map { |m| m['name'] }
       assert metric_names.include?('foo'), 'foo should be present'
       assert metric_names.include?('bar'), 'bar should be present'
@@ -44,21 +44,21 @@ class MetricsRailsRemoteTest < ActiveSupport::TestCase
     end
   
     test 'counters should persist through flush' do
-      Metrics::Rails.increment 'knightrider'
-      Metrics::Rails.flush
-      assert_equal 1, Metrics::Rails.counters['knightrider']
+      Librato::Rails.increment 'knightrider'
+      Librato::Rails.flush
+      assert_equal 1, Librato::Rails.counters['knightrider']
     end
   
     test 'flush sends measures/timings' do
       delete_all_metrics
-      source = Metrics::Rails.qualified_source
+      source = Librato::Rails.qualified_source
       
-      Metrics::Rails.timing  'request.time.total', 122.1
-      Metrics::Rails.measure 'items_bought', 20
-      Metrics::Rails.timing  'request.time.total', 81.3
-      Metrics::Rails.flush
+      Librato::Rails.timing  'request.time.total', 122.1
+      Librato::Rails.measure 'items_bought', 20
+      Librato::Rails.timing  'request.time.total', 81.3
+      Librato::Rails.flush
     
-      client = Metrics::Rails.client
+      client = Librato::Rails.client
       metric_names = client.list.map { |m| m['name'] }
       assert metric_names.include?('request.time.total'), 'request.time.total should be present'
       assert metric_names.include?('items_bought'), 'request.time.db should be present'
@@ -75,24 +75,24 @@ class MetricsRailsRemoteTest < ActiveSupport::TestCase
     test 'flush should purge measures/timings' do
       delete_all_metrics
     
-      Metrics::Rails.timing  'request.time.total', 122.1
-      Metrics::Rails.measure 'items_bought', 20
-      Metrics::Rails.flush
+      Librato::Rails.timing  'request.time.total', 122.1
+      Librato::Rails.measure 'items_bought', 20
+      Librato::Rails.flush
     
-      assert Metrics::Rails.aggregate.empty?, 'measures and timings should be cleared with flush'
+      assert Librato::Rails.aggregate.empty?, 'measures and timings should be cleared with flush'
     end
   
     test 'empty flush should not be sent' do
       delete_all_metrics
-      Metrics::Rails.flush
+      Librato::Rails.flush
     
-      assert_equal [], Metrics::Rails.client.list
+      assert_equal [], Librato::Rails.client.list
     end
   
     private
   
     def delete_all_metrics
-      client = Metrics::Rails.client
+      client = Librato::Rails.client
       client.list.each do |metric|
         client.connection.delete("metrics/#{metric['name']}")
       end
