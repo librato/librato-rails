@@ -1,3 +1,6 @@
+### Version 0.3.1
+* Fix config file fields to match new env variables
+
 ### Version 0.3.0
 * Rename to librato-rails
 * Change env variables to LIBRATO_METRICS_USER and LIBRATO_METRICS_TOKEN
