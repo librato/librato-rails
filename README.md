@@ -25,7 +25,7 @@ Create a `config/librato.yml` like the following:
       email: <your-email>
       api_key: <your-api-key>
       
-OR provide `METRICS_EMAIL` and `METRICS_API_KEY` environment variables. If both env variables and a config file are present, environment variables will take precendence.
+OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. If both env variables and a config file are present, environment variables will take precendence.
 
 Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in all environments. 
 
