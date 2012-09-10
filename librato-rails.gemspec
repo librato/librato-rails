@@ -1,16 +1,14 @@
 $:.push File.expand_path("../lib", __FILE__)
 
-# Maintain your gem's version:
-require "metrics/rails/version"
+require "librato/rails/version"
 
-# Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "metrics-rails"
-  s.version     = Metrics::Rails::VERSION
+  s.name        = "librato-rails"
+  s.version     = Librato::Rails::VERSION
   
   s.authors     = ["Matt Sanders"]
   s.email       = ["matt@librato.com"]
-  s.homepage    = "https://github.com/librato/metrics-rails"
+  s.homepage    = "https://github.com/librato/librato-rails"
   
   s.summary     = "Use Librato Metrics with your Rails 3 app"
   s.description = "Report key app statistics to the Librato Metrics service and easily track your own custom metrics."
