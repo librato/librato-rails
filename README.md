@@ -7,6 +7,8 @@ Report key statistics for your Rails app to [Librato Metrics](https://metrics.li
 
 **NOTE: This is currently in alpha development and is not yet officially supported**
 
+**IMPORTANT NOTE: If you are currently using a version prior to the rename to librato-rails, note that the env variable names for configuration and the name of the config files have changed. See the new names in configuration, below.**
+
 ## Installation
 
 In your `Gemfile` add:
