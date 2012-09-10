@@ -1,7 +1,7 @@
-metrics-rails
+librato-rails
 =======
 
-[![Build Status](https://secure.travis-ci.org/librato/metrics-rails.png?branch=master)](http://travis-ci.org/librato/metrics-rails)
+[![Build Status](https://secure.travis-ci.org/librato/librato-rails.png?branch=master)](http://travis-ci.org/librato/librato-rails)
 
 Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/), easily track your own custom metrics. Currently supports Rails 3.0+.
 
@@ -11,15 +11,15 @@ Report key statistics for your Rails app to [Librato Metrics](https://metrics.li
 
 In your `Gemfile` add:
 
-    gem 'metrics-rails'
+    gem 'librato-rails'
     
 Then run `bundle install`.
 
 ## Configuration
 
-If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you need to provide your account credentials to `metrics-rails`. You can provide these one of two ways:
+If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you need to provide your account credentials to `librato-rails`. You can provide these one of two ways:
 
-Create a `config/metrics.yml` like the following:
+Create a `config/librato.yml` like the following:
 
     production:
       email: <your-email>
@@ -29,13 +29,13 @@ OR provide `METRICS_EMAIL` and `METRICS_API_KEY` environment variables. If both 
 
 Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in all environments. 
 
-Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/metrics-rails/wiki/Configuration).
+Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
 
 ## Automatic Measurements
 
-After installing `metrics-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. All built-in performance metrics start with the prefix `rails` by convention &mdash; for example: `rails.request.total` is the total number of requests received during an interval. 
+After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. All built-in performance metrics start with the prefix `rails` by convention &mdash; for example: `rails.request.total` is the total number of requests received during an interval. 
 
-If you have multiple apps reporting to the same Metrics account you can change this prefix in your [configuration](https://github.com/librato/metrics-rails/wiki/Configuration).
+If you have multiple apps reporting to the same Metrics account you can change this prefix in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration).
 
 ## Custom Measurements
 
@@ -46,10 +46,10 @@ Tracking anything that interests you is easy with Metrics. There are four primar
 Use for tracking a running total of something _across_ requests, examples:
 
     # increment the 'sales_completed' metric by one
-    Metrics.increment 'sales_completed'
+    Librato.increment 'sales_completed'
     
     # increment by five
-    Metrics.increment 'items_purchased', 5
+    Librato.increment 'items_purchased', 5
     
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
 
@@ -57,20 +57,20 @@ Other things you might track this way: user signups, requests of a certain type 
 
 Use when you want to track an average value _per_-request. Examples:
 
-    Metrics.measure 'user.social_graph.nodes', 212
+    Librato.measure 'user.social_graph.nodes', 212
 
-    Metrics.measure 'jobs.queued', 3
+    Librato.measure 'jobs.queued', 3
     
 
 #### timing
 
-Like `Metrics.measure` this is per-request, but specialized for timing information:
+Like `Librato.measure` this is per-request, but specialized for timing information:
 
-    Metrics.timing 'twitter.lookup.time', 21.2
+    Librato.timing 'twitter.lookup.time', 21.2
 	
 The block form auto-submits the time it took for its contents to execute as the measurement value:
 
-    Metrics.timing 'twitter.lookup.time' do
+    Librato.timing 'twitter.lookup.time' do
       @twitter = Twitter.lookup(user)
     end
 
@@ -78,13 +78,13 @@ The block form auto-submits the time it took for its contents to execute as the 
 
 There is also a grouping helper, to make managing nested metrics easier. So this:
 
-    Metrics.measure 'memcached.gets', 20
-    Metrics.measure 'memcached.sets', 2
-    Metrics.measure 'memcached.hits', 18
+    Librato.measure 'memcached.gets', 20
+    Librato.measure 'memcached.sets', 2
+    Librato.measure 'memcached.hits', 18
     
 Can also be written as:
 
-    Metrics.group 'memcached' do |g|
+    Librato.group 'memcached' do |g|
       g.measure 'gets', 20
       g.measure 'sets', 2
       g.measure 'hits', 18
