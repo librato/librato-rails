@@ -20,10 +20,13 @@ module Librato
       end
       
       def flush_to(queue)
+        counts = nil
         @lock.synchronize do
-          @cache.each do |key, value| 
-            queue.add key => {:type => :counter, :value => value}
-          end
+          counts = @cache.dup
+          @cache.clear
+        end
+        counts.each do |key, value| 
+          queue.add key => value
         end
       end
     
