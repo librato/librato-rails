@@ -1,6 +1,6 @@
 test:
   user: 'test@bar.com'
-  token: 'test api key'
+  token: <%= 'test api key' %>
   prefix: 'rails-test'
   flush_interval: 30
   source: 'custom-1'
