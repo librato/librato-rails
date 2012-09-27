@@ -68,7 +68,7 @@ module Librato
           logger.debug "[librato-rails] no configuration file present, using ENV variables"
           self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
           self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
-          self.token = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
+          self.prefix = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
         end
       end
 
