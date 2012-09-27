@@ -58,14 +58,18 @@ module Librato
       # detect / update configuration
       def check_config
         if self.config_file && File.exists?(self.config_file)
+          logger.debug "[librato-rails] configuration file present, ignoring ENV variables"
           configs = YAML.load_file(config_file)
           if env_specific = configs[::Rails.env]
             settable = CONFIG_SETTABLE & env_specific.keys
             settable.each { |key| self.send("#{key}=", env_specific[key]) }
           end
+        else
+          logger.debug "[librato-rails] no configuration file present, using ENV variables"
+          self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
+          self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
+          self.token = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
         end
-        self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
-        self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
       end
 
       # check to see if we've forked into a process where a worker
@@ -73,8 +77,8 @@ module Librato
       def check_worker
         if @pid != $$
           start_worker
-          #aggregate.clear
-          #counters.clear
+          # aggregate.clear
+          # counters.clear
         end
       end
 
@@ -119,7 +123,7 @@ module Librato
       # run once during Rails startup sequence
       def setup
         check_config
-        #return unless self.email && self.api_key
+        # return unless self.email && self.api_key
         logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
         if forking_server?
