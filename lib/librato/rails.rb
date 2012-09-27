@@ -59,11 +59,9 @@ module Librato
       def check_config
         if self.config_file && File.exists?(self.config_file)
           logger.debug "[librato-rails] configuration file present, ignoring ENV variables"
-          configs = YAML.load_file(config_file)
-          if env_specific = configs[::Rails.env]
-            settable = CONFIG_SETTABLE & env_specific.keys
-            settable.each { |key| self.send("#{key}=", env_specific[key]) }
-          end
+          env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
+          settable = CONFIG_SETTABLE & env_specific.keys
+          settable.each { |key| self.send("#{key}=", env_specific[key]) }
         else
           logger.debug "[librato-rails] no configuration file present, using ENV variables"
           self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
