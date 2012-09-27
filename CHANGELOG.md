@@ -1,5 +1,7 @@
-### Version 0.3.2
+### Version 0.4.0
 * Support ERB config file using env variables. (Justin Smestad)
+* Precedence changed to favor YAML config (if present) over env vars.
+  Mirrors Heroku add-on model. (Justin Smestad)
 * Report counters as gauge increments instead.
 
 ### Version 0.3.1
