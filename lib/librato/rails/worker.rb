@@ -32,7 +32,7 @@ module Librato
               next_run += period
             end
           else
-            sleep (next_run - now)
+            sleep(next_run - now)
           end
         end
       end
