@@ -1,3 +1,6 @@
+### Version 0.4.1
+* Fix whitespace-before-params warning.
+
 ### Version 0.4.0
 * Support ERB config file using env variables. (Justin Smestad)
 * Precedence changed to favor YAML config (if present) over env vars.
