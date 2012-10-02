@@ -7,16 +7,17 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
     ENV.delete('LIBRATO_METRICS_TOKEN')
     ENV.delete('LIBRATO_METRICS_SOURCE')
     Librato::Rails.check_config
+    Librato::Rails.prefix = nil
   end
 
   def test_environmental_variable_config
     ENV['LIBRATO_METRICS_USER'] = 'foo@bar.com'
     ENV['LIBRATO_METRICS_TOKEN'] = 'api_key'
-    ENV['LIBRATO_METRICS_SOURCE'] = 'appname'
+    ENV['LIBRATO_METRICS_SOURCE'] = 'source'
     Librato::Rails.check_config
     assert_equal 'foo@bar.com', Librato::Rails.user
     assert_equal 'api_key', Librato::Rails.token
-    assert_equal 'appname', Librato::Rails.prefix
+    assert_equal 'source', Librato::Rails.source
   end
 
   def test_config_file_config
@@ -32,7 +33,7 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
   def test_environmental_and_config_file_config
     ENV['LIBRATO_METRICS_USER'] = 'foo@bar.com'
     ENV['LIBRATO_METRICS_TOKEN'] = 'api_key'
-    ENV['LIBRATO_METRICS_SOURCE'] = 'appname'
+    ENV['LIBRATO_METRICS_SOURCE'] = 'source'
     with_fixture_config do
       assert_equal 'test@bar.com', Librato::Rails.user # from config file
       assert_equal 'test api key', Librato::Rails.token # from config file
