@@ -6,7 +6,7 @@ gem "jquery-rails"
 gem 'capybara'
 gem 'pry'
 #gem 'minitest'
-gem 'mocha', '0.12.4', :require => false
+gem 'mocha', :require => false
 
 # servers for testing
 # gem 'thin'
