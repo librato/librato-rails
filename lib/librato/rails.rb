@@ -33,7 +33,6 @@ module Librato
 
     # config defaults
     self.flush_interval = 60 # seconds
-    self.prefix = 'rails'
 
     def_delegators :counters, :increment
     def_delegators :aggregate, :measure, :timing
@@ -94,7 +93,7 @@ module Librato
       # send all current data to Metrics
       def flush
         logger.debug "[librato-rails] flushing #{Process.pid} (#{Time.now}):"
-        queue = client.new_queue(:source => qualified_source)
+        queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)

@@ -7,6 +7,7 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
     ENV.delete('LIBRATO_METRICS_TOKEN')
     ENV.delete('LIBRATO_METRICS_SOURCE')
     Librato::Rails.check_config
+    Librato::Rails.prefix = nil
   end
 
   def test_environmental_variable_config
