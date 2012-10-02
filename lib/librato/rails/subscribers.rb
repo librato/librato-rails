@@ -15,7 +15,7 @@ module Librato
       exception = event.payload[:exception]
       # page_key = "request.#{controller}.#{action}_#{format}."
   
-      group "#{Librato::Rails.prefix}.request" do |r|
+      group "rails.request" do |r|
    
         r.increment 'total'
         r.timing    'time', event.duration
@@ -46,7 +46,7 @@ module Librato
     ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
       payload = args.last
   
-      group "#{Librato::Rails.prefix}.sql" do |s|
+      group "rails.sql" do |s|
         # puts (event.payload[:name] || 'nil') + ":" + event.payload[:sql] + "\n"
         s.increment 'queries'
         
@@ -62,13 +62,13 @@ module Librato
     
     ActiveSupport::Notifications.subscribe 'deliver.action_mailer' do |*args|
       # payload[:mailer] => 'UserMailer'
-      group "#{Librato::Rails.prefix}.mail" do |m|
+      group "rails.mail" do |m|
         m.increment 'sent'
       end
     end
     
     ActiveSupport::Notifications.subscribe 'receive.action_mailer' do |*args|
-      group "#{Librato::Rails.prefix}.mail" do |m|
+      group "rails.mail" do |m|
         m.increment 'received'
       end
     end

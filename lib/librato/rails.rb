@@ -33,7 +33,6 @@ module Librato
 
     # config defaults
     self.flush_interval = 60 # seconds
-    self.prefix = 'rails'
 
     def_delegators :counters, :increment
     def_delegators :aggregate, :measure, :timing
@@ -66,7 +65,7 @@ module Librato
           logger.debug "[librato-rails] no configuration file present, using ENV variables"
           self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
           self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
-          self.prefix = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
+          self.source = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
         end
       end
 
@@ -94,7 +93,7 @@ module Librato
       # send all current data to Metrics
       def flush
         logger.debug "[librato-rails] flushing #{Process.pid} (#{Time.now}):"
-        queue = client.new_queue(:source => qualified_source)
+        queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
