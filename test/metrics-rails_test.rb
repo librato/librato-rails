@@ -36,4 +36,9 @@ class LibratoRailsTest < ActiveSupport::TestCase
     assert_match /\.\d{2,6}$/, Librato::Rails.qualified_source
   end
   
+  test 'qualified source does not include pid when disabled' do
+    Librato::Rails.use_pid = false
+    assert_match Librato::Rails.source, Librato::Rails.qualified_source
+    Librato::Rails.use_pid = true
+  end
 end
