@@ -37,8 +37,8 @@ class LibratoRailsTest < ActiveSupport::TestCase
   end
   
   test 'qualified source does not include pid when disabled' do
-    Librato::Rails.use_pid = false
+    Librato::Rails.source_pids = false
     assert_match Librato::Rails.source, Librato::Rails.qualified_source
-    Librato::Rails.use_pid = true
+    Librato::Rails.source_pids = true
   end
 end

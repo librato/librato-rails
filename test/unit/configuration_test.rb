@@ -27,7 +27,7 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
       assert_equal 'rails-test', Librato::Rails.prefix
       assert_equal 30, Librato::Rails.flush_interval
       assert_equal 'custom-1', Librato::Rails.source
-      assert_equal false, Librato::Rails.use_pid
+      assert_equal false, Librato::Rails.source_pids
     end
   end
 
