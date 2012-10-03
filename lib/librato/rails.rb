@@ -19,7 +19,7 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    CONFIG_SETTABLE = %w{user token flush_interval prefix source}
+    CONFIG_SETTABLE = %w{user token flush_interval prefix source use_pid}
     FORKING_SERVERS = [:unicorn, :passenger]
 
     mattr_accessor :config_file
@@ -30,9 +30,11 @@ module Librato
     mattr_accessor :token
     mattr_accessor :flush_interval
     mattr_accessor :prefix
+    mattr_accessor :use_pid
 
     # config defaults
     self.flush_interval = 60 # seconds
+    self.use_pid = true
 
     def_delegators :counters, :increment
     def_delegators :aggregate, :measure, :timing
@@ -114,7 +116,11 @@ module Librato
 
       # source including process pid
       def qualified_source
-        "#{source}.#{$$}"
+        if self.use_pid
+          "#{source}.#{$$}"
+        else
+          source
+        end
       end
 
       # run once during Rails startup sequence
