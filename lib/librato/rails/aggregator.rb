@@ -36,10 +36,19 @@ module Librato
         queue.merge!(queued) if queued
       end
       
-      def measure(event, duration)
+      def measure(*args, &block)
+        event = args[0].to_s
+        returned = nil
         @lock.synchronize do
-          @cache.add event.to_s => duration
+          if block_given?
+            start = Time.now
+            returned = yield
+            @cache.add event => ((Time.now - start) * 1000.0).to_i
+          else
+            @cache.add event => args[1] || nil
+          end
         end
+        returned
       end
       alias :timing :measure
       
