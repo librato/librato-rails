@@ -9,7 +9,6 @@ require 'librato/rack'
 require 'librato/rails/aggregator'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
-require 'librato/rails/helpers'
 require 'librato/rails/worker'
 require 'librato/rails/version'
 
