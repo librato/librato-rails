@@ -1,7 +1,12 @@
+### Version 0.5.1
+* Remove old helper libs which may cause load conflict for rails helpers
+* Don't lock mutex during duration of timing blocks
+
 ### Version 0.5.0
 * Support block form of timing
 * Config option to disable pid inclusion in source (Chris Roby)
 * Change prefix handling to be global for all reported metrics
+* Fix misassignment of source to prefix
 
 ### Version 0.4.1
 * Fix whitespace-before-params warning.
