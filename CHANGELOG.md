@@ -1,3 +1,8 @@
+### Version 0.5.0
+* Support block form of timing
+* Config option to disable pid inclusion in source (Chris Roby)
+* Change prefix handling to be global for all reported metrics
+
 ### Version 0.4.1
 * Fix whitespace-before-params warning.
 
