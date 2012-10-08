@@ -56,7 +56,7 @@ module Dummy
     config.assets.version = '1.0'
     
     # set librato_rails prefix
-    config.librato_rails.prefix = 'dummy'
+    # config.librato_rails.prefix = 'dummy'
     config.librato_rails.flush_interval = 5
   end
 end
