@@ -42,7 +42,7 @@ module Librato
 
       # access to internal aggregator object
       def aggregate
-        @aggregator_cache ||= Aggregator.new
+        @aggregator_cache ||= Aggregator.new(:prefix => self.prefix)
       end
 
       # set custom api endpoint

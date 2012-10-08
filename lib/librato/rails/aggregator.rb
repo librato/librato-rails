@@ -5,8 +5,8 @@ module Librato
 
       def_delegators :@cache, :empty?
 
-      def initialize
-        @cache = Librato::Metrics::Aggregator.new
+      def initialize(options={})
+        @cache = Librato::Metrics::Aggregator.new(:prefix => options[:prefix])
         @lock = Mutex.new
       end
 
