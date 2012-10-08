@@ -1,3 +1,7 @@
+### Version 0.5.2
+* Fix bug where measure/timing events don't apply global prefix properly
+* Fix bug where increment events could have missing values if not called
+
 ### Version 0.5.1
 * Remove old helper libs which may cause load conflict for rails helpers
 * Don't lock mutex during duration of timing blocks
