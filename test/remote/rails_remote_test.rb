@@ -43,11 +43,11 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       assert_equal 2, bar[source][0]['value']
     end
   
-    test 'counters should not persist through flush' do
+    test 'counters should persist through flush' do
       Librato::Rails.increment 'knightrider'
       assert_equal 1, Librato::Rails.counters['knightrider']
       Librato::Rails.flush
-      assert_equal nil, Librato::Rails.counters['knightrider']
+      assert_equal 0, Librato::Rails.counters['knightrider']
     end
   
     test 'flush sends measures/timings' do

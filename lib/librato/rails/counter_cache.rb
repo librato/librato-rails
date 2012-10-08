@@ -23,7 +23,7 @@ module Librato
         counts = nil
         @lock.synchronize do
           counts = @cache.dup
-          @cache.clear
+          @cache.each_key { |key| @cache[key] = 0 }
         end
         counts.each do |key, value| 
           queue.add key => value
