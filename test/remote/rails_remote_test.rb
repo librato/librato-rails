@@ -19,6 +19,10 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       end
       Librato::Rails.delete_all
     end
+    
+    teardown do
+      Librato::Rails.prefix = nil
+    end
 
     test 'flush sends counters' do
       delete_all_metrics
@@ -88,6 +92,27 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       Librato::Rails.flush
     
       assert_equal [], Librato::Rails.client.list
+    end
+    
+    test 'flush respects prefix' do
+      delete_all_metrics
+      source = Librato::Rails.qualified_source
+      Librato::Rails.prefix = 'testyprefix'
+      
+      Librato::Rails.timing 'mytime', 221.1
+      Librato::Rails.increment 'mycount', 4
+      Librato::Rails.flush
+      
+      client = Librato::Rails.client
+      metric_names = client.list.map { |m| m['name'] }
+      assert metric_names.include?('testyprefix.mytime'), 'testyprefix.mytime should be present'
+      assert metric_names.include?('testyprefix.mycount'), 'testyprefix.mycount should be present'
+      
+      mytime = client.fetch 'testyprefix.mytime', :count => 10
+      assert_equal 1, mytime[source][0]['count']
+      
+      mycount = client.fetch 'testyprefix.mycount', :count => 10
+      assert_equal 4, mycount[source][0]['value']
     end
   
     private
