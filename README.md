@@ -96,6 +96,26 @@ Can also be written as:
 
 Symbols can be used interchangably with strings for metric names.
 
+## Cross-process Aggregation
+
+`librato-rails` submits measurements back to the Librato platform on a
+per-process basis. By default these are then aggregated in our service
+up to host-level streams prior to persisting the data. E.g. given 8
+unicorn instances on 4 hosts, you'll find 4 data streams (1 per host)
+available in the Librato platform instead of 32. This leverages a
+brand-new beta Librato capability to perform *service-side aggregation*.
+Current per-measurement pricing applies after aggregation, so in this
+case you're also only metered as 4 streams instead of 32.
+
+If you would like to prevent this aggregation and preserve the
+per-process measurements, you can do so by setting `source_pids=true` in
+your config. Alternatively, you can also decide to perform aggregation
+at an even higher level by manually configuring the source to the same
+value in each process you want aggregated. E.g. if you configure a
+uniform source name of `app.foo` on all of the 32 unicorn instances
+described above, you'll only find in the Librato platform (and be metered
+for) a single set of streams instead of 4.
+
 ## Contribution
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
