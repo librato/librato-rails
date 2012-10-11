@@ -100,8 +100,9 @@ Symbols can be used interchangably with strings for metric names.
 
 `librato-rails` submits measurements back to the Librato platform on a
 per-process basis. By default these are then aggregated in our service
-up to host-level streams prior to persisting the data. E.g. given 8
-unicorn instances on 4 hosts, you'll find 4 data streams (1 per host)
+up to host-level streams prior to persisting the data. For example given 
+4 hosts with 8 unicorn instances each (i.e. 32 processes total),
+you'll find 4 data streams (1 per host)
 available in the Librato platform instead of 32. This leverages a
 brand-new beta Librato capability to perform *service-side aggregation*.
 Current per-measurement pricing applies after aggregation, so in this
