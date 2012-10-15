@@ -7,6 +7,7 @@ require 'librato/metrics'
 
 require 'librato/rack'
 require 'librato/rails/aggregator'
+require 'librato/rails/collector'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
 require 'librato/rails/worker'
@@ -28,22 +29,17 @@ module Librato
     mattr_accessor :user
     mattr_accessor :token
     mattr_accessor :flush_interval
-    mattr_accessor :prefix
     mattr_accessor :source_pids
 
     # config defaults
     self.flush_interval = 60 # seconds
     self.source_pids = true
 
+    def_delegators :collector, :aggregate, :prefix, :prefix=
     def_delegators :counters, :increment
     def_delegators :aggregate, :measure, :timing
 
     class << self
-
-      # access to internal aggregator object
-      def aggregate
-        @aggregator_cache ||= Aggregator.new(:prefix => self.prefix)
-      end
 
       # set custom api endpoint
       def api_endpoint=(endpoint)
@@ -78,6 +74,10 @@ module Librato
           # aggregate.clear
           # counters.clear
         end
+      end
+      
+      def collector
+        @collector ||= Collector.new
       end
 
       # access to internal counters object
