@@ -8,9 +8,7 @@ module Librato
       initializer 'librato_rails.setup' do |app|
         # don't start in test mode or in the console
         unless ::Rails.env.test? || defined?(::Rails::Console)
-          Librato::Rails.setup
-
-          app.middleware.use Librato::Rack::Middleware
+          Librato::Rails.setup(app)
         end
       end
     end

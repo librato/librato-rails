@@ -7,6 +7,7 @@ require 'librato/metrics'
 
 require 'librato/rack'
 require 'librato/rails/aggregator'
+require 'librato/rails/collector'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
 require 'librato/rails/worker'
@@ -28,31 +29,21 @@ module Librato
     mattr_accessor :user
     mattr_accessor :token
     mattr_accessor :flush_interval
-    mattr_accessor :prefix
     mattr_accessor :source_pids
 
     # config defaults
     self.flush_interval = 60 # seconds
     self.source_pids = true
 
-    def_delegators :counters, :increment
-    def_delegators :aggregate, :measure, :timing
+    # a collector instance handles all measurement addition/storage
+    def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment, 
+                               :measure, :prefix, :prefix=, :timing
 
     class << self
-
-      # access to internal aggregator object
-      def aggregate
-        @aggregator_cache ||= Aggregator.new(:prefix => self.prefix)
-      end
 
       # set custom api endpoint
       def api_endpoint=(endpoint)
         @api_endpoint = endpoint
-      end
-
-      # access to client instance
-      def client
-        @client ||= prepare_client
       end
 
       # detect / update configuration
@@ -80,15 +71,14 @@ module Librato
         end
       end
 
-      # access to internal counters object
-      def counters
-        @counter_cache ||= CounterCache.new
+      # access to client instance
+      def client
+        @client ||= prepare_client
       end
-
-      # remove any accumulated but unsent metrics
-      def delete_all
-        aggregate.delete_all
-        counters.delete_all
+      
+      # collector instance which is tracking all measurement additions
+      def collector
+        @collector ||= Collector.new
       end
 
       # send all current data to Metrics
@@ -101,12 +91,7 @@ module Librato
         logger.debug queue.queued
         queue.submit unless queue.empty?
       rescue Exception => error
-        logger.error "[librato-rails] submission failed permanently, worker exiting: #{error}"
-      end
-
-      def group(prefix)
-        group = Group.new(prefix)
-        yield group
+        logger.error "[librato-rails] submission failed permanently: #{error}"
       end
 
       def logger
@@ -119,16 +104,13 @@ module Librato
       end
 
       # run once during Rails startup sequence
-      def setup
+      def setup(app)
         check_config
-        # return unless self.email && self.api_key
+        return unless credentials_present?
         logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
-        if forking_server?
-          install_worker_check
-        else
-          start_worker # start immediately
-        end
+        app.middleware.use Librato::Rack::Middleware
+        start_worker unless forking_server?
       end
 
       def source
@@ -168,6 +150,10 @@ module Librato
         else
           :other
         end
+      end
+      
+      def credentials_present?
+        self.user && self.token
       end
 
       def forking_server?
