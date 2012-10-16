@@ -3,7 +3,7 @@ module Librato
     class Aggregator
       extend Forwardable
 
-      def_delegators :@cache, :empty?
+      def_delegators :@cache, :empty?, :prefix, :prefix=
 
       def initialize(options={})
         @cache = Librato::Metrics::Aggregator.new(:prefix => options[:prefix])
