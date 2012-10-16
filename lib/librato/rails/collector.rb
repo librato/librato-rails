@@ -26,6 +26,11 @@ module Librato
         counters.delete_all
       end
       
+      def group(prefix)
+        group = Group.new(prefix)
+        yield group
+      end
+      
       # update prefix
       def prefix=(new_prefix)
         @prefix = new_prefix

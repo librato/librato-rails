@@ -35,19 +35,15 @@ module Librato
     self.flush_interval = 60 # seconds
     self.source_pids = true
 
-    def_delegators :collector, :aggregate, :counters, :delete_all, :increment, :measure,
-                               :prefix, :prefix=, :timing
+    # a collector instance handles all measurement addition/storage
+    def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment, 
+                               :measure, :prefix, :prefix=, :timing
 
     class << self
 
       # set custom api endpoint
       def api_endpoint=(endpoint)
         @api_endpoint = endpoint
-      end
-
-      # access to client instance
-      def client
-        @client ||= prepare_client
       end
 
       # detect / update configuration
@@ -74,7 +70,13 @@ module Librato
           # counters.clear
         end
       end
+
+      # access to client instance
+      def client
+        @client ||= prepare_client
+      end
       
+      # collector instance which is tracking all measurement additions
       def collector
         @collector ||= Collector.new
       end
@@ -90,11 +92,6 @@ module Librato
         queue.submit unless queue.empty?
       rescue Exception => error
         logger.error "[librato-rails] submission failed permanently, worker exiting: #{error}"
-      end
-
-      def group(prefix)
-        group = Group.new(prefix)
-        yield group
       end
 
       def logger
