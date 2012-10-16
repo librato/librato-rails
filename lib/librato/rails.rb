@@ -35,9 +35,8 @@ module Librato
     self.flush_interval = 60 # seconds
     self.source_pids = true
 
-    def_delegators :collector, :aggregate, :prefix, :prefix=
-    def_delegators :counters, :increment
-    def_delegators :aggregate, :measure, :timing
+    def_delegators :collector, :aggregate, :counters, :delete_all, :increment, :measure,
+                               :prefix, :prefix=, :timing
 
     class << self
 
@@ -78,17 +77,6 @@ module Librato
       
       def collector
         @collector ||= Collector.new
-      end
-
-      # access to internal counters object
-      def counters
-        @counter_cache ||= CounterCache.new
-      end
-
-      # remove any accumulated but unsent metrics
-      def delete_all
-        aggregate.delete_all
-        counters.delete_all
       end
 
       # send all current data to Metrics
