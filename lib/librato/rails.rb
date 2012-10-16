@@ -104,11 +104,12 @@ module Librato
       end
 
       # run once during Rails startup sequence
-      def setup
+      def setup(app)
         check_config
-        # return unless self.email && self.api_key
+        return unless credentials_present?
         logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
+        app.middleware.use Librato::Rack::Middleware
         if forking_server?
           install_worker_check
         else
@@ -153,6 +154,10 @@ module Librato
         else
           :other
         end
+      end
+      
+      def credentials_present?
+        self.user && self.token
       end
 
       def forking_server?
