@@ -91,7 +91,7 @@ module Librato
         logger.debug queue.queued
         queue.submit unless queue.empty?
       rescue Exception => error
-        logger.error "[librato-rails] submission failed permanently, worker exiting: #{error}"
+        logger.error "[librato-rails] submission failed permanently: #{error}"
       end
 
       def logger
@@ -110,11 +110,7 @@ module Librato
         logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
-        if forking_server?
-          install_worker_check
-        else
-          start_worker # start immediately
-        end
+        start_worker unless forking_server?
       end
 
       def source
