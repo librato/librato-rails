@@ -1,3 +1,15 @@
+### Version 0.6.0
+* Add support for custom sources per measurement via increment
+* Add support for custom sources per measurement via measure/timing
+* Add support for sporadic (non-continuous) increment metrics
+* Aggregate metrics by source by default
+* Don't append pids to sources by default anymore
+* Start extracting collector behaviors into Collector
+* measure/timing metrics prefix now updates dynamically if .prefix changes after startup
+* Fix issue with some helpers not being found when running on unicorn
+* Fix issue with sometimes attempting submission without full credentials
+* Documentation improvements
+
 ### Version 0.5.2
 * Fix bug where measure/timing events don't apply global prefix properly
 * Fix bug where increment events could have missing values if not called
