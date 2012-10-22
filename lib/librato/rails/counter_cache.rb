@@ -45,6 +45,7 @@ module Librato
         end
       end
       
+      # transfer all measurements to queue and reset internal status
       def flush_to(queue)
         counts = nil
         @lock.synchronize do
