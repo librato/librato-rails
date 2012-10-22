@@ -71,14 +71,14 @@ module Librato
       #   increment :foo, :source => user.id
       #
       def increment(counter, options={})
+        if options.is_a?(Fixnum) 
+          # suppport legacy style
+          options = {:by => options}
+        end
+        by = options[:by] || 1
         source = DEFAULT_SOURCE
-        if options.is_a?(Fixnum) # suppport legacy style
-          by = options
-        else
-          by = options[:by] || 1
-          if options[:source]
-            source = options[:source].to_s
-          end
+        if options[:source]
+          source = options[:source].to_s
         end
         counter = counter.to_s
         @lock.synchronize do
