@@ -46,10 +46,10 @@ module Librato
       
       def flush_to(queue)
         counts = nil
-        # work off of a duplicate data set so we block for
-        # as little time as possible
         @lock.synchronize do
-          counts = @cache.dup
+          # work off of a duplicate data set so we block for
+          # as little time as possible
+          counts = Marshal.load(Marshal.dump(@cache))
           reset_cache
         end
         counts.each do |key, data|
