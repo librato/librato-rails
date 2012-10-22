@@ -34,8 +34,12 @@ module Librato
       
       
       def fetch(key, options={})
-        source = options[:source].to_s || DEFAULT_SOURCE
+        source = DEFAULT_SOURCE
+        if options[:source]
+          source = options[:source].to_s
+        end
         @lock.synchronize do 
+          return nil unless @cache[key.to_s]
           @cache[key.to_s][source]
         end
       end
