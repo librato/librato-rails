@@ -75,7 +75,8 @@ Use when you want to track an average value _per_-request. Examples:
 
     Librato.measure 'user.social_graph.nodes', 212
 
-    Librato.measure 'jobs.queued', 3
+	# report from a custom source
+    Librato.measure 'jobs.queued', 3, :source => 'worker.12'
     
 
 #### timing
