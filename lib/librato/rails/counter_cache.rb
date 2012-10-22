@@ -11,6 +11,7 @@ module Librato
       def initialize
         @cache = {}
         @lock = Mutex.new
+        @sporadics = {}
       end
     
       # Retrieve the current value for a given metric. This is a short
@@ -75,6 +76,7 @@ module Librato
       #   increment :foo, :source => user.id
       #
       def increment(counter, options={})
+        counter = counter.to_s
         if options.is_a?(Fixnum) 
           # suppport legacy style
           options = {:by => options}
@@ -84,7 +86,9 @@ module Librato
         if options[:source]
           source = options[:source].to_s
         end
-        counter = counter.to_s
+        if options[:sporadic]
+          make_sporadic(counter, source)
+        end
         @lock.synchronize do
           @cache[counter] ||= {}
           @cache[counter][source] ||= 0
@@ -92,9 +96,20 @@ module Librato
         end
       end
       
-    private
+      private
+    
+      def make_sporadic(metric, source)
+        @sporadics[metric] ||= Set.new
+        @sporadics[metric] << source
+      end
     
       def reset_cache
+        # remove any source/metric pairs that aren't continuous
+        @sporadics.each do |key, sources|
+          sources.each { |source| @cache[key].delete(source) }
+        end
+        @sporadics.clear
+        # reset all continuous source/metric pairs to 0
         @cache.each_key do |key|
           @cache[key].each_key { |source| @cache[key][source] = 0 }
         end

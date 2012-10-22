@@ -39,6 +39,35 @@ class LibratoRailsCounterCacheTest < MiniTest::Unit::TestCase
     assert_equal 10, cc.fetch(:foo, :source => 'boombah')
   end
   
+  def test_continuous
+    cc = Librato::Rails::CounterCache.new
+    
+    cc.increment :foo
+    cc.increment :foo, :source => 'bar'
+    
+    cc.increment :baz, :sporadic => true
+    cc.increment :baz, :source => 118, :sporadic => true
+    assert_equal 1, cc[:baz]
+    assert_equal 1, cc.fetch(:baz, :source => 118)
+    
+    cc.flush_to(Librato::Metrics::Queue.new) # persist values once
+    
+    # continous values persist
+    assert_equal 0, cc[:foo]
+    assert_equal 0, cc.fetch(:foo, :source => 'bar')
+    
+    # non-continous do not
+    assert_equal nil, cc[:baz]
+    assert_equal nil, cc.fetch(:baz, :source => 118)
+    
+    # add a different sporadic metric 
+    cc.increment :bazoom, :sporadic => true
+    assert_equal 1, cc[:bazoom]
+    
+    cc.flush_to(Librato::Metrics::Queue.new) # persist values again
+    assert_equal nil, cc[:bazoom]
+  end
+  
   def test_flushing
     cc = Librato::Rails::CounterCache.new
     
