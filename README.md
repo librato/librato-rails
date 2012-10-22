@@ -53,9 +53,21 @@ Use for tracking a running total of something _across_ requests, examples:
     Librato.increment 'sales_completed'
     
     # increment by five
-    Librato.increment 'items_purchased', 5
+    Librato.increment 'items_purchased', :by => 5
+    
+    # increment with a custom source
+    Librato.increment 'user.purchases', :source => user.id
     
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
+
+###### Sporadic Increment Reporting
+
+Note that `increment` is primarily used for tracking the rate of occurrence of some event. Given this increment metrics are _continuous by default_: after being called on a metric once they will report on every interval, reporting zeros for any interval when increment was not called on the metric.
+
+Especially with custom sources you may want the opposite behavior - reporting a measurement only during intervals where `increment` was called on the metric:
+
+    # report a value for 'user.uploaded_file' only during non-zero intervals
+    Librato.increment 'user.uploaded_file', :source => user.id, :sporadic => true
 
 #### measure
 
