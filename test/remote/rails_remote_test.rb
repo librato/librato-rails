@@ -31,6 +31,7 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       Librato::Rails.increment :foo
       Librato::Rails.increment :bar, 2
       Librato::Rails.increment :foo
+      Librato::Rails.increment :foo, :source => 'baz', :by => 3
       Librato::Rails.flush
     
       client = Librato::Rails.client
@@ -41,6 +42,10 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       foo = client.fetch 'foo', :count => 10
       assert_equal 1, foo[source].length
       assert_equal 2, foo[source][0]['value']
+      
+      # custom source
+      assert_equal 1, foo['baz'].length
+      assert_equal 3, foo['baz'][0]['value']  
     
       bar = client.fetch 'bar', :count => 10
       assert_equal 1, bar[source].length
@@ -49,9 +54,13 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
   
     test 'counters should persist through flush' do
       Librato::Rails.increment 'knightrider'
+      Librato::Rails.increment 'badguys', :sporadic => true
       assert_equal 1, Librato::Rails.counters['knightrider']
+      assert_equal 1, Librato::Rails.counters['badguys']
+      
       Librato::Rails.flush
       assert_equal 0, Librato::Rails.counters['knightrider']
+      assert_equal nil, Librato::Rails.counters['badguys']
     end
   
     test 'flush sends measures/timings' do
@@ -61,6 +70,7 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       Librato::Rails.timing  'request.time.total', 122.1
       Librato::Rails.measure 'items_bought', 20
       Librato::Rails.timing  'request.time.total', 81.3
+      Librato::Rails.timing  'jobs.queued', 5, :source => 'worker.3'
       Librato::Rails.flush
     
       client = Librato::Rails.client
@@ -75,6 +85,10 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       items = client.fetch 'items_bought', :count => 10
       assert_equal 1, items[source][0]['count']
       assert_in_delta 20, items[source][0]['sum'], 0.1
+      
+      jobs = client.fetch 'jobs.queued', :count => 10
+      assert_equal 1, jobs['worker.3'][0]['count']
+      assert_in_delta 5, jobs['worker.3'][0]['sum'], 0.1
     end
   
     test 'flush should purge measures/timings' do

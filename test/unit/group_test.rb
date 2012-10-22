@@ -5,7 +5,11 @@ class LibratoRailsGroupTest < MiniTest::Unit::TestCase
   def test_basic_grouping
     Librato::Rails.group 'fruit' do |g|
       g.increment 'bites'
+      g.increment 'nibbles', :by => 2
       g.increment 'nibbles', 5
+      
+      g.increment 'chomps', :source => 'pacman'
+      g.increment 'chomps', :source => 'pacman', :by => 5
       
       g.measure 'banana', 12
       g.measure 'banana', 10
@@ -15,7 +19,8 @@ class LibratoRailsGroupTest < MiniTest::Unit::TestCase
     end
     
     assert_equal 1, counters['fruit.bites']
-    assert_equal 5, counters['fruit.nibbles']
+    assert_equal 7, counters['fruit.nibbles']
+    assert_equal 6, counters.fetch('fruit.chomps', :source => 'pacman')
 
     assert_equal 2, aggregate['fruit.banana'][:count]
     assert_equal 22, aggregate['fruit.banana'][:sum]
