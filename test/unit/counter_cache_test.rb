@@ -11,9 +11,13 @@ class LibratoRailsCounterCacheTest < MiniTest::Unit::TestCase
     cc.increment :foo, :by => 5
     assert_equal 6, cc[:foo]
     
+    # legacy style
+    cc.increment :foo, 2
+    assert_equal 8, cc[:foo]
+    
     # strings or symbols work
     cc.increment 'foo'
-    assert_equal 7, cc['foo']
+    assert_equal 9, cc['foo']
   end
   
   def test_custom_sources
