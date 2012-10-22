@@ -39,4 +39,23 @@ class LibratoRailsCounterCacheTest < MiniTest::Unit::TestCase
     assert_equal 10, cc.fetch(:foo, :source => 'boombah')
   end
   
+  def test_flushing
+    cc = Librato::Rails::CounterCache.new
+    
+    cc.increment :foo
+    cc.increment :bar, :by => 2
+    cc.increment :foo, :source => 'foobar'
+    cc.increment :foo, :source => 'foobar', :by => 3
+    
+    q = Librato::Metrics::Queue.new
+    cc.flush_to(q)
+    
+    expected = Set.new [{:name=>"foo", :value=>1},
+                {:name=>"foo", :value=>4, :source=>"foobar"},
+                {:name=>"bar", :value=>2}]
+    queued = Set.new q.gauges
+    queued.each { |hash| hash.delete(:measure_time) } 
+    assert_equal queued, expected
+  end
+  
 end
