@@ -31,7 +31,7 @@ Create a `config/librato.yml` like the following:
 
 (the `librato.yml` file is parsed via ERB in case you need to add some magic in there - useful in some cloud environments)
 
-OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. If both env variables and a config file are present, environment variables will be ignored and the config file will take precendence.
+OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. If both env variables and a config file are present, environment variables will be ignored and the config file will take precedence.
 
 Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in all environments. 
 
