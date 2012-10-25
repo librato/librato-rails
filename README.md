@@ -31,23 +31,27 @@ Create a `config/librato.yml` like the following:
       user: <your-email>
       token: <your-api-key>
 
-(the `librato.yml` file is parsed via ERB in case you need to add some magic in there - useful in some cloud environments)
+The `librato.yml` file is parsed via ERB in case you need to add some host or environment-specific magic. 
+
+Note that using a configuration file allows you to specify different configurations per-environment. Submission will be disabled in any environment without credentials. 
 
 ##### Use environment variables
 
-OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. Note that if a config file is present, _all environment variables will be ignored._
+Alternately you can provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. Unlike config file settings, environment variables will be used in all non-test environments (development, production, etc).  
 
-Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in all environments. 
+Note that if a config file is present, _all environment variables will be ignored_.
+
+For more information on combining config files and environment variables, see the [full configuration docs](https://github.com/librato/librato-rails/wiki/Configuration).
 
 ##### Running on Heroku
 
-If you are using the Librato Metrics Heroku addon, your user and token environment variables will already be set in your heroku environment. If you are running without the addon you will need to provide them yourself.
+If you are using the Librato Metrics Heroku addon, your user and token environment variables will already be set in your Heroku environment. If you are running without the addon you will need to provide them yourself.
 
-Either way you will need to specify a custom source for your app to allow `librato-rails` to track properly. If a source has not been provided, `librato-rails` will detect this and not start. You can set the source in your environment like:
+In either case you will need to specify a custom source for your app to track properly. If `librato-rails` does not detect an explicit source it will not start. You can set the source in your environment:
 
     heroku config:add LIBRATO_METRICS_SOURCE=myappname
     
-If you are using a config file, add a source entry to that instead.
+If you are using a config file, add your source entry to that instead.
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
 
@@ -127,7 +131,7 @@ Symbols can be used interchangably with strings for metric names.
 
 ## Custom Prefix
 
-If you want to add a prefix to all metrics reported by `librato-rails` you can set a prefix in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration). This can be helpful for isolating test data or forcing different apps to use different metric names.
+You can set an optional prefix to all metrics reported by `librato-rails` in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration). This can be helpful for isolating test data or forcing different apps to use different metric names.
 
 ## Cross-Process Aggregation
 
