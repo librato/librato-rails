@@ -23,6 +23,8 @@ Then run `bundle install`.
 
 If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you need to provide your account credentials to `librato-rails`. You can provide these one of two ways:
 
+##### Use a config file
+
 Create a `config/librato.yml` like the following:
 
     production:
@@ -31,9 +33,21 @@ Create a `config/librato.yml` like the following:
 
 (the `librato.yml` file is parsed via ERB in case you need to add some magic in there - useful in some cloud environments)
 
-OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. If both env variables and a config file are present, environment variables will be ignored and the config file will take precedence.
+##### Use environment variables
+
+OR provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. Note that if a config file is present, _all environment variables will be ignored._
 
 Note that using a configuration file allows you to specify configurations per-environment. Submission will be disabled in any environment without credentials. However, if environment variables are set they will be used in all environments. 
+
+##### Running on Heroku
+
+If you are using the Librato Metrics Heroku addon, your user and token environment variables will already be set in your heroku environment. If you are running without the addon you will need to provide them yourself.
+
+Either way you will need to specify a custom source for your app to allow `librato-rails` to track properly. If a source has not been provided, `librato-rails` will detect this and not start. You can set the source in your environment like:
+
+    heroku config:add LIBRATO_METRICS_SOURCE=myappname
+    
+If you are using a config file, add a source entry to that instead.
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
 
