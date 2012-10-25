@@ -35,6 +35,9 @@ module Librato
     self.flush_interval = 60 # seconds
     self.source_pids = false # append process id to the source?
 
+    # handy introspection
+    mattr_reader :explicit_source
+
     # a collector instance handles all measurement addition/storage
     def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment,
                                :measure, :prefix, :prefix=, :timing
