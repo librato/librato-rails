@@ -188,7 +188,7 @@ module Librato
       end
 
       def running_on_heroku?
-        env.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
+        ENV.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
       end
 
       def user_agent
