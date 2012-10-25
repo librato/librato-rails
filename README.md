@@ -53,9 +53,9 @@ Full information on configuration options is available on the [configuration wik
 
 ## Automatic Measurements
 
-After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. All built-in performance metrics start with the prefix `rails` by convention &mdash; for example: `rails.request.total` is the total number of requests received during an interval. 
+After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. 
 
-If you have multiple apps reporting to the same Metrics account you can change this prefix in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration).
+Built-in performance metrics will start with either `rack` or `rails`, depending on the level they are being sampled from. For example: `rails.request.total` is the total number of requests rails has received each minute. 
 
 ## Custom Measurements
 
@@ -125,7 +125,11 @@ Can also be written as:
 
 Symbols can be used interchangably with strings for metric names.
 
-## Cross-process Aggregation
+## Custom Prefix
+
+If you want to add a prefix to all metrics reported by `librato-rails` you can set a prefix in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration). This can be helpful for isolating test data or forcing different apps to use different metric names.
+
+## Cross-Process Aggregation
 
 `librato-rails` submits measurements back to the Librato platform on a _per-process_ basis. By default these measurements are then combined into a single measurement per source (default is your hostname) before persisting the data. 
 
