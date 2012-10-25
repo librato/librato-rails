@@ -159,12 +159,19 @@ module Librato
       end
 
       def should_start?
-        return false if running_on_heroku? && !@explicit_source
+        return false if implicit_source_on_heroku?
         self.user && self.token # are credentials present?
       end
 
       def forking_server?
         FORKING_SERVERS.include?(app_server)
+      end
+
+      # there isn't anything in the environment before the
+      # first request to know if we're running on heroku, but
+      # they set all hostnames to UUIDs.
+      def implicit_source_on_heroku?
+        !explicit_source && source_is_uuid?
       end
 
       def install_worker_check
@@ -187,8 +194,8 @@ module Librato
         RUBY_DESCRIPTION.split[0]
       end
 
-      def running_on_heroku?
-        ENV.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
+      def source_is_uuid?
+        source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
       end
 
       def user_agent
