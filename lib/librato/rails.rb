@@ -36,7 +36,7 @@ module Librato
     self.source_pids = false # append process id to the source?
 
     # handy introspection
-    mattr_reader :explicit_source
+    mattr_accessor :explicit_source
 
     # a collector instance handles all measurement addition/storage
     def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment,
@@ -118,13 +118,13 @@ module Librato
 
       def source
         return @source if @source
-        @explicit_source = false
+        self.explicit_source = false
         @source = Socket.gethostname
       end
 
       # set a custom source
       def source=(src)
-        @explicit_source = true
+        self.explicit_source = true
         @source = src
       end
 
