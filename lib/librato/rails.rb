@@ -114,11 +114,14 @@ module Librato
       end
 
       def source
-        @source ||= Socket.gethostname
+        return @source if @source
+        @explicit_source = false
+        @source = Socket.gethostname
       end
 
       # set a custom source
       def source=(src)
+        @explicit_source = true
         @source = src
       end
 
@@ -153,7 +156,7 @@ module Librato
       end
 
       def should_start?
-        return false if running_on_heroku? && !self.source # is explicit source set?
+        return false if running_on_heroku? && !@explicit_source
         self.user && self.token # are credentials present?
       end
 
