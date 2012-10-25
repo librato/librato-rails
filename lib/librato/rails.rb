@@ -35,8 +35,11 @@ module Librato
     self.flush_interval = 60 # seconds
     self.source_pids = false # append process id to the source?
 
+    # handy introspection
+    mattr_accessor :explicit_source
+
     # a collector instance handles all measurement addition/storage
-    def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment, 
+    def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment,
                                :measure, :prefix, :prefix=, :timing
 
     class << self
@@ -75,7 +78,7 @@ module Librato
       def client
         @client ||= prepare_client
       end
-      
+
       # collector instance which is tracking all measurement additions
       def collector
         @collector ||= Collector.new
@@ -106,7 +109,7 @@ module Librato
       # run once during Rails startup sequence
       def setup(app)
         check_config
-        return unless credentials_present?
+        return unless should_start?
         logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
@@ -114,11 +117,14 @@ module Librato
       end
 
       def source
-        @source ||= Socket.gethostname
+        return @source if @source
+        self.explicit_source = false
+        @source = Socket.gethostname
       end
 
       # set a custom source
       def source=(src)
+        self.explicit_source = true
         @source = src
       end
 
@@ -151,13 +157,21 @@ module Librato
           :other
         end
       end
-      
-      def credentials_present?
-        self.user && self.token
+
+      def should_start?
+        return false if implicit_source_on_heroku?
+        self.user && self.token # are credentials present?
       end
 
       def forking_server?
         FORKING_SERVERS.include?(app_server)
+      end
+
+      # there isn't anything in the environment before the
+      # first request to know if we're running on heroku, but
+      # they set all hostnames to UUIDs.
+      def implicit_source_on_heroku?
+        !explicit_source && source_is_uuid?
       end
 
       def install_worker_check
@@ -178,6 +192,10 @@ module Librato
       def ruby_engine
         return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
         RUBY_DESCRIPTION.split[0]
+      end
+
+      def source_is_uuid?
+        source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
       end
 
       def user_agent

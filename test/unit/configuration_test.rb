@@ -1,6 +1,10 @@
 require 'test_helper'
 
-class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
+class LibratoRailsConfigTest < MiniTest::Unit::TestCase
+
+  def setup
+    Librato::Rails.explicit_source = nil
+  end
 
   def teardown
     ENV.delete('LIBRATO_METRICS_USER')
@@ -8,6 +12,7 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
     ENV.delete('LIBRATO_METRICS_SOURCE')
     Librato::Rails.check_config
     Librato::Rails.prefix = nil
+    Librato::Rails.explicit_source = nil
   end
 
   def test_environmental_variable_config
@@ -18,6 +23,7 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
     assert_equal 'foo@bar.com', Librato::Rails.user
     assert_equal 'api_key', Librato::Rails.token
     assert_equal 'source', Librato::Rails.source
+    assert Librato::Rails.explicit_source, 'source is explicit'
   end
 
   def test_config_file_config
@@ -28,6 +34,15 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
       assert_equal 30, Librato::Rails.flush_interval
       assert_equal 'custom-1', Librato::Rails.source
       assert_equal false, Librato::Rails.source_pids
+      assert Librato::Rails.explicit_source, 'source is explicit'
+    end
+  end
+
+  def test_implicit_source
+    with_fixture_config('simple') do
+      assert_equal 'test@bar.com', Librato::Rails.user
+      assert_equal 'test api key', Librato::Rails.token
+      assert !Librato::Rails.explicit_source, 'source is not explicit'
     end
   end
 
@@ -43,8 +58,8 @@ class LibratoRailsAggregatorTest < MiniTest::Unit::TestCase
     end
   end
 
-  def with_fixture_config
-    fixture_config = File.join(File.dirname(__FILE__), '../fixtures/config/librato.yml')
+  def with_fixture_config(file='librato')
+    fixture_config = File.join(File.dirname(__FILE__), "../fixtures/config/#{file}.yml")
     previous, Librato::Rails.config_file = Librato::Rails.config_file, fixture_config
     Librato::Rails.check_config
     yield
