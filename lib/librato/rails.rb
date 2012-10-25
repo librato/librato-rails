@@ -36,7 +36,7 @@ module Librato
     self.source_pids = false # append process id to the source?
 
     # a collector instance handles all measurement addition/storage
-    def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment, 
+    def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment,
                                :measure, :prefix, :prefix=, :timing
 
     class << self
@@ -75,7 +75,7 @@ module Librato
       def client
         @client ||= prepare_client
       end
-      
+
       # collector instance which is tracking all measurement additions
       def collector
         @collector ||= Collector.new
@@ -106,7 +106,7 @@ module Librato
       # run once during Rails startup sequence
       def setup(app)
         check_config
-        return unless credentials_present?
+        return unless should_start?
         logger.info "[librato-rails] starting up with #{app_server}..."
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
@@ -151,9 +151,10 @@ module Librato
           :other
         end
       end
-      
-      def credentials_present?
-        self.user && self.token
+
+      def should_start?
+        return false if running_on_heroku? && !self.source # is explicit source set?
+        self.user && self.token # are credentials present?
       end
 
       def forking_server?
@@ -178,6 +179,10 @@ module Librato
       def ruby_engine
         return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
         RUBY_DESCRIPTION.split[0]
+      end
+
+      def running_on_heroku?
+        env.keys.include?('HTTP_X_HEROKU_QUEUE_DEPTH')
       end
 
       def user_agent
