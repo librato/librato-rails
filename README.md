@@ -7,9 +7,7 @@ Report key statistics for your Rails app to [Librato Metrics](https://metrics.li
 
 **NOTE: This is currently in alpha development and is not yet officially supported**
 
-**NOTES FOR ALPHA TESTERS:**
- * If you are upgrading from a version prior to the rename to librato-rails, note that *the env variable names for configuration and the name of the config files have changed*. See the new names in configuration, below.
- * Starting with 0.4.0 *all metrics are now submitted as gauges*. If you were using a prior version you will need to manually remove any librato-rails generated metrics which are counters.
+You may want to read the [notes on upgrading](https://github.com/librato/librato-rails/wiki/Alpha-Tester-Upgrade-Notes) if you are an alpha tester.
 
 ## Installation
 
