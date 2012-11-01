@@ -125,7 +125,11 @@ module Librato
       def setup(app)
         check_config
         return unless should_start?
-        log :info, "starting up with #{app_server}..."
+        if app_server == :other
+          log :info, "starting up..."
+        else
+          log :info, "starting up with #{app_server}..."
+        end
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
         start_worker unless forking_server?
