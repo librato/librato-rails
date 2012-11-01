@@ -120,6 +120,7 @@ module Librato
         level = level.to_sym
         if LOG_LEVELS.index(level)
           @log_level = level
+          require 'pp' if should_log?(:debug)
         else
           raise "Invalid log level '#{level}'"
         end
