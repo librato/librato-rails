@@ -10,6 +10,9 @@ gem 'pry'
 # mocks
 gem 'mocha', :require => false
 
+# benchmarking
+gem 'benchmark_suite'
+
 # servers for testing
 # gem 'thin'
 # gem 'unicorn'
