@@ -206,7 +206,7 @@ module Librato
       def logger
         @logger ||= if on_heroku
           logger = Logger.new(STDOUT)
-          logger.log_level = :info
+          logger.level = Logger::INFO
         else
           ::Rails.logger
         end
