@@ -90,13 +90,15 @@ module Librato
 
       # send all current data to Metrics
       def flush
-        log :debug, "flushing #{Process.pid} (#{Time.now}):"
+        log :debug, "flushing #{@pid} (#{Time.now}).."
+        start = Time.now
         queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
         trace_queued(queue.queued) if should_log?(:trace)
         queue.submit unless queue.empty?
+        log :trace, "flushed #{@pid} in #{(Time.now - start)*1000.to_f}ms"
       rescue Exception => error
         log :error, "submission failed permanently: #{error}"
       end
@@ -139,6 +141,7 @@ module Librato
       # run once during Rails startup sequence
       def setup(app)
         check_config
+        trace_settings if should_log?(:debug)
         return unless should_start?
         if app_server == :other
           log :info, "starting up..."
@@ -212,9 +215,29 @@ module Librato
         !explicit_source && source_is_uuid?
       end
 
+      # trace current environment
+      def trace_environment
+        log :info, "Environment: " + ENV.pretty_inspect
+      end
+
       # trace metrics being sent
       def trace_queued(queued)
         log :trace, "Queued: " + queued.pretty_inspect
+      end
+
+      def trace_settings
+        settings = {
+          :user => self.user,
+          :token => self.token,
+          :source => source,
+          :explicit_source => self.explicit_source ? 'true' : 'false',
+          :source_pids => self.source_pids ? 'true' : 'false',
+          :qualified_source => qualified_source,
+          :log_level => log_level,
+          :prefix => prefix,
+          :flush_interval => self.flush_interval
+        }
+        log :info, 'Settings: ' + settings.pretty_inspect
       end
 
       def prepare_client
