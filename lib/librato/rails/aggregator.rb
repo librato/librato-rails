@@ -13,7 +13,7 @@ module Librato
       def [](key)
         fetch(key)
       end
-      
+
       def fetch(key, options={})
         return nil if @cache.empty?
         gauges = nil
@@ -61,7 +61,7 @@ module Librato
         options = {}
         event = args[0].to_s
         returned = nil
-        
+
         # handle block or specified argument
         if block_given?
           start = Time.now
@@ -72,13 +72,13 @@ module Librato
         else
           raise "no value provided"
         end
-        
+
         # detect options hash if present
         if args.length > 1 and args[-1].respond_to?(:each)
           options = args[-1]
         end
         source = options[:source]
-        
+
         @lock.synchronize do
           if source
             @cache.add event => {:source => source, :value => value}
