@@ -19,8 +19,9 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    CONFIG_SETTABLE = %w{user token flush_interval prefix source source_pids}
+    CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
     FORKING_SERVERS = [:unicorn, :passenger]
+    LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
 
     mattr_accessor :config_file
     self.config_file = 'config/librato.yml'
@@ -30,10 +31,12 @@ module Librato
     mattr_accessor :token
     mattr_accessor :flush_interval
     mattr_accessor :source_pids
+    mattr_accessor :log_level
 
     # config defaults
     self.flush_interval = 60 # seconds
     self.source_pids = false # append process id to the source?
+    self.log_level = :info
 
     # handy introspection
     mattr_accessor :explicit_source
@@ -52,12 +55,12 @@ module Librato
       # detect / update configuration
       def check_config
         if self.config_file && File.exists?(self.config_file)
-          logger.debug "[librato-rails] configuration file present, ignoring ENV variables"
+          log :debug, "configuration file present, ignoring ENV variables"
           env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
           settable = CONFIG_SETTABLE & env_specific.keys
           settable.each { |key| self.send("#{key}=", env_specific[key]) }
         else
-          logger.debug "[librato-rails] no configuration file present, using ENV variables"
+          log :debug, "no configuration file present, using ENV variables"
           self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
           self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
           self.source = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
@@ -86,15 +89,27 @@ module Librato
 
       # send all current data to Metrics
       def flush
-        logger.debug "[librato-rails] flushing #{Process.pid} (#{Time.now}):"
+        log :debug, "flushing #{Process.pid} (#{Time.now}):"
         queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
-        logger.debug queue.queued
+        trace_queued(queue.queued)
         queue.submit unless queue.empty?
       rescue Exception => error
-        logger.error "[librato-rails] submission failed permanently: #{error}"
+        log :error, "submission failed permanently: #{error}"
+      end
+
+      def log(level, message)
+        return if below_log_level?(level)
+        case level
+        when :error, :warn
+          method = level
+        else
+          method = :info
+        end
+        message = '[librato-rails] ' << message
+        logger.send(method, message)
       end
 
       def logger
@@ -110,7 +125,7 @@ module Librato
       def setup(app)
         check_config
         return unless should_start?
-        logger.info "[librato-rails] starting up with #{app_server}..."
+        log :info, "starting up with #{app_server}..."
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
         start_worker unless forking_server?
@@ -135,7 +150,7 @@ module Librato
       def start_worker
         return if @worker # already running
         @pid = $$
-        logger.debug "[librato-rails] >> starting up worker for pid #{@pid}..."
+        log :debug, ">> starting up worker for pid #{@pid}..."
         @worker = Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
@@ -156,6 +171,11 @@ module Librato
         else
           :other
         end
+      end
+
+      def below_log_level?(level)
+        #logger.info "#{level} (#{LOG_LEVELS.index(level)}); #{self.log_level} (#{LOG_LEVELS.index(self.log_level)})"
+        LOG_LEVELS.index(level) > LOG_LEVELS.index(self.log_level)
       end
 
       def should_start?
