@@ -94,14 +94,14 @@ module Librato
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
-        trace_queued(queue.queued)
+        trace_queued(queue.queued) if should_log?(:trace)
         queue.submit unless queue.empty?
       rescue Exception => error
         log :error, "submission failed permanently: #{error}"
       end
 
       def log(level, message)
-        return if below_log_level?(level)
+        return unless should_log?(level)
         case level
         when :error, :warn
           method = level
@@ -173,9 +173,8 @@ module Librato
         end
       end
 
-      def below_log_level?(level)
-        #logger.info "#{level} (#{LOG_LEVELS.index(level)}); #{self.log_level} (#{LOG_LEVELS.index(self.log_level)})"
-        LOG_LEVELS.index(level) > LOG_LEVELS.index(self.log_level)
+      def should_log?(level)
+        LOG_LEVELS.index(self.log_level) >= LOG_LEVELS.index(level)
       end
 
       def should_start?
@@ -198,6 +197,11 @@ module Librato
         ::ApplicationController.prepend_before_filter do |c|
           Librato::Rails.check_worker
         end
+      end
+
+      # trace metrics being sent
+      def trace_queued(queued)
+        log :trace, "Queued: " + queued.pretty_inspect
       end
 
       def prepare_client
