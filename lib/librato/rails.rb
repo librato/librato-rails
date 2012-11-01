@@ -31,12 +31,12 @@ module Librato
     mattr_accessor :token
     mattr_accessor :flush_interval
     mattr_accessor :source_pids
-    mattr_accessor :log_level
 
     # config defaults
     self.flush_interval = 60 # seconds
     self.source_pids = false # append process id to the source?
-    self.log_level = :info
+    # log_level (default :info)
+    # source (default: your machine's hostname)
 
     # handy introspection
     mattr_accessor :explicit_source
@@ -111,6 +111,20 @@ module Librato
         end
         message = '[librato-rails] ' << message
         logger.send(method, message)
+      end
+
+      # set log level to any of LOG_LEVELS
+      def log_level=(level)
+        level = level.to_sym
+        if LOG_LEVELS.index(level)
+          @log_level = level
+        else
+          raise "Invalid log level '#{level}'"
+        end
+      end
+
+      def log_level
+        @log_level ||= :info
       end
 
       def logger
