@@ -191,8 +191,33 @@ module Librato
         end
       end
 
+      def forking_server?
+        FORKING_SERVERS.include?(app_server)
+      end
+
+      # there isn't anything in the environment before the
+      # first request to know if we're running on heroku, but
+      # they set all hostnames to UUIDs.
+      def implicit_source_on_heroku?
+        !explicit_source && source_is_uuid?
+      end
+
       def logger
         @logger ||= ::Rails.logger
+      end
+
+      def prepare_client
+        check_config
+        client = Librato::Metrics::Client.new
+        client.authenticate user, token
+        client.api_endpoint = @api_endpoint if @api_endpoint
+        client.custom_user_agent = user_agent
+        client
+      end
+
+      def ruby_engine
+        return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
+        RUBY_DESCRIPTION.split[0]
       end
 
       def should_log?(level)
@@ -204,15 +229,8 @@ module Librato
         self.user && self.token # are credentials present?
       end
 
-      def forking_server?
-        FORKING_SERVERS.include?(app_server)
-      end
-
-      # there isn't anything in the environment before the
-      # first request to know if we're running on heroku, but
-      # they set all hostnames to UUIDs.
-      def implicit_source_on_heroku?
-        !explicit_source && source_is_uuid?
+      def source_is_uuid?
+        source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
       end
 
       # trace current environment
@@ -238,24 +256,6 @@ module Librato
           :flush_interval => self.flush_interval
         }
         log :info, 'Settings: ' + settings.pretty_inspect
-      end
-
-      def prepare_client
-        check_config
-        client = Librato::Metrics::Client.new
-        client.authenticate user, token
-        client.api_endpoint = @api_endpoint if @api_endpoint
-        client.custom_user_agent = user_agent
-        client
-      end
-
-      def ruby_engine
-        return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
-        RUBY_DESCRIPTION.split[0]
-      end
-
-      def source_is_uuid?
-        source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
       end
 
       def user_agent
