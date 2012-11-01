@@ -197,12 +197,6 @@ module Librato
         !explicit_source && source_is_uuid?
       end
 
-      def install_worker_check
-        ::ApplicationController.prepend_before_filter do |c|
-          Librato::Rails.check_worker
-        end
-      end
-
       # trace metrics being sent
       def trace_queued(queued)
         log :trace, "Queued: " + queued.pretty_inspect
