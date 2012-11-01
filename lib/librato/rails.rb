@@ -19,8 +19,9 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    CONFIG_SETTABLE = %w{user token flush_interval prefix source source_pids}
+    CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
     FORKING_SERVERS = [:unicorn, :passenger]
+    LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
 
     mattr_accessor :config_file
     self.config_file = 'config/librato.yml'
@@ -34,6 +35,8 @@ module Librato
     # config defaults
     self.flush_interval = 60 # seconds
     self.source_pids = false # append process id to the source?
+    # log_level (default :info)
+    # source (default: your machine's hostname)
 
     # handy introspection
     mattr_accessor :explicit_source
@@ -52,15 +55,16 @@ module Librato
       # detect / update configuration
       def check_config
         if self.config_file && File.exists?(self.config_file)
-          logger.debug "[librato-rails] configuration file present, ignoring ENV variables"
+          log :debug, "configuration file present, ignoring ENV variables"
           env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
           settable = CONFIG_SETTABLE & env_specific.keys
           settable.each { |key| self.send("#{key}=", env_specific[key]) }
         else
-          logger.debug "[librato-rails] no configuration file present, using ENV variables"
-          self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
-          self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
-          self.source = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
+          log :debug, "no configuration file present, using ENV variables"
+          %w{user token source log_level}.each do |settable|
+            env_var = "LIBRATO_METRICS_#{settable.upcase}"
+            send("#{settable}=", ENV[env_var]) if ENV[env_var]
+          end
         end
       end
 
@@ -86,19 +90,43 @@ module Librato
 
       # send all current data to Metrics
       def flush
-        logger.debug "[librato-rails] flushing #{Process.pid} (#{Time.now}):"
+        log :debug, "flushing #{@pid} (#{Time.now}).."
+        start = Time.now
         queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
-        logger.debug queue.queued
+        trace_queued(queue.queued) if should_log?(:trace)
         queue.submit unless queue.empty?
+        log :trace, "flushed #{@pid} in #{(Time.now - start)*1000.to_f}ms"
       rescue Exception => error
-        logger.error "[librato-rails] submission failed permanently: #{error}"
+        log :error, "submission failed permanently: #{error}"
       end
 
-      def logger
-        @logger ||= ::Rails.logger
+      def log(level, message)
+        return unless should_log?(level)
+        case level
+        when :error, :warn
+          method = level
+        else
+          method = :info
+        end
+        message = '[librato-rails] ' << message
+        logger.send(method, message)
+      end
+
+      # set log level to any of LOG_LEVELS
+      def log_level=(level)
+        level = level.to_sym
+        if LOG_LEVELS.index(level)
+          @log_level = level
+        else
+          raise "Invalid log level '#{level}'"
+        end
+      end
+
+      def log_level
+        @log_level ||= :info
       end
 
       # source including process pid
@@ -109,8 +137,13 @@ module Librato
       # run once during Rails startup sequence
       def setup(app)
         check_config
+        trace_settings if should_log?(:debug)
         return unless should_start?
-        logger.info "[librato-rails] starting up with #{app_server}..."
+        if app_server == :other
+          log :info, "starting up..."
+        else
+          log :info, "starting up with #{app_server}..."
+        end
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
         start_worker unless forking_server?
@@ -135,7 +168,7 @@ module Librato
       def start_worker
         return if @worker # already running
         @pid = $$
-        logger.debug "[librato-rails] >> starting up worker for pid #{@pid}..."
+        log :debug, ">> starting up worker for pid #{@pid}..."
         @worker = Thread.new do
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
@@ -158,11 +191,6 @@ module Librato
         end
       end
 
-      def should_start?
-        return false if implicit_source_on_heroku?
-        self.user && self.token # are credentials present?
-      end
-
       def forking_server?
         FORKING_SERVERS.include?(app_server)
       end
@@ -174,10 +202,8 @@ module Librato
         !explicit_source && source_is_uuid?
       end
 
-      def install_worker_check
-        ::ApplicationController.prepend_before_filter do |c|
-          Librato::Rails.check_worker
-        end
+      def logger
+        @logger ||= ::Rails.logger
       end
 
       def prepare_client
@@ -194,8 +220,42 @@ module Librato
         RUBY_DESCRIPTION.split[0]
       end
 
+      def should_log?(level)
+        LOG_LEVELS.index(self.log_level) >= LOG_LEVELS.index(level)
+      end
+
+      def should_start?
+        return false if implicit_source_on_heroku?
+        self.user && self.token # are credentials present?
+      end
+
       def source_is_uuid?
         source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
+      end
+
+      # trace current environment
+      def trace_environment
+        log :info, "Environment: " + ENV.pretty_inspect
+      end
+
+      # trace metrics being sent
+      def trace_queued(queued)
+        log :trace, "Queued: " + queued.pretty_inspect
+      end
+
+      def trace_settings
+        settings = {
+          :user => self.user,
+          :token => self.token,
+          :source => source,
+          :explicit_source => self.explicit_source ? 'true' : 'false',
+          :source_pids => self.source_pids ? 'true' : 'false',
+          :qualified_source => qualified_source,
+          :log_level => log_level,
+          :prefix => prefix,
+          :flush_interval => self.flush_interval
+        }
+        log :info, 'Settings: ' + settings.pretty_inspect
       end
 
       def user_agent
