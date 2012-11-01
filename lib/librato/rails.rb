@@ -90,7 +90,7 @@ module Librato
 
       # send all current data to Metrics
       def flush
-        log :debug, "flushing #{@pid} (#{Time.now}).."
+        log :debug, "flushing pid #{@pid} (#{Time.now}).."
         start = Time.now
         queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
         # thread safety is handled internally for both stores
@@ -98,7 +98,7 @@ module Librato
         aggregate.flush_to(queue)
         trace_queued(queue.queued) if should_log?(:trace)
         queue.submit unless queue.empty?
-        log :trace, "flushed #{@pid} in #{(Time.now - start)*1000.to_f}ms"
+        log :trace, "flushed pid #{@pid} in #{(Time.now - start)*1000.to_f}ms"
       rescue Exception => error
         log :error, "submission failed permanently: #{error}"
       end
