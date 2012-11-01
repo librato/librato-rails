@@ -141,6 +141,16 @@ Current pricing applies after aggregation, so in this case you will be charged f
 If you want to report per-process instead, you can set `source_pids` to `true` in
 your config, which will append the process id to the source name used by each thread. 
 
+## Troubleshooting
+
+Note that it may take 2-3 minutes for the first results to show up in your Metrics account after you have started your servers with `librato-rails` enabled. 
+
+If you want to get more information about `librato-rails` submissions to the Metrics service you can set your `log_level` to `debug` (see [configuration](https://github.com/librato/librato-rails/wiki/Configuration)) to get detailed information added to your logs about the settings `librato-rails` is seeing at startup and when it is submitting.
+
+If you are having an issue with a specific metric, using a `log_level` of `trace` will add the exact measurements being sent to your logs along with lots of other information about `librato-rails` as it executes. Neither of these modes are recommended long-term in production as they will add quite a bit of volume to your log file and will slow operation somewhat. Note that submission I/O is non-blocking, submission times are total time - your process will continue to handle requests during submissions.
+
+If you are debugging setting up `librato-rails` locally you can set `flush_interval` to something shorter (say 10s) to force submission more frequently. Don't change your `flush_interval` in production as it will not result in measurements showing up more quickly, but may affect performance.
+
 ## Contribution
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
