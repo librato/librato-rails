@@ -61,9 +61,10 @@ module Librato
           settable.each { |key| self.send("#{key}=", env_specific[key]) }
         else
           log :debug, "no configuration file present, using ENV variables"
-          self.token = ENV['LIBRATO_METRICS_TOKEN'] if ENV['LIBRATO_METRICS_TOKEN']
-          self.user = ENV['LIBRATO_METRICS_USER'] if ENV['LIBRATO_METRICS_USER']
-          self.source = ENV['LIBRATO_METRICS_SOURCE'] if ENV['LIBRATO_METRICS_SOURCE']
+          %w{user token source log_level}.each do |settable|
+            env_var = "LIBRATO_METRICS_#{settable.upcase}"
+            send("#{settable}=", ENV[env_var]) if ENV[env_var]
+          end
         end
       end
 
