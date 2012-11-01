@@ -200,11 +200,23 @@ module Librato
       # first request to know if we're running on heroku, but
       # they set all hostnames to UUIDs.
       def implicit_source_on_heroku?
-        !explicit_source && source_is_uuid?
+        !explicit_source && on_heroku
       end
 
       def logger
-        @logger ||= ::Rails.logger
+        @logger ||= if on_heroku
+          logger = Logger.new(STDOUT)
+          logger.level = Logger::INFO
+          logger
+        else
+          ::Rails.logger
+        end
+      end
+
+      def on_heroku
+        # would be nice to have something more specific here,
+        # but nothing characteristic in ENV, etc.
+        @on_heroku ||= source_is_uuid?(Socket.gethostname)
       end
 
       def prepare_client
@@ -230,7 +242,7 @@ module Librato
         self.user && self.token # are credentials present?
       end
 
-      def source_is_uuid?
+      def source_is_uuid?(source)
         source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
       end
 
