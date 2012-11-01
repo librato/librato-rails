@@ -129,10 +129,6 @@ module Librato
         @log_level ||= :info
       end
 
-      def logger
-        @logger ||= ::Rails.logger
-      end
-
       # source including process pid
       def qualified_source
         self.source_pids ? "#{source}.#{$$}" : source
@@ -193,6 +189,10 @@ module Librato
         else
           :other
         end
+      end
+
+      def logger
+        @logger ||= ::Rails.logger
       end
 
       def should_log?(level)
