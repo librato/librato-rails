@@ -5,11 +5,11 @@ require "librato/rails/version"
 Gem::Specification.new do |s|
   s.name        = "librato-rails"
   s.version     = Librato::Rails::VERSION
-  
+
   s.authors     = ["Matt Sanders"]
   s.email       = ["matt@librato.com"]
   s.homepage    = "https://github.com/librato/librato-rails"
-  
+
   s.summary     = "Use Librato Metrics with your Rails 3 app"
   s.description = "Report key app statistics to the Librato Metrics service and easily track your own custom metrics."
 
