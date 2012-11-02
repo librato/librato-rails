@@ -53,6 +53,8 @@ If you are using a config file, add your source entry to that instead.
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
 
+Note that if Heroku idles your application measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic this is the most likely cause.
+
 ## Automatic Measurements
 
 After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats. 
@@ -143,7 +145,7 @@ your config, which will append the process id to the source name used by each th
 
 ## Troubleshooting
 
-Note that it may take 2-3 minutes for the first results to show up in your Metrics account after you have started your servers with `librato-rails` enabled. 
+Note that it may take 2-3 minutes for the first results to show up in your Metrics account after you have started your servers with `librato-rails` enabled and the first request has been received. 
 
 If you want to get more information about `librato-rails` submissions to the Metrics service you can set your `log_level` to `debug` (see [configuration](https://github.com/librato/librato-rails/wiki/Configuration)) to get detailed information added to your logs about the settings `librato-rails` is seeing at startup and when it is submitting.
 
