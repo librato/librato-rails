@@ -1,3 +1,16 @@
+### Version 0.7.0
+* Add configurable log_level for easier debugging
+* Show settings during startup in debug mode
+* Logs are now redirected to be visible when running on Heroku
+* Fix running with unicorn on Heroku
+* Don't start on Heroku without an explicit source being set
+* Improve log messages
+* Clean up tracing output for measurements
+* Remove redundant per-measurement time tracking
+* Add some initial benchmarks of instrumenting performance
+* Added troubleshooting and heroku setup sections to README
+* Documentation improvements
+
 ### Version 0.6.0
 * Add support for custom sources per measurement via increment
 * Add support for custom sources per measurement via measure/timing
