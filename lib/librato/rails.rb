@@ -92,7 +92,8 @@ module Librato
       def flush
         log :debug, "flushing pid #{@pid} (#{Time.now}).."
         start = Time.now
-        queue = client.new_queue(:source => qualified_source, :prefix => self.prefix)
+        queue = client.new_queue(:source => qualified_source, 
+          :prefix => self.prefix, :skip_measurement_times => true)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
