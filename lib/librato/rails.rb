@@ -184,7 +184,7 @@ module Librato
       def app_server
         if defined?(::Unicorn) && defined?(::Unicorn::HttpServer) && !::Unicorn.listener_names.empty?
           :unicorn
-        elsif defined?(::IN_PHUSION_PASSENGER) || (defined?(::Passenger) && defined?(::Passenger::AbstractServer))
+        elsif defined?(::IN_PHUSION_PASSENGER) || defined?(::PhusionPassenger)
           :passenger
         elsif defined?(::Thin) && defined?(::Thin::Server)
           :thin
