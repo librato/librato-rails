@@ -1,3 +1,6 @@
+### Version 0.7.1
+* Support for Passenger 4 (James Miller)
+
 ### Version 0.7.0
 * Add configurable log_level for easier debugging
 * Show settings during startup in debug mode
