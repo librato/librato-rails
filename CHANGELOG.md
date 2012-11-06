@@ -1,3 +1,9 @@
+### Version 0.7.2
+* Relax multi_json version requirement to allow running with Rails 3.1/3.0
+* Fix exception if current environment is not in config file
+* Always respect LIBRATO_METRICS_LOG_LEVEL env variable for easier startup debugging
+* Add more debugging statements in startup sequence_
+
 ### Version 0.7.1
 * Support for Passenger 4 (James Miller)
 
