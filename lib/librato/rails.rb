@@ -54,13 +54,17 @@ module Librato
 
       # detect / update configuration
       def check_config
+        self.log_level = ENV['LIBRATO_METRICS_LOG_LEVEL'] if ENV['LIBRATO_METRICS_LOG_LEVEL']
         if self.config_file && File.exists?(self.config_file)
-          log :debug, "configuration file present, ignoring ENV variables"
-          env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
-          settable = CONFIG_SETTABLE & env_specific.keys
-          settable.each { |key| self.send("#{key}=", env_specific[key]) }
+          log :debug, "configuring with librato.yml; ignoring environment variables.."
+          if env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
+            settable = CONFIG_SETTABLE & env_specific.keys
+            settable.each { |key| self.send("#{key}=", env_specific[key]) }
+          else
+            log :debug, "current environment not in config file, halting"
+          end
         else
-          log :debug, "no configuration file present, using ENV variables"
+          log :debug, "using environment variables for configuration.."
           %w{user token source log_level}.each do |settable|
             env_var = "LIBRATO_METRICS_#{settable.upcase}"
             send("#{settable}=", ENV[env_var]) if ENV[env_var]
@@ -92,7 +96,7 @@ module Librato
       def flush
         log :debug, "flushing pid #{@pid} (#{Time.now}).."
         start = Time.now
-        queue = client.new_queue(:source => qualified_source, 
+        queue = client.new_queue(:source => qualified_source,
           :prefix => self.prefix, :skip_measurement_times => true)
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
@@ -197,13 +201,6 @@ module Librato
         FORKING_SERVERS.include?(app_server)
       end
 
-      # there isn't anything in the environment before the
-      # first request to know if we're running on heroku, but
-      # they set all hostnames to UUIDs.
-      def implicit_source_on_heroku?
-        !explicit_source && on_heroku
-      end
-
       def logger
         @logger ||= if on_heroku
           logger = Logger.new(STDOUT)
@@ -239,8 +236,15 @@ module Librato
       end
 
       def should_start?
-        return false if implicit_source_on_heroku?
-        self.user && self.token # are credentials present?
+        if !self.user || !self.token
+          log :debug, 'credentials not present, halting..'
+          false
+        elsif !explicit_source && on_heroku
+          log :debug, 'source must be set, halting..'
+          false
+        else
+          true
+        end
       end
 
       def source_is_uuid?(source)
