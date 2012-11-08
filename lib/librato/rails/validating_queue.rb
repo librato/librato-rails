@@ -11,13 +11,18 @@ module Librato
       def submit
         @queued[:gauges].delete_if do |entry|
           name = entry[:name].to_s
+          source = entry[:source] && entry[:source].to_s
           if name !~ METRIC_NAME_REGEX
             LOGGER.log :warn, "metric name '#{name}' is invalid, not sending"
+            true # delete
+          elsif source && source !~ SOURCE_NAME_REGEX
+            LOGGER.log :warn, "source name '#{source}' is invalid, not sending"
             true # delete
           else
             false # preserve
           end
         end
+
         super
       end
 

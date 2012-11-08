@@ -165,12 +165,17 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush tolerates invalid source names' do
-      Librato::Rails.increment :foo
-      Librato::Rails.increment :foo, :source => 'glébnöst'
-      Librato::Rails.measure 'bar', 2.25, :source => 'b/l/ak/nok'
+      client = Librato::Rails.client
+
+      Librato::Rails.increment :foo, :source => 'atreides'
+      Librato::Rails.increment :bar, :source => 'glébnöst'
+      Librato::Rails.measure 'baz', 2.25, :source => 'b/l/ak/nok'
       Librato::Rails.flush
 
-      client = Librato::Rails.client
+      # should have saved values for foo even though
+      # other metrics had invalid sources
+      foo = client.fetch :foo, :count => 5
+      assert_equal 1.0, foo['atreides'][0]["value"]
     end
 
     private
