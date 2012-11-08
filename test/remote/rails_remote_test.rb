@@ -135,6 +135,10 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       Librato::Rails.measure :foo, 2.12
       Librato::Rails.flush
 
+      foo = client.fetch :foo, :count => 10
+      assert_equal 1, foo['unassigned'].length
+      assert_nil foo[source] # shouldn't have been accepted
+
       Librato::Rails.measure :boo, 2.12
       Librato::Rails.flush
 
