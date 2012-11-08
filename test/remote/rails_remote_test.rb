@@ -18,6 +18,7 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
         Librato::Rails.api_endpoint = ENV['LIBRATO_RAILS_TEST_API_ENDPOINT']
       end
       Librato::Rails.delete_all
+      delete_all_metrics
     end
 
     teardown do
@@ -25,7 +26,6 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush sends counters' do
-      delete_all_metrics
       source = Librato::Rails.qualified_source
 
       Librato::Rails.increment :foo
@@ -64,7 +64,6 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush sends measures/timings' do
-      delete_all_metrics
       source = Librato::Rails.qualified_source
 
       Librato::Rails.timing  'request.time.total', 122.1
@@ -92,8 +91,6 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush should purge measures/timings' do
-      delete_all_metrics
-
       Librato::Rails.timing  'request.time.total', 122.1
       Librato::Rails.measure 'items_bought', 20
       Librato::Rails.flush
@@ -102,14 +99,11 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'empty flush should not be sent' do
-      delete_all_metrics
       Librato::Rails.flush
-
       assert_equal [], Librato::Rails.client.list
     end
 
     test 'flush respects prefix' do
-      delete_all_metrics
       source = Librato::Rails.qualified_source
       Librato::Rails.prefix = 'testyprefix'
 
@@ -133,9 +127,8 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
 
     def delete_all_metrics
       client = Librato::Rails.client
-      client.list.each do |metric|
-        client.connection.delete("metrics/#{metric['name']}")
-      end
+      metric_names = client.list.map { |metric| metric['name'] }
+      client.delete(*metric_names) if !metric_names.empty?
     end
 
   else
