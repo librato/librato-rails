@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'test_helper'
 
 class LibratoRailsRemoteTest < ActiveSupport::TestCase
@@ -18,6 +19,7 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
         Librato::Rails.api_endpoint = ENV['LIBRATO_RAILS_TEST_API_ENDPOINT']
       end
       Librato::Rails.delete_all
+      delete_all_metrics
     end
 
     teardown do
@@ -25,7 +27,6 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush sends counters' do
-      delete_all_metrics
       source = Librato::Rails.qualified_source
 
       Librato::Rails.increment :foo
@@ -64,7 +65,6 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush sends measures/timings' do
-      delete_all_metrics
       source = Librato::Rails.qualified_source
 
       Librato::Rails.timing  'request.time.total', 122.1
@@ -92,8 +92,6 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'flush should purge measures/timings' do
-      delete_all_metrics
-
       Librato::Rails.timing  'request.time.total', 122.1
       Librato::Rails.measure 'items_bought', 20
       Librato::Rails.flush
@@ -102,14 +100,11 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     end
 
     test 'empty flush should not be sent' do
-      delete_all_metrics
       Librato::Rails.flush
-
       assert_equal [], Librato::Rails.client.list
     end
 
     test 'flush respects prefix' do
-      delete_all_metrics
       source = Librato::Rails.qualified_source
       Librato::Rails.prefix = 'testyprefix'
 
@@ -129,13 +124,66 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       assert_equal 4, mycount[source][0]['value']
     end
 
+    test 'flush recovers from failed flush' do
+      client = Librato::Rails.client
+      source = Librato::Rails.qualified_source
+
+      # create a metric foo of counter type
+      client.submit :foo => {:type => :counter, :value => 12}
+
+      # failing flush - submit a foo measurement as a gauge (type mismatch)
+      Librato::Rails.measure :foo, 2.12
+      Librato::Rails.flush
+
+      foo = client.fetch :foo, :count => 10
+      assert_equal 1, foo['unassigned'].length
+      assert_nil foo[source] # shouldn't have been accepted
+
+      Librato::Rails.measure :boo, 2.12
+      Librato::Rails.flush
+
+      boo = client.fetch :boo, :count => 10
+      assert_equal 2.12, boo[source][0]["value"]
+    end
+
+    test 'flush tolerates invalid metric names' do
+      client = Librato::Rails.client
+      source = Librato::Rails.qualified_source
+
+      Librato::Rails.increment :foo
+      Librato::Rails.increment 'fübar'
+      Librato::Rails.measure 'fu/bar/baz', 12.1
+      Librato::Rails.flush
+
+      metric_names = client.list.map { |m| m['name'] }
+      assert metric_names.include?('foo')
+
+      # should have saved values for foo even though
+      # other metrics had invalid names
+      foo = client.fetch :foo, :count => 5
+      assert_equal 1.0, foo[source][0]["value"]
+    end
+
+    test 'flush tolerates invalid source names' do
+      client = Librato::Rails.client
+
+      Librato::Rails.increment :foo, :source => 'atreides'
+      Librato::Rails.increment :bar, :source => 'glébnöst'
+      Librato::Rails.measure 'baz', 2.25, :source => 'b/l/ak/nok'
+      Librato::Rails.flush
+
+      # should have saved values for foo even though
+      # other metrics had invalid sources
+      foo = client.fetch :foo, :count => 5
+      assert_equal 1.0, foo['atreides'][0]["value"]
+    end
+
     private
 
     def delete_all_metrics
       client = Librato::Rails.client
-      client.list.each do |metric|
-        client.connection.delete("metrics/#{metric['name']}")
-      end
+      metric_names = client.list.map { |metric| metric['name'] }
+      client.delete(*metric_names) if !metric_names.empty?
     end
 
   else
