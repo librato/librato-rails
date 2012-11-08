@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'test_helper'
 
 class LibratoRailsRemoteTest < ActiveSupport::TestCase
@@ -121,6 +122,24 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
 
       mycount = client.fetch 'testyprefix.mycount', :count => 10
       assert_equal 4, mycount[source][0]['value']
+    end
+
+    test 'flush recovers from failed flush' do
+      client = Librato::Rails.client
+      source = Librato::Rails.qualified_source
+
+      # create a metric foo of counter type
+      client.submit :foo => {:type => :counter, :value => 12}
+
+      # failing flush - submit a foo measurement as a gauge (type mismatch)
+      Librato::Rails.measure :foo, 2.12
+      Librato::Rails.flush
+
+      Librato::Rails.measure :boo, 2.12
+      Librato::Rails.flush
+
+      boo = client.fetch :boo, :count => 10
+      assert_equal 2.12, boo[source][0]["value"]
     end
 
     private
