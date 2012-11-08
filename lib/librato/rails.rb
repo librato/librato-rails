@@ -10,8 +10,9 @@ require 'librato/rails/aggregator'
 require 'librato/rails/collector'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
-require 'librato/rails/worker'
+require 'librato/rails/validating_queue'
 require 'librato/rails/version'
+require 'librato/rails/worker'
 
 module Librato
   extend SingleForwardable
@@ -96,8 +97,7 @@ module Librato
       def flush
         log :debug, "flushing pid #{@pid} (#{Time.now}).."
         start = Time.now
-        queue = client.new_queue(:source => qualified_source,
-          :prefix => self.prefix, :skip_measurement_times => true)
+        queue = flush_queue
         # thread safety is handled internally for both stores
         counters.flush_to(queue)
         aggregate.flush_to(queue)
@@ -195,6 +195,14 @@ module Librato
         else
           :other
         end
+      end
+
+      def flush_queue
+        ValidatingQueue.new(
+          :client => client,
+          :source => qualified_source,
+          :prefix => self.prefix,
+          :skip_measurement_times => true )
       end
 
       def forking_server?
