@@ -248,7 +248,7 @@ module Librato
           log :debug, 'credentials not present, halting..'
           false
         elsif !explicit_source && on_heroku
-          log :debug, 'source must be set, halting..'
+          log :info, 'source must be provided in configuration, halting..'
           false
         else
           true
