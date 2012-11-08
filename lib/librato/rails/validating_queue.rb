@@ -13,10 +13,10 @@ module Librato
           name = entry[:name].to_s
           source = entry[:source] && entry[:source].to_s
           if name !~ METRIC_NAME_REGEX
-            LOGGER.log :warn, "metric name '#{name}' is invalid, not sending"
+            LOGGER.log :warn, "invalid metric name '#{name}', not sending."
             true # delete
           elsif source && source !~ SOURCE_NAME_REGEX
-            LOGGER.log :warn, "source name '#{source}' is invalid, not sending"
+            LOGGER.log :warn, "invalid source name '#{source}', not sending."
             true # delete
           else
             false # preserve
