@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class LibratoRailsRemoteTest < ActiveSupport::TestCase
-  
+
   # These tests connect to the Metrics server with an account and verify remote
   # functions. They will only run if the below environment variables are set.
   #
@@ -9,7 +9,7 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
   # test account.
   #
   if ENV['LIBRATO_RAILS_TEST_EMAIL'] && ENV['LIBRATO_RAILS_TEST_API_KEY']
-  
+
     setup do
       # delete any generated Librato::Rails
       Librato::Rails.user = ENV['LIBRATO_RAILS_TEST_EMAIL']
@@ -19,7 +19,7 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       end
       Librato::Rails.delete_all
     end
-    
+
     teardown do
       Librato::Rails.prefix = nil
     end
@@ -27,13 +27,13 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
     test 'flush sends counters' do
       delete_all_metrics
       source = Librato::Rails.qualified_source
-      
+
       Librato::Rails.increment :foo
       Librato::Rails.increment :bar, 2
       Librato::Rails.increment :foo
       Librato::Rails.increment :foo, :source => 'baz', :by => 3
       Librato::Rails.flush
-    
+
       client = Librato::Rails.client
       metric_names = client.list.map { |m| m['name'] }
       assert metric_names.include?('foo'), 'foo should be present'
@@ -42,104 +42,104 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       foo = client.fetch 'foo', :count => 10
       assert_equal 1, foo[source].length
       assert_equal 2, foo[source][0]['value']
-      
+
       # custom source
       assert_equal 1, foo['baz'].length
-      assert_equal 3, foo['baz'][0]['value']  
-    
+      assert_equal 3, foo['baz'][0]['value']
+
       bar = client.fetch 'bar', :count => 10
       assert_equal 1, bar[source].length
       assert_equal 2, bar[source][0]['value']
     end
-  
+
     test 'counters should persist through flush' do
       Librato::Rails.increment 'knightrider'
       Librato::Rails.increment 'badguys', :sporadic => true
       assert_equal 1, Librato::Rails.counters['knightrider']
       assert_equal 1, Librato::Rails.counters['badguys']
-      
+
       Librato::Rails.flush
       assert_equal 0, Librato::Rails.counters['knightrider']
       assert_equal nil, Librato::Rails.counters['badguys']
     end
-  
+
     test 'flush sends measures/timings' do
       delete_all_metrics
       source = Librato::Rails.qualified_source
-      
+
       Librato::Rails.timing  'request.time.total', 122.1
       Librato::Rails.measure 'items_bought', 20
       Librato::Rails.timing  'request.time.total', 81.3
       Librato::Rails.timing  'jobs.queued', 5, :source => 'worker.3'
       Librato::Rails.flush
-    
+
       client = Librato::Rails.client
       metric_names = client.list.map { |m| m['name'] }
       assert metric_names.include?('request.time.total'), 'request.time.total should be present'
       assert metric_names.include?('items_bought'), 'request.time.db should be present'
-    
+
       total = client.fetch 'request.time.total', :count => 10
       assert_equal 2, total[source][0]['count']
       assert_in_delta 203.4, total[source][0]['sum'], 0.1
-    
+
       items = client.fetch 'items_bought', :count => 10
       assert_equal 1, items[source][0]['count']
       assert_in_delta 20, items[source][0]['sum'], 0.1
-      
+
       jobs = client.fetch 'jobs.queued', :count => 10
       assert_equal 1, jobs['worker.3'][0]['count']
       assert_in_delta 5, jobs['worker.3'][0]['sum'], 0.1
     end
-  
+
     test 'flush should purge measures/timings' do
       delete_all_metrics
-    
+
       Librato::Rails.timing  'request.time.total', 122.1
       Librato::Rails.measure 'items_bought', 20
       Librato::Rails.flush
-    
+
       assert Librato::Rails.aggregate.empty?, 'measures and timings should be cleared with flush'
     end
-  
+
     test 'empty flush should not be sent' do
       delete_all_metrics
       Librato::Rails.flush
-    
+
       assert_equal [], Librato::Rails.client.list
     end
-    
+
     test 'flush respects prefix' do
       delete_all_metrics
       source = Librato::Rails.qualified_source
       Librato::Rails.prefix = 'testyprefix'
-      
+
       Librato::Rails.timing 'mytime', 221.1
       Librato::Rails.increment 'mycount', 4
       Librato::Rails.flush
-      
+
       client = Librato::Rails.client
       metric_names = client.list.map { |m| m['name'] }
       assert metric_names.include?('testyprefix.mytime'), 'testyprefix.mytime should be present'
       assert metric_names.include?('testyprefix.mycount'), 'testyprefix.mycount should be present'
-      
+
       mytime = client.fetch 'testyprefix.mytime', :count => 10
       assert_equal 1, mytime[source][0]['count']
-      
+
       mycount = client.fetch 'testyprefix.mycount', :count => 10
       assert_equal 4, mycount[source][0]['value']
     end
-  
+
     private
-  
+
     def delete_all_metrics
       client = Librato::Rails.client
       client.list.each do |metric|
         client.connection.delete("metrics/#{metric['name']}")
       end
     end
-  
+
   else
     puts "Skipping remote tests..."
   end
-  
+
 end
