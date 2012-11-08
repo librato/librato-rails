@@ -146,6 +146,33 @@ class LibratoRailsRemoteTest < ActiveSupport::TestCase
       assert_equal 2.12, boo[source][0]["value"]
     end
 
+    test 'flush tolerates invalid metric names' do
+      client = Librato::Rails.client
+      source = Librato::Rails.qualified_source
+
+      Librato::Rails.increment :foo
+      Librato::Rails.increment 'fübar'
+      Librato::Rails.measure 'fu/bar/baz', 12.1
+      Librato::Rails.flush
+
+      metric_names = client.list.map { |m| m['name'] }
+      assert metric_names.include?('foo')
+
+      # should have saved values for foo even though
+      # other metrics had invalid names
+      foo = client.fetch :foo, :count => 5
+      assert_equal 1.0, foo[source][0]["value"]
+    end
+
+    test 'flush tolerates invalid source names' do
+      Librato::Rails.increment :foo
+      Librato::Rails.increment :foo, :source => 'glébnöst'
+      Librato::Rails.measure 'bar', 2.25, :source => 'b/l/ak/nok'
+      Librato::Rails.flush
+
+      client = Librato::Rails.client
+    end
+
     private
 
     def delete_all_metrics
