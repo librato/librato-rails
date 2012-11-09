@@ -23,6 +23,7 @@ module Librato
     CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
     FORKING_SERVERS = [:unicorn, :passenger]
     LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
+    SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
 
     mattr_accessor :config_file
     self.config_file = 'config/librato.yml'
@@ -245,10 +246,14 @@ module Librato
 
       def should_start?
         if !self.user || !self.token
-          log :debug, 'credentials not present, halting..'
+          # don't show this unless we're debugging, expected behavior
+          log :debug, 'halting: credentials not present.'
+          false
+        elsif qualified_source !~ SOURCE_REGEX
+          log :warn, "halting: '#{qualified_source}' is an invalid source name."
           false
         elsif !explicit_source && on_heroku
-          log :debug, 'source must be set, halting..'
+          log :warn, 'halting: source must be provided in configuration.'
           false
         else
           true
