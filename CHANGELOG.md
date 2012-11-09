@@ -1,3 +1,7 @@
+### Version 0.7.3
+* More resilient handling of invalid metric/source names
+* Don't start if provided source is invalid
+
 ### Version 0.7.2
 * Relax multi_json version requirement to allow running with Rails 3.1/3.0
 * Fix exception if current environment is not in config file
