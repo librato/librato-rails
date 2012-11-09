@@ -8,6 +8,7 @@ require 'librato/metrics'
 require 'librato/rack'
 require 'librato/rails/aggregator'
 require 'librato/rails/collector'
+require 'librato/rails/configuration'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
 require 'librato/rails/validating_queue'
@@ -20,13 +21,11 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
+    extend Librato::Rails::Configuration
+
     FORKING_SERVERS = [:unicorn, :passenger]
     LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
     SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
-
-    mattr_accessor :config_file
-    self.config_file = 'config/librato.yml'
 
     # config options
     mattr_accessor :user
@@ -48,31 +47,6 @@ module Librato
                                :measure, :prefix, :prefix=, :timing
 
     class << self
-
-      # set custom api endpoint
-      def api_endpoint=(endpoint)
-        @api_endpoint = endpoint
-      end
-
-      # detect / update configuration
-      def check_config
-        self.log_level = ENV['LIBRATO_METRICS_LOG_LEVEL'] if ENV['LIBRATO_METRICS_LOG_LEVEL']
-        if self.config_file && File.exists?(self.config_file)
-          log :debug, "configuring with librato.yml; ignoring environment variables.."
-          if env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
-            settable = CONFIG_SETTABLE & env_specific.keys
-            settable.each { |key| self.send("#{key}=", env_specific[key]) }
-          else
-            log :debug, "current environment not in config file, halting"
-          end
-        else
-          log :debug, "using environment variables for configuration.."
-          %w{user token source log_level}.each do |settable|
-            env_var = "LIBRATO_METRICS_#{settable.upcase}"
-            send("#{settable}=", ENV[env_var]) if ENV[env_var]
-          end
-        end
-      end
 
       # check to see if we've forked into a process where a worker
       # isn't running yet, if so start it up!
