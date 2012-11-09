@@ -29,7 +29,7 @@ module Librato
           settable = CONFIG_SETTABLE & env_specific.keys
           settable.each { |key| self.send("#{key}=", env_specific[key]) }
         else
-          log :debug, "current environment not in config file, halting"
+          log :debug, "halting: current environment (#{::Rails.env}) not in config file."
         end
       end
 
