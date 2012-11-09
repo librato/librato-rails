@@ -8,8 +8,10 @@ require 'librato/metrics'
 require 'librato/rack'
 require 'librato/rails/aggregator'
 require 'librato/rails/collector'
+require 'librato/rails/configuration'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
+require 'librato/rails/logging'
 require 'librato/rails/validating_queue'
 require 'librato/rails/version'
 require 'librato/rails/worker'
@@ -20,13 +22,11 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
-    FORKING_SERVERS = [:unicorn, :passenger]
-    LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
-    SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
+    extend Librato::Rails::Configuration
+    extend Librato::Rails::Logging
 
-    mattr_accessor :config_file
-    self.config_file = 'config/librato.yml'
+    FORKING_SERVERS = [:unicorn, :passenger]
+    SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
 
     # config options
     mattr_accessor :user
@@ -48,31 +48,6 @@ module Librato
                                :measure, :prefix, :prefix=, :timing
 
     class << self
-
-      # set custom api endpoint
-      def api_endpoint=(endpoint)
-        @api_endpoint = endpoint
-      end
-
-      # detect / update configuration
-      def check_config
-        self.log_level = ENV['LIBRATO_METRICS_LOG_LEVEL'] if ENV['LIBRATO_METRICS_LOG_LEVEL']
-        if self.config_file && File.exists?(self.config_file)
-          log :debug, "configuring with librato.yml; ignoring environment variables.."
-          if env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
-            settable = CONFIG_SETTABLE & env_specific.keys
-            settable.each { |key| self.send("#{key}=", env_specific[key]) }
-          else
-            log :debug, "current environment not in config file, halting"
-          end
-        else
-          log :debug, "using environment variables for configuration.."
-          %w{user token source log_level}.each do |settable|
-            env_var = "LIBRATO_METRICS_#{settable.upcase}"
-            send("#{settable}=", ENV[env_var]) if ENV[env_var]
-          end
-        end
-      end
 
       # check to see if we've forked into a process where a worker
       # isn't running yet, if so start it up!
@@ -107,33 +82,6 @@ module Librato
         log :trace, "flushed pid #{@pid} in #{(Time.now - start)*1000.to_f}ms"
       rescue Exception => error
         log :error, "submission failed permanently: #{error}"
-      end
-
-      def log(level, message)
-        return unless should_log?(level)
-        case level
-        when :error, :warn
-          method = level
-        else
-          method = :info
-        end
-        message = '[librato-rails] ' << message
-        logger.send(method, message)
-      end
-
-      # set log level to any of LOG_LEVELS
-      def log_level=(level)
-        level = level.to_sym
-        if LOG_LEVELS.index(level)
-          @log_level = level
-          require 'pp' if should_log?(:debug)
-        else
-          raise "Invalid log level '#{level}'"
-        end
-      end
-
-      def log_level
-        @log_level ||= :info
       end
 
       # source including process pid
@@ -210,16 +158,6 @@ module Librato
         FORKING_SERVERS.include?(app_server)
       end
 
-      def logger
-        @logger ||= if on_heroku
-          logger = Logger.new(STDOUT)
-          logger.level = Logger::INFO
-          logger
-        else
-          ::Rails.logger
-        end
-      end
-
       def on_heroku
         # would be nice to have something more specific here,
         # but nothing characteristic in ENV, etc.
@@ -240,10 +178,6 @@ module Librato
         RUBY_DESCRIPTION.split[0]
       end
 
-      def should_log?(level)
-        LOG_LEVELS.index(self.log_level) >= LOG_LEVELS.index(level)
-      end
-
       def should_start?
         if !self.user || !self.token
           # don't show this unless we're debugging, expected behavior
@@ -262,31 +196,6 @@ module Librato
 
       def source_is_uuid?(source)
         source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
-      end
-
-      # trace current environment
-      def trace_environment
-        log :info, "Environment: " + ENV.pretty_inspect
-      end
-
-      # trace metrics being sent
-      def trace_queued(queued)
-        log :trace, "Queued: " + queued.pretty_inspect
-      end
-
-      def trace_settings
-        settings = {
-          :user => self.user,
-          :token => self.token,
-          :source => source,
-          :explicit_source => self.explicit_source ? 'true' : 'false',
-          :source_pids => self.source_pids ? 'true' : 'false',
-          :qualified_source => qualified_source,
-          :log_level => log_level,
-          :prefix => prefix,
-          :flush_interval => self.flush_interval
-        }
-        log :info, 'Settings: ' + settings.pretty_inspect
       end
 
       def user_agent
