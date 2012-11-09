@@ -246,13 +246,14 @@ module Librato
 
       def should_start?
         if !self.user || !self.token
+          # don't show this unless we're debugging, expected behavior
           log :debug, 'halting: credentials not present.'
           false
         elsif qualified_source !~ SOURCE_REGEX
-          log :info, "halting: '#{qualified_source}' is an invalid source name."
+          log :warn, "halting: '#{qualified_source}' is an invalid source name."
           false
         elsif !explicit_source && on_heroku
-          log :info, 'halting: source must be provided in configuration.'
+          log :warn, 'halting: source must be provided in configuration.'
           false
         else
           true
