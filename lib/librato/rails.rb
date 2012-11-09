@@ -11,6 +11,7 @@ require 'librato/rails/collector'
 require 'librato/rails/configuration'
 require 'librato/rails/counter_cache'
 require 'librato/rails/group'
+require 'librato/rails/logging'
 require 'librato/rails/validating_queue'
 require 'librato/rails/version'
 require 'librato/rails/worker'
@@ -22,9 +23,9 @@ module Librato
   module Rails
     extend SingleForwardable
     extend Librato::Rails::Configuration
+    extend Librato::Rails::Logging
 
     FORKING_SERVERS = [:unicorn, :passenger]
-    LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
     SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
 
     # config options
@@ -81,33 +82,6 @@ module Librato
         log :trace, "flushed pid #{@pid} in #{(Time.now - start)*1000.to_f}ms"
       rescue Exception => error
         log :error, "submission failed permanently: #{error}"
-      end
-
-      def log(level, message)
-        return unless should_log?(level)
-        case level
-        when :error, :warn
-          method = level
-        else
-          method = :info
-        end
-        message = '[librato-rails] ' << message
-        logger.send(method, message)
-      end
-
-      # set log level to any of LOG_LEVELS
-      def log_level=(level)
-        level = level.to_sym
-        if LOG_LEVELS.index(level)
-          @log_level = level
-          require 'pp' if should_log?(:debug)
-        else
-          raise "Invalid log level '#{level}'"
-        end
-      end
-
-      def log_level
-        @log_level ||= :info
       end
 
       # source including process pid
@@ -184,16 +158,6 @@ module Librato
         FORKING_SERVERS.include?(app_server)
       end
 
-      def logger
-        @logger ||= if on_heroku
-          logger = Logger.new(STDOUT)
-          logger.level = Logger::INFO
-          logger
-        else
-          ::Rails.logger
-        end
-      end
-
       def on_heroku
         # would be nice to have something more specific here,
         # but nothing characteristic in ENV, etc.
@@ -214,10 +178,6 @@ module Librato
         RUBY_DESCRIPTION.split[0]
       end
 
-      def should_log?(level)
-        LOG_LEVELS.index(self.log_level) >= LOG_LEVELS.index(level)
-      end
-
       def should_start?
         if !self.user || !self.token
           # don't show this unless we're debugging, expected behavior
@@ -236,31 +196,6 @@ module Librato
 
       def source_is_uuid?(source)
         source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
-      end
-
-      # trace current environment
-      def trace_environment
-        log :info, "Environment: " + ENV.pretty_inspect
-      end
-
-      # trace metrics being sent
-      def trace_queued(queued)
-        log :trace, "Queued: " + queued.pretty_inspect
-      end
-
-      def trace_settings
-        settings = {
-          :user => self.user,
-          :token => self.token,
-          :source => source,
-          :explicit_source => self.explicit_source ? 'true' : 'false',
-          :source_pids => self.source_pids ? 'true' : 'false',
-          :qualified_source => qualified_source,
-          :log_level => log_level,
-          :prefix => prefix,
-          :flush_interval => self.flush_interval
-        }
-        log :info, 'Settings: ' + settings.pretty_inspect
       end
 
       def user_agent
