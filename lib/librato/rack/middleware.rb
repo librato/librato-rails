@@ -4,7 +4,7 @@ class Librato::Rack::Middleware
   end
 
   def call(env)
-    @metrics.check_worker if @metrics.send(:forking_server?)
+    @metrics.check_worker
 
     header_metrics env
 
