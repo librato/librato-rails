@@ -13,7 +13,7 @@ module Librato
 
       # detect / update configuration
       def check_config
-        self.log_level = ENV['LIBRATO_METRICS_LOG_LEVEL'] if ENV['LIBRATO_METRICS_LOG_LEVEL']
+        self.log_level = ENV['LIBRATO_LOG_LEVEL'] if ENV['LIBRATO_LOG_LEVEL']
         if self.config_file && File.exists?(self.config_file)
           configure_with_config_file
         else
@@ -35,8 +35,14 @@ module Librato
 
       def configure_with_environment
         log :debug, "using environment variables for configuration.."
-        %w{user token source log_level}.each do |settable|
-          env_var = "LIBRATO_METRICS_#{settable.upcase}"
+        %w{user token source log_level prefix}.each do |settable|
+          legacy_env_var = "LIBRATO_METRICS_#{settable.upcase}"
+          if ENV[legacy_env_var]
+            log :warn, "#{legacy_env_var} is deprecated, use LIBRATO_#{settable.upcase} instead"
+            send("#{settable}=", ENV[legacy_env_var])
+          end
+          # if both are present, new-style dominates
+          env_var = "LIBRATO_#{settable.upcase}"
           send("#{settable}=", ENV[env_var]) if ENV[env_var]
         end
       end

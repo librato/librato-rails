@@ -7,6 +7,10 @@ class LibratoRailsConfigTest < MiniTest::Unit::TestCase
   end
 
   def teardown
+    ENV.delete('LIBRATO_USER')
+    ENV.delete('LIBRATO_TOKEN')
+    ENV.delete('LIBRATO_SOURCE')
+    # legacy
     ENV.delete('LIBRATO_METRICS_USER')
     ENV.delete('LIBRATO_METRICS_TOKEN')
     ENV.delete('LIBRATO_METRICS_SOURCE')
@@ -16,6 +20,17 @@ class LibratoRailsConfigTest < MiniTest::Unit::TestCase
   end
 
   def test_environmental_variable_config
+    ENV['LIBRATO_USER'] = 'foo@bar.com'
+    ENV['LIBRATO_TOKEN'] = 'api_key'
+    ENV['LIBRATO_SOURCE'] = 'source'
+    Librato::Rails.check_config
+    assert_equal 'foo@bar.com', Librato::Rails.user
+    assert_equal 'api_key', Librato::Rails.token
+    assert_equal 'source', Librato::Rails.source
+    assert Librato::Rails.explicit_source, 'source is explicit'
+  end
+
+  def test_legacy_env_variable_config
     ENV['LIBRATO_METRICS_USER'] = 'foo@bar.com'
     ENV['LIBRATO_METRICS_TOKEN'] = 'api_key'
     ENV['LIBRATO_METRICS_SOURCE'] = 'source'

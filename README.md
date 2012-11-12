@@ -35,7 +35,7 @@ Note that using a configuration file allows you to specify different configurati
 
 ##### Use environment variables
 
-Alternately you can provide `LIBRATO_METRICS_USER` and `LIBRATO_METRICS_TOKEN` environment variables. Unlike config file settings, environment variables will be used in all non-test environments (development, production, etc).  
+Alternately you can provide `LIBRATO_USER` and `LIBRATO_TOKEN` environment variables. Unlike config file settings, environment variables will be used in all non-test environments (development, production, etc).  
 
 Note that if a config file is present, _all environment variables will be ignored_.
 
@@ -47,7 +47,7 @@ If you are using the Librato Metrics Heroku addon, your user and token environme
 
 In either case you will need to specify a custom source for your app to track properly. If `librato-rails` does not detect an explicit source it will not start. You can set the source in your environment:
 
-    heroku config:add LIBRATO_METRICS_SOURCE=myappname
+    heroku config:add LIBRATO_SOURCE=myappname
     
 If you are using a config file, add your source entry to that instead.
 
