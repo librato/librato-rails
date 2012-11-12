@@ -1,3 +1,9 @@
+### Version 0.8.0
+* Add support for terser `LIBRATO_` prefixed environment variables
+* Deprecate `LIBRATO_METRICS_` prefixed environment variables
+* Always check worker, not just in forking servers
+* Refactor configuration/logging functionality into standalone modules
+
 ### Version 0.7.3
 * More resilient handling of invalid metric/source names
 * Don't start if provided source is invalid
