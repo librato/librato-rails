@@ -3,9 +3,30 @@ librato-rails
 
 [![Build Status](https://secure.travis-ci.org/librato/librato-rails.png?branch=master)](http://travis-ci.org/librato/librato-rails)
 
-Report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/), easily track your own custom metrics. Currently supports Rails 3.0+.
+`librato-rails` will report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
+
+Currently Rails 3.0+ and Ruby 1.9.2+ are required.
 
 You may want to read the [notes on upgrading](https://github.com/librato/librato-rails/wiki/Alpha-Tester-Upgrade-Notes) if you were an alpha tester.
+
+## Quick Start
+
+Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Metrics account.
+
+After installation `librato-rails` will detect your environment and start reporting available performance information for your application.
+
+Custom metrics can also be added easily:
+
+    # keep counts of key events
+    Librato.increment 'user.signup'
+
+    # easily benchmark sections of code to verify production performance
+    Librato.timing 'my.complicated.work' do
+      # do work
+    end
+
+    # track averages across requests
+    Librato.measure 'user.social_graph.nodes', user.social_graph.size
 
 ## Installation
 
