@@ -17,16 +17,18 @@ After installation `librato-rails` will detect your environment and start report
 
 Custom metrics can also be added easily:
 
-    # keep counts of key events
-    Librato.increment 'user.signup'
+```ruby
+# keep counts of key events
+Librato.increment 'user.signup'
 
-    # easily benchmark sections of code to verify production performance
-    Librato.timing 'my.complicated.work' do
-      # do work
-    end
+# easily benchmark sections of code to verify production performance
+Librato.timing 'my.complicated.work' do
+  # do work
+end
 
-    # track averages across requests
-    Librato.measure 'user.social_graph.nodes', user.social_graph.size
+# track averages across requests
+Librato.measure 'user.social_graph.nodes', user.social_graph.size
+```
 
 ## Installation
 
@@ -44,9 +46,11 @@ If you don't have a Metrics account already, [sign up](https://metrics.librato.c
 
 Create a `config/librato.yml` like the following:
 
-    production:
-      user: <your-email>
-      token: <your-api-key>
+```yaml
+production:
+  user: <your-email>
+  token: <your-api-key>
+```
 
 The `librato.yml` file is parsed via ERB in case you need to add some host or environment-specific magic.
 
@@ -88,14 +92,16 @@ Tracking anything that interests you is easy with Metrics. There are four primar
 
 Use for tracking a running total of something _across_ requests, examples:
 
-    # increment the 'sales_completed' metric by one
-    Librato.increment 'sales_completed'
+```ruby
+# increment the 'sales_completed' metric by one
+Librato.increment 'sales_completed'
 
-    # increment by five
-    Librato.increment 'items_purchased', :by => 5
+# increment by five
+Librato.increment 'items_purchased', :by => 5
 
-    # increment with a custom source
-    Librato.increment 'user.purchases', :source => user.id
+# increment with a custom source
+Librato.increment 'user.purchases', :source => user.id
+```
 
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
 
@@ -105,46 +111,57 @@ Note that `increment` is primarily used for tracking the rate of occurrence of s
 
 Especially with custom sources you may want the opposite behavior - reporting a measurement only during intervals where `increment` was called on the metric:
 
-    # report a value for 'user.uploaded_file' only during non-zero intervals
-    Librato.increment 'user.uploaded_file', :source => user.id, :sporadic => true
+```ruby
+# report a value for 'user.uploaded_file' only during non-zero intervals
+Librato.increment 'user.uploaded_file', :source => user.id, :sporadic => true
+```
 
 #### measure
 
 Use when you want to track an average value _per_-request. Examples:
 
-    Librato.measure 'user.social_graph.nodes', 212
+```ruby
+Librato.measure 'user.social_graph.nodes', 212
 
-	# report from a custom source
-    Librato.measure 'jobs.queued', 3, :source => 'worker.12'
-
+# report from a custom source
+Librato.measure 'jobs.queued', 3, :source => 'worker.12'
+```
 
 #### timing
 
 Like `Librato.measure` this is per-request, but specialized for timing information:
 
-    Librato.timing 'twitter.lookup.time', 21.2
+```ruby
+Librato.timing 'twitter.lookup.time', 21.2
+```
 
 The block form auto-submits the time it took for its contents to execute as the measurement value:
 
-    Librato.timing 'twitter.lookup.time' do
-      @twitter = Twitter.lookup(user)
-    end
+```ruby
+Librato.timing 'twitter.lookup.time' do
+  @twitter = Twitter.lookup(user)
+end
+```
 
 #### group
 
 There is also a grouping helper, to make managing nested metrics easier. So this:
 
-    Librato.measure 'memcached.gets', 20
-    Librato.measure 'memcached.sets', 2
-    Librato.measure 'memcached.hits', 18
+```ruby
+Librato.measure 'memcached.gets', 20
+Librato.measure 'memcached.sets', 2
+Librato.measure 'memcached.hits', 18
+```
 
 Can also be written as:
 
-    Librato.group 'memcached' do |g|
-      g.measure 'gets', 20
-      g.measure 'sets', 2
-      g.measure 'hits', 18
-    end
+```ruby
+Librato.group 'memcached' do |g|
+  g.measure 'gets', 20
+  g.measure 'sets', 2
+  g.measure 'hits', 18
+end
+```
 
 Symbols can be used interchangably with strings for metric names.
 
