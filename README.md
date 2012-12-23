@@ -199,4 +199,4 @@ If you are debugging setting up `librato-rails` locally you can set `flush_inter
 
 ## Copyright
 
-Copyright (c) 2012 [Librato Inc.](http://librato.com) See LICENSE for details.
+Copyright (c) 2012-2013 [Librato Inc.](http://librato.com) See LICENSE for details.
