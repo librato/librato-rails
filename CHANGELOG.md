@@ -1,3 +1,6 @@
+### Version 0.8.1
+* Bump librato-metrics to fix issue with Rails 3.1.6
+
 ### Version 0.8.0
 * Add support for terser `LIBRATO_` prefixed environment variables
 * Deprecate `LIBRATO_METRICS_` prefixed environment variables
