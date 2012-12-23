@@ -100,7 +100,7 @@ module Librato
           log :info, "starting up with #{app_server}..."
         end
         @pid = $$
-        app.middleware.use Librato::Rack::Middleware
+        app.middleware.insert(0, Librato::Rack::Middleware)
         start_worker unless forking_server?
       end
 
