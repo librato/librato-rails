@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", ">= 3.0"
-  s.add_dependency "librato-metrics", "~> 0.7.4"
+  s.add_dependency "librato-metrics", "~> 1.0.2"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "minitest", '~> 3.4.0'
