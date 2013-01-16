@@ -17,7 +17,7 @@ class LibratoRailsTest < ActiveSupport::TestCase
   
   test '#measure exists' do
     assert Librato::Rails.respond_to?(:measure)
-    Librato::Rails.timing 'queries', 10
+    Librato::Rails.measure 'queries', 10
   end
   
   test '#timing exists' do
