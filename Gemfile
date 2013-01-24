@@ -1,12 +1,13 @@
 source "http://rubygems.org"
 gemspec
 
-# jquery-rails is used by the dummy application
-gem 'rails', '3.2.11'
-gem 'jquery-rails'
-gem 'capybara', '~> 1.0'
+# current capybara and less specific rails dependency
+# leads to incredibly long bundler resolution, hopefully
+# this specificity can be removed in the future
+gem 'rails', '~> 3.2.11'
+
+# debugging
 gem 'pry'
-#gem 'minitest'
 
 # mocks
 gem 'mocha', :require => false
