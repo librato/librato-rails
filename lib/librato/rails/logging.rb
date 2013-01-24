@@ -30,8 +30,6 @@ module Librato::Rails
       @log_level ||= :info
     end
 
-    private
-
     def logger
       @logger ||= if on_heroku
         logger = Logger.new(STDOUT)
@@ -41,6 +39,10 @@ module Librato::Rails
         ::Rails.logger
       end
     end
+
+    attr_writer :logger
+
+    private
 
     def should_log?(level)
       LOG_LEVELS.index(self.log_level) >= LOG_LEVELS.index(level)
