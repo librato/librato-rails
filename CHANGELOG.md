@@ -1,3 +1,6 @@
+### Version 0.8.2
+* Allow override of logging location (Rick Martinez)
+
 ### Version 0.8.1
 * Bump librato-metrics to fix issue with Rails 3.1.6
 
@@ -15,7 +18,7 @@
 * Relax multi_json version requirement to allow running with Rails 3.1/3.0
 * Fix exception if current environment is not in config file
 * Always respect LIBRATO_METRICS_LOG_LEVEL env variable for easier startup debugging
-* Add more debugging statements in startup sequence_
+* Add more debugging statements in startup sequence
 
 ### Version 0.7.1
 * Support for Passenger 4 (James Miller)
