@@ -2,8 +2,9 @@ source "http://rubygems.org"
 gemspec
 
 # jquery-rails is used by the dummy application
+gem 'rails', '3.2.11'
 gem 'jquery-rails'
-gem 'capybara'
+gem 'capybara', '~> 1.0'
 gem 'pry'
 #gem 'minitest'
 
