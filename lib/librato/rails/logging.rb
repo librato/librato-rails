@@ -2,6 +2,8 @@ module Librato::Rails
   module Logging
     LOG_LEVELS = [:off, :error, :warn, :info, :debug, :trace]
 
+    attr_writer :logger
+
     # ex: log :debug, 'this is a debug message'
     def log(level, message)
       return unless should_log?(level)
@@ -39,8 +41,6 @@ module Librato::Rails
         ::Rails.logger
       end
     end
-
-    attr_writer :logger
 
     private
 
