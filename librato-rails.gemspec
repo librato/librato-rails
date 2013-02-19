@@ -13,8 +13,14 @@ Gem::Specification.new do |s|
   s.summary     = "Use Librato Metrics with your Rails 3 app"
   s.description = "Report key app statistics to the Librato Metrics service and easily track your own custom metrics."
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*"]
+  s.files += ["LICENSE", "Rakefile", "README.md", "CHANGELOG.md"]
   s.test_files = Dir["test/**/*"]
+
+  # ignore temporary files
+  s.test_files.reject! { |file| file =~ /dummy\/tmp\/[a-z]+\// }
+  s.test_files.reject! { |file| file =~ /dummy\/db\/.*\.sqlite3/ }
+  s.test_files.reject! { |file| file =~ /dummy\/log\/.*\.log/ }
 
   s.add_dependency "rails", ">= 3.0"
   s.add_dependency "librato-metrics", "~> 1.0.2"
