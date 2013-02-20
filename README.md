@@ -165,6 +165,48 @@ end
 
 Symbols can be used interchangably with strings for metric names.
 
+## Use with ActiveSupport::Notifications
+
+`librato-rails` and [ActiveSupport::Notifications](http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html) work great together. In fact, many of the Rails metrics provided are produced by subscribing to the [instrumentation events](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) built into Rails.
+
+Assume you have a custom event:
+
+```ruby
+ActiveSupport::Notifications.instrument 'my.event', :user => user do
+  # do work..
+end
+```
+
+Writing a subscriber to capture that event and its outcomes is easy:
+
+```ruby
+ActiveSupport::Notifications.subscribe 'my.event' do |*args|
+  event = ActiveSupport::Notifications::Event.new(*args)
+  user = event.payload[:user]
+
+  # track every time the event happens
+  Librato.increment 'my.event'
+
+  # track how long the event is taking
+  Librato.timing 'my.event.time', event.duration
+
+  # use payload data to do user-specific tracking
+  Librato.increment 'user.did.event', :source => user.id, :sporadic => true
+
+  # do conditional tracking
+  if user.feature_on?(:sample_group)
+    Librato.increment 'user.sample.event'
+  end
+
+  # track slow events
+  if event.duration >= 50.0
+    Librato.increment 'my.event.slow'
+  end
+end
+```
+
+These are just a few examples. Combining `ActiveSupport::Notifications` instrumentation with Librato can be extremely powerful. As an added benefit, using the instrument/subscribers model allows you to isolate complex instrumentation code from your main application codebase.
+
 ## Custom Prefix
 
 You can set an optional prefix to all metrics reported by `librato-rails` in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration). This can be helpful for isolating test data or forcing different apps to use different metric names.
