@@ -33,10 +33,14 @@ module Librato
     mattr_accessor :token
     mattr_accessor :flush_interval
     mattr_accessor :source_pids
+    mattr_accessor :use_middleware
+    mattr_accessor :use_subscribers
 
     # config defaults
     self.flush_interval = 60 # seconds
     self.source_pids = false # append process id to the source?
+    self.use_middleware = true
+    self.use_subscribers = true
     # log_level (default :info)
     # source (default: your machine's hostname)
 
@@ -100,7 +104,8 @@ module Librato
           log :info, "starting up with #{app_server}..."
         end
         @pid = $$
-        app.middleware.use Librato::Rack::Middleware
+        app.middleware.use Librato::Rack::Middleware if self.use_middleware
+        enable_subscribers! if self.use_subscribers
         start_worker unless forking_server?
       end
 

@@ -1,7 +1,9 @@
 class ActiveSupport::IntegrationCase < ActiveSupport::TestCase
   include Capybara::DSL
   include Rails.application.routes.url_helpers
-  
+
+  Librato::Rails.enable_subscribers!
+
   setup do
     # remove any accumulated metrics
     Librato::Rails.delete_all

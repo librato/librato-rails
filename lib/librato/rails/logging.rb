@@ -68,7 +68,9 @@ module Librato::Rails
         :qualified_source => qualified_source,
         :log_level => log_level,
         :prefix => prefix,
-        :flush_interval => self.flush_interval
+        :flush_interval => self.flush_interval,
+        :use_middleware => self.use_middleware,
+        :use_subscribers => self.use_subscribers
       }
       log :info, 'Settings: ' + settings.pretty_inspect
     end

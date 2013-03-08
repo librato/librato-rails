@@ -1,7 +1,7 @@
 module Librato
   module Rails
     module Configuration
-      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
+      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids use_middleware use_subscribers}
 
       mattr_accessor :config_file
       self.config_file = 'config/librato.yml'
