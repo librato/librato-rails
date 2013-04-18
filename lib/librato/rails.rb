@@ -128,7 +128,7 @@ module Librato
           worker = Worker.new
           worker.run_periodically(self.flush_interval) do
             flush
-          end
+          end unless self.flush_interval == 0
         end
       end
 
