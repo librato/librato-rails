@@ -26,6 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency "librato-metrics", "~> 1.0.2"
 
   s.add_development_dependency "sqlite3", ">= 1.3"
-  s.add_development_dependency "capybara", ">= 2.0"
+  s.add_development_dependency "capybara", "~> 2.0.3"
   s.add_development_dependency "minitest", '~> 3.4.0'
 end
