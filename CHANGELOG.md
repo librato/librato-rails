@@ -1,3 +1,6 @@
+### Version 0.9.0
+* Bump librato-metrics dependency version for new functionality
+
 ### Version 0.8.2
 * Allow override of logging location (Rick Martinez)
 
