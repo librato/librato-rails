@@ -4,7 +4,6 @@ require 'active_support/notifications'
 require 'librato/rack'
 require 'librato/rails/configuration'
 require 'librato/rails/version'
-require 'librato/rails/worker'
 
 module Librato
   extend SingleForwardable
@@ -12,8 +11,8 @@ module Librato
 
   module Rails
     extend SingleForwardable
-    extend Librato::Rails::Configuration
-    extend Librato::Rails::Logging
+    # extend Librato::Rails::Configuration
+    # extend Librato::Rails::Logging
 
     FORKING_SERVERS = [:unicorn, :passenger]
     SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
