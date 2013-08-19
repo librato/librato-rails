@@ -207,9 +207,16 @@ end
 
 These are just a few examples. Combining `ActiveSupport::Notifications` instrumentation with Librato can be extremely powerful. As an added benefit, using the instrument/subscribers model allows you to isolate complex instrumentation code from your main application codebase.
 
-## Custom Prefix
+## Custom Prefixes
 
 You can set an optional prefix to all metrics reported by `librato-rails` in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration). This can be helpful for isolating test data or forcing different apps to use different metric names.
+
+## Use with Background Workers / Cron Jobs
+
+`librato-rails` is designed to run within a long-running process and report periodically. Intermittently running rake tasks and most background job tools (delayed job, resque, queue_classic) don't run long enough for this to work.
+
+Never fear, [we have some guidelines](https://github.com/librato/librato-rails/wiki/Monitoring-Background-Workers) for how to instrument your workers properly.
+
 
 ## Cross-Process Aggregation
 
