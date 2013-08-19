@@ -1,7 +1,7 @@
 librato-rails
 =======
 
-[![Build Status](https://secure.travis-ci.org/librato/librato-rails.png?branch=master)](http://travis-ci.org/librato/librato-rails)
+[![Gem Version](https://badge.fury.io/rb/librato-rails.png)](http://badge.fury.io/rb/librato-rails) [![Build Status](https://secure.travis-ci.org/librato/librato-rails.png?branch=master)](http://travis-ci.org/librato/librato-rails) [![Code Climate](https://codeclimate.com/github/librato/librato-rails.png)](https://codeclimate.com/github/librato/librato-rails)
 
 `librato-rails` will report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
 
