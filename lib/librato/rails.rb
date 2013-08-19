@@ -12,7 +12,6 @@ module Librato
     # extend Librato::Rails::Logging
 
     FORKING_SERVERS = [:unicorn, :passenger]
-    SOURCE_REGEX = /\A[-:A-Za-z0-9_.]{1,255}\z/
 
     # config options
     mattr_accessor :user
@@ -168,9 +167,6 @@ module Librato
         if !self.user || !self.token
           # don't show this unless we're debugging, expected behavior
           log :debug, 'halting: credentials not present.'
-          false
-        elsif qualified_source !~ SOURCE_REGEX
-          log :warn, "halting: '#{qualified_source}' is an invalid source name."
           false
         elsif !explicit_source && on_heroku
           log :warn, 'halting: source must be provided in configuration.'
