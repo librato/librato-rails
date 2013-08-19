@@ -1,9 +1,5 @@
-require 'socket'
-require 'thread'
-
 require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/notifications'
-require 'librato/metrics'
 
 require 'librato/rack'
 require 'librato/rails/aggregator'
