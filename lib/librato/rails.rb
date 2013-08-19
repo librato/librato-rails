@@ -6,9 +6,6 @@ require 'librato/rails/configuration'
 require 'librato/rails/version'
 
 module Librato
-  extend SingleForwardable
-  def_delegators Librato::Rails, :increment, :measure, :timing, :group
-
   module Rails
     extend SingleForwardable
     # extend Librato::Rails::Configuration
