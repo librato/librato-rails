@@ -13,21 +13,6 @@ module Librato
 
     FORKING_SERVERS = [:unicorn, :passenger]
 
-    # config options
-    mattr_accessor :user
-    mattr_accessor :token
-    mattr_accessor :flush_interval
-    mattr_accessor :source_pids
-
-    # config defaults
-    self.flush_interval = 60 # seconds
-    self.source_pids = false # append process id to the source?
-    # log_level (default :info)
-    # source (default: your machine's hostname)
-
-    # handy introspection
-    mattr_accessor :explicit_source
-
     # a collector instance handles all measurement addition/storage
     def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment,
                                :measure, :prefix, :prefix=, :timing
@@ -69,11 +54,6 @@ module Librato
         log :error, "submission failed permanently: #{error}"
       end
 
-      # source including process pid
-      def qualified_source
-        self.source_pids ? "#{source}.#{$$}" : source
-      end
-
       # run once during Rails startup sequence
       def setup(app)
         check_config
@@ -87,18 +67,6 @@ module Librato
         @pid = $$
         app.middleware.use Librato::Rack::Middleware
         start_worker unless forking_server?
-      end
-
-      def source
-        return @source if @source
-        self.explicit_source = false
-        @source = Socket.gethostname
-      end
-
-      # set a custom source
-      def source=(src)
-        self.explicit_source = true
-        @source = src
       end
 
       # start the worker thread, one is needed per process.
