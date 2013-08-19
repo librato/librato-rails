@@ -8,10 +8,6 @@ require 'librato/rails/version'
 module Librato
   module Rails
     extend SingleForwardable
-    # extend Librato::Rails::Configuration
-    # extend Librato::Rails::Logging
-
-    FORKING_SERVERS = [:unicorn, :passenger]
 
     # a collector instance handles all measurement addition/storage
     def_delegators :collector, :aggregate, :counters, :delete_all, :group, :increment,
@@ -32,11 +28,6 @@ module Librato
       # access to client instance
       def client
         @client ||= prepare_client
-      end
-
-      # collector instance which is tracking all measurement additions
-      def collector
-        @collector ||= Collector.new
       end
 
       # send all current data to Metrics
@@ -87,34 +78,12 @@ module Librato
 
     private
 
-      def app_server
-        if defined?(::Unicorn) && defined?(::Unicorn::HttpServer) && !::Unicorn.listener_names.empty?
-          :unicorn
-        elsif defined?(::IN_PHUSION_PASSENGER) || defined?(::PhusionPassenger)
-          :passenger
-        elsif defined?(::Thin) && defined?(::Thin::Server)
-          :thin
-        else
-          :other
-        end
-      end
-
       def flush_queue
         ValidatingQueue.new(
           :client => client,
           :source => qualified_source,
           :prefix => self.prefix,
           :skip_measurement_times => true )
-      end
-
-      def forking_server?
-        FORKING_SERVERS.include?(app_server)
-      end
-
-      def on_heroku
-        # would be nice to have something more specific here,
-        # but nothing characteristic in ENV, etc.
-        @on_heroku ||= source_is_uuid?(Socket.gethostname)
       end
 
       def prepare_client
@@ -129,23 +98,6 @@ module Librato
       def ruby_engine
         return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
         RUBY_DESCRIPTION.split[0]
-      end
-
-      def should_start?
-        if !self.user || !self.token
-          # don't show this unless we're debugging, expected behavior
-          log :debug, 'halting: credentials not present.'
-          false
-        elsif !explicit_source && on_heroku
-          log :warn, 'halting: source must be provided in configuration.'
-          false
-        else
-          true
-        end
-      end
-
-      def source_is_uuid?(source)
-        source =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
       end
 
       def user_agent
