@@ -2,13 +2,7 @@ require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/notifications'
 
 require 'librato/rack'
-require 'librato/rails/aggregator'
-require 'librato/rails/collector'
 require 'librato/rails/configuration'
-require 'librato/rails/counter_cache'
-require 'librato/rails/group'
-require 'librato/rails/logging'
-require 'librato/rails/validating_queue'
 require 'librato/rails/version'
 require 'librato/rails/worker'
 
