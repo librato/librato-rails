@@ -10,7 +10,7 @@ On versions of `librato-rails` prior to 0.9.0 these can appear similar as the mi
 
 #### I've noticed that the HTTP request sending my metrics sometimes takes a while, isn't that slowing down my web server or limiting how many requests I can handle?
 
-Submissions to the Metrics service take place in a background thread which runs extremely quickly and has minimal impact on your primary request-serving thread or threads.
+Submissions to the Librato service take place in a background thread which runs extremely quickly and has minimal impact on your primary request-serving thread or threads.
 
 The only time that the worker uses any CPU is to package up submissions, which is highly optimized. While the worker thread is sleeping or waiting for a response it is non-blocking and doesn't compete with your request-serving threads.
 
