@@ -6,6 +6,7 @@ module Librato
       config.librato_rails = Configuration.new
       tracker = Tracker.new(config.librato_rails)
       config.librato_rails.tracker = tracker
+      Librato.register_tracker(tracker)
 
       if !::Rails.env.test? && tracker.should_start?
         unless defined?(::Rails::Console) && ENV['LIBRATO_AUTORUN'] != '1'
