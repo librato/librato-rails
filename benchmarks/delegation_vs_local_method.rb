@@ -32,8 +32,21 @@ class SenderTwo
   end
 end
 
-sender_one = SenderOne.new
-sender_two = SenderTwo.new
+class SenderThree
+  extend Forwardable
+  def_delegators :sender, :doit
+
+  private
+
+  def sender
+    @sender ||= SenderTwo.new
+  end
+
+end
+
+sender_one    = SenderOne.new
+sender_two    = SenderTwo.new
+sender_three  = SenderThree.new
 
 Benchmark.ips do |x|
   x.report('local method') do
@@ -42,5 +55,9 @@ Benchmark.ips do |x|
 
   x.report('delegation') do
     sender_two.doit
+  end
+
+  x.report('nested delegation') do
+    sender_three.doit
   end
 end
