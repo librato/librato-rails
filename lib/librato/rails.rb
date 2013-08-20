@@ -1,6 +1,3 @@
-require 'active_support/core_ext/module/attribute_accessors'
-require 'active_support/notifications'
-
 require 'librato/rack'
 require 'librato/rails/configuration'
 require 'librato/rails/tracker'
