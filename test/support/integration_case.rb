@@ -1,19 +1,23 @@
 class ActiveSupport::IntegrationCase < ActiveSupport::TestCase
   include Capybara::DSL
   include Rails.application.routes.url_helpers
-  
+
   setup do
     # remove any accumulated metrics
-    Librato::Rails.delete_all
+    collector.delete_all
   end
-  
+
   private
-  
+
   def aggregate
-    Librato::Rails.aggregate
+    collector.aggregate
   end
-  
+
+  def collector
+    Librato.tracker.collector
+  end
+
   def counters
-    Librato::Rails.counters
+    collector.counters
   end
 end
