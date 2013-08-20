@@ -4,6 +4,12 @@ module Librato
   module Rails
     module Subscribers
 
+      # make the collector object directly available since it won't
+      # be changing
+      def self.collector
+        @collector ||= Librato.tracker.collector
+      end
+
       # Controllers
 
       ActiveSupport::Notifications.subscribe /process_action.action_controller/ do |*args|
@@ -18,7 +24,7 @@ module Librato
         exception = event.payload[:exception]
         # page_key = "request.#{controller}.#{action}_#{format}."
 
-        Librato.group "rails.request" do |r|
+        collector.group "rails.request" do |r|
 
           r.increment 'total'
           r.timing    'time', event.duration
@@ -49,7 +55,7 @@ module Librato
       ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
         payload = args.last
 
-        Librato.group "rails.sql" do |s|
+        collector.group "rails.sql" do |s|
           # puts (event.payload[:name] || 'nil') + ":" + event.payload[:sql] + "\n"
           s.increment 'queries'
 
@@ -65,11 +71,11 @@ module Librato
 
       ActiveSupport::Notifications.subscribe 'deliver.action_mailer' do |*args|
         # payload[:mailer] => 'UserMailer'
-        Librato.increment "rails.mail.sent"
+        collector.increment "rails.mail.sent"
       end
 
       ActiveSupport::Notifications.subscribe 'receive.action_mailer' do |*args|
-        Librato.increment "rails.mail.received"
+        collector.increment "rails.mail.received"
       end
 
     end
