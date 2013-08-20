@@ -25,20 +25,6 @@ module Librato
         start_worker unless forking_server?
       end
 
-    private
-
-      def ruby_engine
-        return RUBY_ENGINE if Object.constants.include?(:RUBY_ENGINE)
-        RUBY_DESCRIPTION.split[0]
-      end
-
-      def user_agent
-        ua_chunks = []
-        ua_chunks << "librato-rails/#{Librato::Rails::VERSION}"
-        ua_chunks << "(#{ruby_engine}; #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}; #{RUBY_PLATFORM}; #{app_server})"
-        ua_chunks.join(' ')
-      end
-
     end # end class << self
 
   end
