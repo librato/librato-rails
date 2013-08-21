@@ -13,7 +13,7 @@ module Librato
       config.librato_rails.tracker = tracker
       Librato.register_tracker(tracker)
 
-      if !::Rails.env.test? && tracker.should_start?
+      if !::Rails.env.test?
         unless defined?(::Rails::Console) && ENV['LIBRATO_AUTORUN'] != '1'
 
           initializer 'librato_rails.setup' do |app|
@@ -23,8 +23,10 @@ module Librato
               config.librato_rails.log_target = ::Rails.logger
             end
 
-            tracker.log :info, "starting up (pid #{$$}, using #{config.librato_rails.config_by})..."
-            app.middleware.use Librato::Rack, :config => config.librato_rails
+            if tracker.should_start?
+              tracker.log :info, "starting up (pid #{$$}, using #{config.librato_rails.config_by})..."
+              app.middleware.use Librato::Rack, :config => config.librato_rails
+            end
           end
 
         end
