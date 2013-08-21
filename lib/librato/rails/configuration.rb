@@ -16,6 +16,7 @@ module Librato
       def initialize(options={})
         self.config_file = options[:config_file] || 'config/librato.yml'
         super()
+        self.log_prefix = '[librato-rails] '
       end
 
       def configure_with_config_file
