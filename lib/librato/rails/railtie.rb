@@ -23,7 +23,7 @@ module Librato
               config.librato_rails.log_target = ::Rails.logger
             end
 
-            tracker.log :info, "starting up..."
+            tracker.log :info, "starting up (pid #{$$}, using #{config.librato_rails.config_by})..."
             app.middleware.use Librato::Rack, :config => config.librato_rails
           end
 
