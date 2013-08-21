@@ -19,15 +19,6 @@ module Librato
         self.log_prefix = '[librato-rails] '
       end
 
-      def configure_with_config_file
-        self.config_by = :config_file
-        env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
-        if env_specific
-          settable = CONFIG_SETTABLE & env_specific.keys
-          settable.each { |key| self.send("#{key}=", env_specific[key]) }
-        end
-      end
-
       # detect and load configuration from config file or env vars
       def load_configuration
         if self.config_file && File.exists?(self.config_file)
@@ -40,6 +31,17 @@ module Librato
         # respect autorun and log_level env vars regardless of config method
         self.autorun = detect_autorun
         self.log_level = ENV['LIBRATO_LOG_LEVEL'] if ENV['LIBRATO_LOG_LEVEL']
+      end
+
+      private
+
+      def configure_with_config_file
+        self.config_by = :config_file
+        env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
+        if env_specific
+          settable = CONFIG_SETTABLE & env_specific.keys
+          settable.each { |key| self.send("#{key}=", env_specific[key]) }
+        end
       end
 
     end
