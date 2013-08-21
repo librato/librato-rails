@@ -20,14 +20,11 @@ module Librato
       end
 
       def configure_with_config_file
-        # log :debug, "configuring with librato.yml; ignoring environment variables.."
         self.config_by = :config_file
         env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
         if env_specific
           settable = CONFIG_SETTABLE & env_specific.keys
           settable.each { |key| self.send("#{key}=", env_specific[key]) }
-        # else
-        #   log :debug, "halting: current environment (#{::Rails.env}) not in config file."
         end
       end
 
