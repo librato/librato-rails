@@ -24,10 +24,11 @@ Gem::Specification.new do |s|
   s.test_files.reject! { |file| file =~ /dummy\/log\/.*\.log/ }
 
   s.add_dependency "rails", ">= 3.0"
-  s.add_dependency "librato-metrics", "~> 1.1.0"
+  s.add_dependency "librato-rack", "~> 0.4.1"
 
   s.add_development_dependency "sqlite3", ">= 1.3"
   s.add_development_dependency "capybara", "~> 2.0.3"
+  # activesupport 3.2.x breaks with newer minitest
   s.add_development_dependency "minitest", '~> 3.4.0'
 
   signing_key = File.expand_path("~/.gem/librato-private_key.pem")
