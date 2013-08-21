@@ -54,7 +54,7 @@ module Dummy
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
-    
+
     # set librato_rails prefix
     # config.librato_rails.prefix = 'dummy'
     config.librato_rails.flush_interval = 5
