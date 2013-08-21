@@ -13,15 +13,19 @@ module Librato
       config.librato_rails.tracker = tracker
       Librato.register_tracker(tracker)
 
-      if !::Rails.env.test?
+      unless ::Rails.env.test?
         unless defined?(::Rails::Console) && ENV['LIBRATO_AUTORUN'] != '1'
 
           initializer 'librato_rails.setup' do |app|
-            # set up logging; heroku needs logs to STDOUT which librato-rack
-            # will handle by default
-            unless on_heroku
-              config.librato_rails.log_target = ::Rails.logger
+            # set up logging; heroku needs logging to STDOUT
+            if on_heroku
+              logger = Logger.new(STDOUT)
+              logger.level = Logger::INFO
+            else
+              logger = ::Rails.logger
             end
+            config.librato_rails.log_target = logger
+            tracker.log(:debug) { "config: #{config.librato_rails.dump}" }
 
             if tracker.should_start?
               tracker.log :info, "starting up (pid #{$$}, using #{config.librato_rails.config_by})..."
