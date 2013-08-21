@@ -15,3 +15,11 @@ Submissions to the Librato service take place in a background thread which runs 
 The only time that the worker uses any CPU is to package up submissions, which is highly optimized. While the worker thread is sleeping or waiting for a response it is non-blocking and doesn't compete with your request-serving threads.
 
 Even if you are using a single-threaded _app server_ like unicorn or thin, you are still running in a multi-threaded _environment_ (the ruby interpreter) so the worker thread will run and report successfully.
+
+#### With a `LOG_LEVEL` of debug or trace I sometimes don't see a worker start for each process
+
+`librato-rails` logs metrics for requests both within the rack middleware and within rails itself. Certain requests may be handled entirely within the rack middleware - these never reach the rails tier at all.
+
+If the first request a process gets is a rack-only process the rails log is unavailable and the startup message may be lost.
+
+However, with a level of `debug` or `trace` you should be able to see flush messages for every worker that is running, even if the startup message is not logged. You can also use the `rack.processes` metric to see how many processes are reporting.
