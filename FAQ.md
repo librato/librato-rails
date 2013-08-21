@@ -22,4 +22,4 @@ Even if you are using a single-threaded _app server_ like unicorn or thin, you a
 
 If the first request a process gets is a rack-only process the rails log is unavailable and the startup message may be lost.
 
-However, with a level of `debug` or `trace` you should be able to see flush messages for every worker that is running, even if the startup message is not logged.
+However, with a level of `debug` or `trace` you should be able to see flush messages for every worker that is running, even if the startup message is not logged. You can also use the `rack.processes` metric to see how many processes are reporting.
