@@ -13,6 +13,7 @@ module Librato
         format = event.payload[:format] || "all"
         format = "all" if format == "*/*"
         status = event.payload[:status]
+        http_method = event.payload[:method]
         exception = event.payload[:exception]
         # page_key = "request.#{controller}.#{action}_#{format}."
 
@@ -26,6 +27,14 @@ module Librato
           else
             r.timing 'time.db', event.payload[:db_runtime] || 0
             r.timing 'time.view', event.payload[:view_runtime] || 0
+          end
+
+          if http_method
+            http_method.downcase!
+            r.group 'method' do |m|
+              m.increment http_method
+              m.timing "#{http_method}.time", event.duration
+            end
           end
 
           unless status.blank?
