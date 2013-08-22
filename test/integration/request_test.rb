@@ -10,6 +10,7 @@ class RequestTest < ActiveSupport::IntegrationCase
     assert_equal 1, counters["rails.request.total"]
     assert_equal 1, counters["rails.request.status.200"]
     assert_equal 1, counters["rails.request.status.2xx"]
+    assert_equal 1, counters["rails.request.method.get"]
 
     visit '/status/204'
 
@@ -30,6 +31,9 @@ class RequestTest < ActiveSupport::IntegrationCase
     # status specific
     assert_equal 1, aggregate["rails.request.status.200.time"][:count]
     assert_equal 1, aggregate["rails.request.status.2xx.time"][:count]
+
+    # http method specific
+    assert_equal 1, aggregate["rails.request.method.get.time"][:count]
   end
 
   test 'track exceptions' do
