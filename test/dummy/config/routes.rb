@@ -14,6 +14,9 @@ Dummy::Application.routes.draw do
   get 'cache/generate'  => 'cache#generate',  :as => :cache_generate
   get 'cache/delete'    => 'cache#delete',    :as => :cache_delete
 
+  get 'render/partial'  => 'render#partial',  :as => :render_partial
+  get 'render/template' => 'render#template', :as => :render_template
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
