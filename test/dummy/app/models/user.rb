@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  if Rails.version[0..2] == '3.2'
+  if Rails.version[0] == '3'
     attr_accessible :email, :password
   end
 
