@@ -1,11 +1,11 @@
 source "http://rubygems.org"
 gemspec
 
-rails_version = ENV["RAILS_VERSION"] || '3.2.14'
+rails_version = ENV["RAILS_VERSION"] || '3.2'
 if rails_version == "master"
   rails = {github: "rails/rails"}
 else
-  rails = "~> #{rails_version}"
+  rails = "~> #{rails_version}.0"
 end
 
 gem "rails", rails

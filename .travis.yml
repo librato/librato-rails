@@ -9,9 +9,9 @@ rvm:
   # - ruby-head
 
 env:
-  - "RAILS_VERSION=3.1.0"
-  - "RAILS_VERSION=3.2.0"
-  - "RAILS_VERSION=4.0.0"
+  - "RAILS_VERSION=3.1"
+  - "RAILS_VERSION=3.2"
+  - "RAILS_VERSION=4.0"
   - "RAILS_VERSION=master"
 
 matrix:
@@ -20,13 +20,13 @@ matrix:
     - env: "RAILS_VERSION=master"
   exclude:
     - rvm: 1.9.2
-      env: "RAILS_VERSION=4.0.0"
+      env: "RAILS_VERSION=4.0"
     - rvm: 1.9.2
       env: "RAILS_VERSION=master"
   include:
     - rvm: 1.9.2
-      env: "RAILS_VERSION=3.1.0"
+      env: "RAILS_VERSION=3.1"
     - rvm: 1.9.2
-      env: "RAILS_VERSION=3.2.0"
+      env: "RAILS_VERSION=3.2"
     - rvm: ruby-head
-      env: "RAILS_VERSION=4.0.0"
+      env: "RAILS_VERSION=4.0"
