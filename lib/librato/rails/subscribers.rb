@@ -17,5 +17,6 @@ end
 
 require_relative 'subscribers/cache'
 require_relative 'subscribers/controller'
+require_relative 'subscribers/render'
 require_relative 'subscribers/sql'
 require_relative 'subscribers/mail'
