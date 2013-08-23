@@ -1,12 +1,18 @@
 Dummy::Application.routes.draw do
 
   get "status/:code" => 'status#index'
-  
+
   get 'exception' => 'home#boom',   :as => :exception
   get 'slow'      => 'home#slow',   :as => :slow
   get 'custom'    => 'home#custom', :as => :custom
-  
+
   get 'user/manipulation' => 'user#manipulation', :as => :user_manipulation
+
+  get 'cache/read'      => 'cache#read',      :as => :cache_read
+  get 'cache/write'     => 'cache#write',     :as => :cache_write
+  get 'cache/fetch_hit' => 'cache#fetch_hit', :as => :cache_fetch_hit
+  get 'cache/generate'  => 'cache#generate',  :as => :cache_generate
+  get 'cache/delete'    => 'cache#delete',    :as => :cache_delete
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -58,5 +64,5 @@ Dummy::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   root :to => 'home#index'
-  
+
 end
