@@ -1,10 +1,14 @@
 source "http://rubygems.org"
 gemspec
 
-# current capybara and less specific rails dependency
-# leads to incredibly long bundler resolution, hopefully
-# this specificity can be removed in the future
-gem 'rails', '~> 3.2.11'
+rails_version = ENV["RAILS_VERSION"] || '3.2.14'
+if rails_version == "master"
+  rails = {github: "rails/rails"}
+else
+  rails = "~> #{rails_version}"
+end
+
+gem "rails", rails
 
 # debugging
 gem 'pry'
