@@ -1,3 +1,17 @@
+### Version 0.10.0.pre1
+* Add render instrumentation metrics
+* Add cache instrumentation metrics
+* Add metrics on HTTP method use
+* Rack middleware moved from end of stack to beginning, improving value of rack metrics (Thibaud Guillaume-Gentil)
+* Add ability to control startup with LIBRATO_AUTORUN
+* Add ability to force startup in console mode with LIBRATO_AUTORUN
+* Refactor to use librato-rack
+* Remove old deprecated heroku-specific stats
+* Fix startup bug when using unicorn with preload false
+* Fix bug where grouped instrumentation could lose some options
+* Sign gem when building
+* Documentation improvements
+
 ### Version 0.9.0
 * Bump librato-metrics dependency version for new functionality
 
