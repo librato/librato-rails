@@ -65,6 +65,11 @@ module Librato
         assert_equal 30, config.flush_interval # from config file
       end
 
+      def test_empty_config_file_doesnt_break_log_level
+        config = fixture_config('empty')
+        assert_equal :info, config.log_level, 'should be default'
+      end
+
       def fixture_config(file='librato')
         fixture_config = File.join(File.dirname(__FILE__), "../fixtures/config/#{file}.yml")
         Configuration.new(:config_file => fixture_config)

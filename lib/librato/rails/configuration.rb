@@ -30,6 +30,7 @@ module Librato
 
         # respect autorun and log_level env vars regardless of config method
         self.autorun = detect_autorun
+        self.log_level = :info if log_level.blank?
         self.log_level = ENV['LIBRATO_LOG_LEVEL'] if ENV['LIBRATO_LOG_LEVEL']
       end
 
