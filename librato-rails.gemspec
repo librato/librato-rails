@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.test_files.reject! { |file| file =~ /dummy\/log\/.*\.log/ }
 
   s.add_dependency "rails", ">= 3.0"
-  s.add_dependency "librato-rack", "~> 0.4.1"
+  s.add_dependency "librato-rack", "~> 0.4.2"
 
   s.add_development_dependency "sqlite3", ">= 1.3"
   s.add_development_dependency "capybara", "~> 2.0.3"
