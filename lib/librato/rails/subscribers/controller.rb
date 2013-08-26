@@ -30,10 +30,10 @@ module Librato
           end
 
           if http_method
-            http_method.downcase!
+            verb = http_method.to_s.downcase
             r.group 'method' do |m|
-              m.increment http_method
-              m.timing "#{http_method}.time", event.duration
+              m.increment verb
+              m.timing "#{verb}.time", event.duration
             end
           end
 
