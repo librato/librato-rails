@@ -5,6 +5,17 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
+task 'before_build' do
+  signing_key = File.expand_path("~/.gem/librato-private_key.pem")
+  if signing_key
+    puts "Key found: signing gem..."
+    ENV['GEM_SIGNING_KEY'] = signing_key
+  else
+    puts "WARN: signing key not found, gem not signed"
+  end
+end
+task :build => :before_build
+
 # IRB
 desc "Open an irb session preloaded with this library"
 task :console do

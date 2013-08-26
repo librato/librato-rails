@@ -29,9 +29,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "sqlite3", ">= 1.3"
   s.add_development_dependency "capybara", "~> 2.0.3"
 
-  signing_key = File.expand_path("~/.gem/librato-private_key.pem")
-  if File.exists?(signing_key)
-    s.signing_key = signing_key
-    s.cert_chain = ["certs/librato-public.pem"]
+  s.cert_chain = ["certs/librato-public.pem"]
+  if ENV['GEM_SIGNING_KEY']
+    s.signing_key = ENV['GEM_SIGNING_KEY']
   end
 end
