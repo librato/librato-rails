@@ -1,8 +1,8 @@
-### Version 0.10.0.pre1
+### Version 0.10.0
 * Add render instrumentation metrics
 * Add cache instrumentation metrics
 * Add metrics on HTTP method use
-* Rack middleware moved from end of stack to beginning, improving value of rack metrics (Thibaud Guillaume-Gentil)
+* Rack middleware now racks itself first, improving value of rack metrics (Thibaud Guillaume-Gentil)
 * Add ability to control startup with LIBRATO_AUTORUN
 * Add ability to force startup in console mode with LIBRATO_AUTORUN
 * Refactor to use librato-rack

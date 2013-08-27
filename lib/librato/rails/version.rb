@@ -1,5 +1,5 @@
 module Librato
   module Rails
-    VERSION = "0.10.0.pre1"
+    VERSION = "0.10.0"
   end
 end
