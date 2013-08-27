@@ -1,0 +1,4 @@
+test:
+  user: 'test@bar.com'
+  token: 'test key'
+  log_level: ''
