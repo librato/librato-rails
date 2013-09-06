@@ -232,11 +232,23 @@ your config, which will append the process id to the source name used by each th
 
 Note that it may take 2-3 minutes for the first results to show up in your Metrics account after you have started your servers with `librato-rails` enabled and the first request has been received.
 
+#### Verbose Logging
+
 If you want to get more information about `librato-rails` submissions to the Metrics service you can set your `log_level` to `debug` (see [configuration](https://github.com/librato/librato-rails/wiki/Configuration)) to get detailed information added to your logs about the settings `librato-rails` is seeing at startup and when it is submitting.
 
 Be sure to tail your logs manually (`tail -F <logfile>`) as the log output you get when using the `rails server` command often skips startup log lines.
 
 If you are having an issue with a specific metric, using a `log_level` of `trace` will add the exact measurements being sent to your logs along with lots of other information about `librato-rails` as it executes. Neither of these modes are recommended long-term in production as they will add quite a bit of volume to your log file and will slow operation somewhat. Note that submission I/O is non-blocking, submission times are total time - your process will continue to handle requests during submissions.
+
+#### Console Mode
+
+By default the `librato-rails` reporter will not start in console mode, even if `librato-rails` is configured. If you want to force the reporter to run in console mode, set `LIBRATO_AUTORUN` to `1` in your environment:
+
+```sh
+$ LIBRATO_AUTORUN=1 rails console
+```
+
+#### Custom Flush Interval
 
 If you are debugging setting up `librato-rails` locally you can set `flush_interval` to something shorter (say 10s) to force submission more frequently. Don't change your `flush_interval` in production as it will not result in measurements showing up more quickly, but may affect performance.
 
