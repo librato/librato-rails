@@ -1,3 +1,6 @@
+### Version 0.10.1
+* Add ability to force reporter to start at startup via LIBRATO_AUTORUN
+
 ### Version 0.10.0
 * Add render instrumentation metrics
 * Add cache instrumentation metrics
