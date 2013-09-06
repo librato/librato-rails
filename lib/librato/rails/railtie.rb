@@ -29,6 +29,7 @@ module Librato
           if tracker.should_start?
             tracker.log :info, "starting up (pid #{$$}, using #{config.librato_rails.config_by})..."
             app.middleware.insert(0, Librato::Rack, :config => config.librato_rails)
+            tracker.check_worker if config.librato_rails.autorun
           end
         end
 
