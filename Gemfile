@@ -8,7 +8,8 @@ else
   rails = "~> #{rails_version}.0"
 end
 
-gem "rails", rails
+gem "railties", rails
+gem "activesupport", rails
 
 # debugging
 gem 'pry'
@@ -22,3 +23,7 @@ gem 'benchmark_suite'
 # servers for testing
 # gem 'thin'
 # gem 'unicorn'
+
+group :test do
+  gem "rails", rails
+end
