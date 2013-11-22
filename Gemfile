@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 gemspec
 
 rails_version = ENV["RAILS_VERSION"] || '3.2'
