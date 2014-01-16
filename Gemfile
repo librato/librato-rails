@@ -19,6 +19,13 @@ gem 'mocha', :require => false
 # benchmarking
 gem 'benchmark_suite'
 
+platforms :rbx do
+  gem 'rubysl', '~> 2.0'
+  gem 'racc'
+  gem 'rubysl-test-unit'
+  gem 'rubinius-developer_tools'
+end
+
 # servers for testing
 # gem 'thin'
 # gem 'unicorn'
