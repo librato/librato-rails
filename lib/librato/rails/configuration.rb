@@ -1,3 +1,5 @@
+require "yaml"
+
 module Librato
   module Rails
     # Adds yaml-based config and extra properties to the configuration
