@@ -1,3 +1,6 @@
+### Version 0.10.2
+* Ensure yaml is always loaded when needed (Daniel Marschner)
+
 ### Version 0.10.1
 * Add ability to force reporter to start at startup via LIBRATO_AUTORUN
 
