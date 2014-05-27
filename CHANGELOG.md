@@ -1,3 +1,6 @@
+### Version 0.10.3
+* Relax rails loading requirements
+
 ### Version 0.10.2
 * Ensure yaml is always loaded when needed (Daniel Marschner)
 
