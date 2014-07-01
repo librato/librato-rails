@@ -10,7 +10,7 @@ class InstrumentActionController < ApplicationController
     end
   end
 
-  def not
+  def not_instrumented
     render nothing: true
   end
 
