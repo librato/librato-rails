@@ -19,7 +19,7 @@ class SQLTest < ActiveSupport::IntegrationCase
     end
 
     assert_increasing_queries do
-      prev = counters["rails.sql.selects"]
+      prev = counters["rails.sql.selects"].to_i
       foo = User.find_by_email('foo@foo.com')
       assert_equal prev+1, counters["rails.sql.selects"]
     end
