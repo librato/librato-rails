@@ -97,10 +97,10 @@ Use for tracking a running total of something _across_ requests, examples:
 Librato.increment 'sales_completed'
 
 # increment by five
-Librato.increment 'items_purchased', :by => 5
+Librato.increment 'items_purchased', by: 5
 
 # increment with a custom source
-Librato.increment 'user.purchases', :source => user.id
+Librato.increment 'user.purchases', source: user.id
 ```
 
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
@@ -113,7 +113,7 @@ Especially with custom sources you may want the opposite behavior - reporting a 
 
 ```ruby
 # report a value for 'user.uploaded_file' only during non-zero intervals
-Librato.increment 'user.uploaded_file', :source => user.id, :sporadic => true
+Librato.increment 'user.uploaded_file', source: user.id, sporadic: true
 ```
 
 #### measure
@@ -124,7 +124,7 @@ Use when you want to track an average value _per_-request. Examples:
 Librato.measure 'user.social_graph.nodes', 212
 
 # report from a custom source
-Librato.measure 'jobs.queued', 3, :source => 'worker.12'
+Librato.measure 'jobs.queued', 3, source: 'worker.12'
 ```
 
 #### timing
@@ -172,7 +172,7 @@ Symbols can be used interchangably with strings for metric names.
 Assume you have a custom event:
 
 ```ruby
-ActiveSupport::Notifications.instrument 'my.event', :user => user do
+ActiveSupport::Notifications.instrument 'my.event', user: user do
   # do work..
 end
 ```
@@ -191,7 +191,7 @@ ActiveSupport::Notifications.subscribe 'my.event' do |*args|
   Librato.timing 'my.event.time', event.duration
 
   # use payload data to do user-specific tracking
-  Librato.increment 'user.did.event', :source => user.id, :sporadic => true
+  Librato.increment 'user.did.event', source: user.id, sporadic: true
 
   # do conditional tracking
   if user.feature_on?(:sample_group)
