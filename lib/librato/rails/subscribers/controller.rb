@@ -55,7 +55,7 @@ module Librato
           r.increment 'slow' if event.duration > 200.0
         end # end group
 
-        if @watches && @watches.index("#{controller}##{action}".freeze)
+        if @watches && @watches.index("#{controller}##{action}")
           page_key = "#{controller}.#{action}.#{format}"
           collector.group "rails.action.#{page_key}" do |r|
 
