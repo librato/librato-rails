@@ -4,9 +4,15 @@ module Librato
 
       # Controllers
 
-      ActiveSupport::Notifications.subscribe 'process_action.action_controller' do |*args|
+      def self.watch_controller_action(controller, action)
+        @watches ||= []
+        @watches << "#{controller}##{action}".freeze
+      end
 
-        event = ActiveSupport::Notifications::Event.new(*args)
+      AS = ActiveSupport
+      AS::Notifications.subscribe 'process_action.action_controller' do |*args|
+
+        event = AS::Notifications::Event.new(*args)
         controller = event.payload[:controller]
         action = event.payload[:action]
 
@@ -48,6 +54,23 @@ module Librato
 
           r.increment 'slow' if event.duration > 200.0
         end # end group
+
+        if @watches && @watches.index("#{controller}##{action}".freeze)
+          page_key = "#{controller}.#{action}.#{format}"
+          collector.group "rails.action.#{page_key}" do |r|
+
+            r.increment 'total'
+            r.timing    'time', event.duration
+
+            if exception
+              r.increment 'exceptions'
+            else
+              r.timing 'time.db', event.payload[:db_runtime] || 0
+              r.timing 'time.view', event.payload[:view_runtime] || 0
+            end
+
+          end
+        end
 
       end # end subscribe
 

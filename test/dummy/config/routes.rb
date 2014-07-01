@@ -17,6 +17,9 @@ Dummy::Application.routes.draw do
   get 'render/partial'  => 'render#partial',  :as => :render_partial
   get 'render/template' => 'render#template', :as => :render_template
 
+  get 'instrument/inst' => 'instrument_action#inst', :as => :instrument_action
+  get 'instrument/not'  => 'instrument_action#not',  :as => :not_instrumented
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
