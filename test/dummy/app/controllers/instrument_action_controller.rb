@@ -1,8 +1,8 @@
 class InstrumentActionController < ApplicationController
   # extend Librato::Rails::Helpers::Controller
+  # before_filter :before
 
-  before_filter :before
-  instrument_action :inst
+  instrument_action :inst, :inst_too
 
   def inst
     Librato.timing 'internal execution' do
