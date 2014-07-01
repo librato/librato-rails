@@ -175,7 +175,7 @@ Use when you want to profile execution time or request volume for a specific con
 
 ```ruby
 class CommentController < ApplicationController
-  instrument_action :create
+  instrument_action :create # can accept a list
 
   def create
     # ...
@@ -183,7 +183,7 @@ class CommentController < ApplicationController
 end
 ```
 
-Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including # of requests, total time used, and db and view time used.
+Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including # of requests, total time used per request, and db and view time used per request.
 
 Action instrumentation metrics are named following the format `rails.action.<controller>.<action>.<format>.*`.
 
