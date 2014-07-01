@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 gemspec
 
-rails_version = ENV["RAILS_VERSION"] || '3.2'
+rails_version = ENV["RAILS_VERSION"] || '4.1'
 if rails_version == "master"
   rails = {github: "rails/rails"}
 else
@@ -15,17 +15,17 @@ gem "activesupport", rails
 gem 'pry'
 
 # mocks
-gem 'mocha', :require => false
+gem 'mocha', require: false
 
 # benchmarking
 gem 'benchmark_suite'
 
-platforms :rbx do
-  gem 'rubysl', '~> 2.0'
-  gem 'racc'
-  gem 'rubysl-test-unit'
-  gem 'rubinius-developer_tools'
-end
+# platforms :rbx do
+#   gem 'rubysl', '~> 2.0'
+#   gem 'racc'
+#   gem 'rubysl-test-unit'
+#   gem 'rubinius-developer_tools'
+# end
 
 # servers for testing
 # gem 'thin'
