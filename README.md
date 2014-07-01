@@ -3,7 +3,7 @@ librato-rails
 
 [![Gem Version](https://badge.fury.io/rb/librato-rails.png)](http://badge.fury.io/rb/librato-rails) [![Build Status](https://secure.travis-ci.org/librato/librato-rails.png?branch=master)](http://travis-ci.org/librato/librato-rails) [![Code Climate](https://codeclimate.com/github/librato/librato-rails.png)](https://codeclimate.com/github/librato/librato-rails)
 
-`librato-rails` will report key statistics for your Rails app to [Librato Metrics](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
+`librato-rails` will report key statistics for your Rails app to [Librato](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
 
 Currently Rails 3.0+ and Ruby 1.9.2+ are required.
 
@@ -11,7 +11,7 @@ You may want to read the [notes on upgrading](https://github.com/librato/librato
 
 ## Quick Start
 
-Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Metrics account.
+Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Librato account.
 
 After installation `librato-rails` will detect your environment and start reporting available performance information for your application.
 
@@ -40,7 +40,7 @@ Then run `bundle install`.
 
 ## Configuration
 
-If you don't have a Metrics account already, [sign up](https://metrics.librato.com/). In order to send measurements to Metrics you need to provide your account credentials to `librato-rails`. You can provide these one of two ways:
+If you don't have a Librato account already, [sign up](https://metrics.librato.com/). In order to send measurements to Librato you need to provide your account credentials to `librato-rails`. You can provide these one of two ways:
 
 ##### Use a config file
 
@@ -66,7 +66,7 @@ For more information on combining config files and environment variables, see th
 
 ##### Running on Heroku
 
-If you are using the Librato Metrics Heroku addon, your user and token environment variables will already be set in your Heroku environment. If you are running without the addon you will need to provide them yourself.
+If you are using the Librato Heroku addon, your user and token environment variables will already be set in your Heroku environment. If you are running without the addon you will need to provide them yourself.
 
 In either case you will need to specify a custom source for your app to track properly. If `librato-rails` does not detect an explicit source it will not start. You can set the source in your environment:
 
@@ -80,13 +80,13 @@ Note that if Heroku idles your application measurements will not be sent until i
 
 ## Automatic Measurements
 
-After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Metrics account. These track request performance, sql queries, mail handling, and other key stats.
+After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Librato account. These track request performance, sql queries, mail handling, and other key stats.
 
 Built-in performance metrics will start with either `rack` or `rails`, depending on the level they are being sampled from. For example: `rails.request.total` is the total number of requests rails has received each minute.
 
 ## Custom Measurements
 
-Tracking anything that interests you is easy with Metrics. There are four primary helpers available:
+Tracking anything that interests you is easy with Librato. There are four primary helpers available to use anywhere in your application:
 
 #### increment
 
@@ -165,6 +165,30 @@ end
 
 Symbols can be used interchangably with strings for metric names.
 
+## Controller Helpers
+
+`librato-rails` also has special helpers which are available inside your controllers:
+
+#### instrument_action
+
+Use when you want to profile execution time or request volume for a specific controller action:
+
+```ruby
+class CommentController < ApplicationController
+  instrument_action :create
+
+  def create
+    # ...
+  end
+end
+```
+
+Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including # of requests, total time used, and db and view time used.
+
+Action instrumentation metrics are named following the format `rails.action.<controller>.<action>.<format>.*`.
+
+IMPORTANT NOTE: Metrics from `instrument_action` take into account all time spent in the ActionController stack for that action, including before/after filters and any global processing. They are _not_ equivalent to using a `Librato.timing` block inside the method body.
+
 ## Use with ActiveSupport::Notifications
 
 `librato-rails` and [ActiveSupport::Notifications](http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html) work great together. In fact, many of the Rails metrics provided are produced by subscribing to the [instrumentation events](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) built into Rails.
@@ -222,7 +246,7 @@ Never fear, [we have some guidelines](https://github.com/librato/librato-rails/w
 
 `librato-rails` submits measurements back to the Librato platform on a _per-process_ basis. By default these measurements are then combined into a single measurement per source (default is your hostname) before persisting the data.
 
-For example if you have 4 hosts with 8 unicorn instances each (i.e. 32 processes total), on the Metrics site you'll find 4 data streams (1 per host) instead of 32.
+For example if you have 4 hosts with 8 unicorn instances each (i.e. 32 processes total), on the Librato site you'll find 4 data streams (1 per host) instead of 32.
 Current pricing applies after aggregation, so in this case you will be charged for 4 streams instead of 32.
 
 If you want to report per-process instead, you can set `source_pids` to `true` in
@@ -230,11 +254,11 @@ your config, which will append the process id to the source name used by each th
 
 ## Troubleshooting
 
-Note that it may take 2-3 minutes for the first results to show up in your Metrics account after you have started your servers with `librato-rails` enabled and the first request has been received.
+Note that it may take 2-3 minutes for the first results to show up in your Librato account after you have started your servers with `librato-rails` enabled and the first request has been received.
 
 #### Verbose Logging
 
-If you want to get more information about `librato-rails` submissions to the Metrics service you can set your `log_level` to `debug` (see [configuration](https://github.com/librato/librato-rails/wiki/Configuration)) to get detailed information added to your logs about the settings `librato-rails` is seeing at startup and when it is submitting.
+If you want to get more information about `librato-rails` submissions to the Librato service you can set your `log_level` to `debug` (see [configuration](https://github.com/librato/librato-rails/wiki/Configuration)) to get detailed information added to your logs about the settings `librato-rails` is seeing at startup and when it is submitting.
 
 Be sure to tail your logs manually (`tail -F <logfile>`) as the log output you get when using the `rails server` command often skips startup log lines.
 
