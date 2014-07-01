@@ -13,9 +13,13 @@ module Librato
       config.librato_rails.tracker = tracker
       Librato.register_tracker(tracker)
 
-      unless ::Rails.env.test?
+      initializer 'librato_rails.setup' do |app|
 
-        initializer 'librato_rails.setup' do |app|
+        ActiveSupport.on_load :action_controller do
+          extend Librato::Rails::Helpers::Controller
+        end
+
+        unless ::Rails.env.test?
           # set up logging; heroku needs logging to STDOUT
           if on_heroku
             logger = Logger.new(STDOUT)

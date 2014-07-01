@@ -1,5 +1,5 @@
 class InstrumentActionController < ApplicationController
-  extend Librato::Rails::Helpers::Controller
+  # extend Librato::Rails::Helpers::Controller
 
   before_filter :before
   instrument_action :inst
