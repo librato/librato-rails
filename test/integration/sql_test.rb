@@ -7,22 +7,41 @@ class SQLTest < ActiveSupport::IntegrationCase
   test 'total queries and query types' do
     # note that modifying queries are wrapped in a transaction which
     # adds 2 to total queries per operation.
-    user = User.create!(:email => 'foo@foo.com', :password => 'wow')
-    assert_equal 3, counters["rails.sql.queries"]
-    assert_equal 1, counters["rails.sql.inserts"]
 
-    foo = User.find_by_email('foo@foo.com')
-    assert_equal 4, counters["rails.sql.queries"]
-    assert_equal 1, counters["rails.sql.selects"]
+    # rails 4.1 adds extra queries which can be variable, hence the
+    # two possible counts for these operations
 
-    foo.password = 'new password'
-    foo.save
-    assert_equal 7, counters["rails.sql.queries"]
-    assert_equal 1, counters["rails.sql.updates"]
+    foo = nil
 
-    foo.destroy
-    assert_equal 10, counters["rails.sql.queries"]
-    assert_equal 1, counters["rails.sql.deletes"]
+    assert_increasing_queries do
+      user = User.create!(email: 'foo@foo.com', password: 'wow')
+      assert_equal 1, counters["rails.sql.inserts"]
+    end
+
+    assert_increasing_queries do
+      prev = counters["rails.sql.selects"]
+      foo = User.find_by_email('foo@foo.com')
+      assert_equal prev+1, counters["rails.sql.selects"]
+    end
+
+    assert_increasing_queries do
+      foo.password = 'new password'
+      foo.save
+      assert_equal 1, counters["rails.sql.updates"]
+    end
+
+    assert_increasing_queries do
+      foo.destroy
+      assert_equal 1, counters["rails.sql.deletes"]
+    end
+  end
+
+  private
+
+  def assert_increasing_queries
+    previous = counters["rails.sql.queries"].to_i
+    yield
+    assert counters["rails.sql.queries"].to_i > previous
   end
 
 end
