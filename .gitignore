@@ -1,4 +1,3 @@
-.ruby-gemset
 .ruby-version
 
 .bundle
@@ -11,10 +10,7 @@ rdoc
 doc
 .yardoc
 
-# vim
-*.swp
-
-test_env.sh
+env/*
 
 # dummy app
 test/dummy/db/*.sqlite3
