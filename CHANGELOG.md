@@ -1,3 +1,6 @@
+### Version 0.11.0
+* Add instrument_action for profiling a specific controller action
+
 ### Version 0.10.3
 * Relax rails loading requirements
 
