@@ -183,9 +183,16 @@ class CommentController < ApplicationController
 end
 ```
 
-Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including # of requests, total time used per request, and db and view time used per request.
+Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including:
 
-Action instrumentation metrics are named following the format `rails.action.<controller>.<action>.<format>.*`.
+* rails.action.request.total     (# of requests)
+* rails.action.request.slow      (requests >= 200ms to produce)
+* rails.action.request.exceptions
+* rails.action.request.time      (total time spent in action)
+* rails.action.request.time.db   (db interaction time)
+* rails.action.request.time.view (view rendering time)
+
+Each instrumented action will appear as a source for the `rails.action.*` metrics, for example `mycontroller.action.html`.
 
 IMPORTANT NOTE: Metrics from `instrument_action` take into account all time spent in the ActionController stack for that action, including before/after filters and any global processing. They are _not_ equivalent to using a `Librato.timing` block inside the method body.
 
