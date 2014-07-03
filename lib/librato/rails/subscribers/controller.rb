@@ -56,17 +56,18 @@ module Librato
         end # end group
 
         if @watches && @watches.index("#{controller}##{action}")
-          page_key = "#{controller}.#{action}.#{format}"
-          collector.group "rails.action.#{page_key}" do |r|
+          source = "#{controller}.#{action}.#{format}"
+          collector.group 'rails.action.request' do |r|
 
-            r.increment 'total'
-            r.timing    'time', event.duration
+            r.increment 'total', source: source
+            r.increment 'slow' if event.duration > 200.0
+            r.timing    'time', event.duration, source: source
 
             if exception
-              r.increment 'exceptions'
+              r.increment 'exceptions', source: source
             else
-              r.timing 'time.db', event.payload[:db_runtime] || 0
-              r.timing 'time.view', event.payload[:view_runtime] || 0
+              r.timing 'time.db', event.payload[:db_runtime] || 0, source: source
+              r.timing 'time.view', event.payload[:view_runtime] || 0, source: source
             end
 
           end
