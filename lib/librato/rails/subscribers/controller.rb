@@ -60,7 +60,7 @@ module Librato
           collector.group 'rails.action.request' do |r|
 
             r.increment 'total', source: source
-            r.increment 'slow' if event.duration > 200.0
+            r.increment 'slow', source: source if event.duration > 200.0
             r.timing    'time', event.duration, source: source
 
             if exception
