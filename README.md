@@ -5,9 +5,7 @@ librato-rails
 
 `librato-rails` will report key statistics for your Rails app to [Librato](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
 
-Currently Rails 3.0+ and Ruby 1.9.2+ are required.
-
-You may want to read the [notes on upgrading](https://github.com/librato/librato-rails/wiki/Alpha-Tester-Upgrade-Notes) if you were an alpha tester.
+Rails 3.0+ and Ruby 1.9.2+ are supported. Currently verified combinations of ruby/rails are available in our [build matrix](http://travis-ci.org/librato/librato-rails).
 
 ## Quick Start
 
