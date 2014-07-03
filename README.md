@@ -5,7 +5,7 @@ librato-rails
 
 `librato-rails` will report key statistics for your Rails app to [Librato](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
 
-Rails 3.0+ and Ruby 1.9.2+ are supported. Currently verified combinations of ruby/rails are available in our [build matrix](http://travis-ci.org/librato/librato-rails).
+Rails versions 3.0 or greater are supported on Ruby 1.9.2 and above. Verified combinations of ruby/rails are available in our [build matrix](http://travis-ci.org/librato/librato-rails).
 
 ## Quick Start
 
