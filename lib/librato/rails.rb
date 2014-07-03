@@ -7,4 +7,5 @@ require_relative 'rails/version'
 if defined?(Rails)
   require_relative 'rails/railtie'
   require_relative 'rails/subscribers'
+  require_relative 'rails/helpers'
 end

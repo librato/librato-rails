@@ -8,7 +8,7 @@ module Librato
         payload = args.last
 
         collector.group "rails.sql" do |s|
-          # puts (event.payload[:name] || 'nil') + ":" + event.payload[:sql] + "\n"
+          # puts (payload[:name] || 'nil') + ":" + payload[:sql] + "\n\n"
           s.increment 'queries'
 
           sql = payload[:sql].strip
