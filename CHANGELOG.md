@@ -1,3 +1,6 @@
+### Version 0.11.1
+* Use controller/action as source for instrument_action metrics
+
 ### Version 0.11.0
 * Add instrument_action for profiling a specific controller action
 
