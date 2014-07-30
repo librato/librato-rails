@@ -242,6 +242,10 @@ These are just a few examples. Combining `ActiveSupport::Notifications` instrume
 
 You can set an optional prefix to all metrics reported by `librato-rails` in your [configuration](https://github.com/librato/librato-rails/wiki/Configuration). This can be helpful for isolating test data or forcing different apps to use different metric names.
 
+## Tracking Deploys
+
+It can be very useful to track your deploys using [annotations](http://dev.librato.com/v1/annotations) so you can use them to monitor the impact of changes to your app. Take a look at the [librato-rake-deploytrack gem](https://github.com/Jimdo/librato-rake-deploytrack) for an easy install option or [this ticket](https://github.com/librato/librato-rails/issues/41#issuecomment-50595104) for examples of how you can write your own.
+
 ## Use with Background Workers / Cron Jobs
 
 `librato-rails` is designed to run within a long-running process and report periodically. Intermittently running rake tasks and most background job tools (delayed job, resque, queue_classic) don't run long enough for this to work.
