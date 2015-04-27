@@ -18,7 +18,10 @@ Dummy::Application.routes.draw do
   get 'render/template' => 'render#template', :as => :render_template
 
   get 'instrument/inst' => 'instrument_action#inst', :as => :instrument_action
-  get 'instrument/not'  => 'instrument_action#not',  :as => :not_instrumented
+  get 'instrument/not'  => 'instrument_action#not_instrumented',  :as => :not_instrumented
+
+  get 'instrument_all/inst' => 'instrument_all_actions#inst', :as => :instrument_all_actions
+  get 'instrument_all/not'  => 'instrument_all_actions#not_instrumented',  :as => :still_instrumented
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
