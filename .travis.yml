@@ -1,8 +1,8 @@
 rvm:
   # - 1.9.2
   - 1.9.3
-  - 2.0.0
-  - 2.1.2
+  - 2.1.7
+  - 2.2.3
   # - jruby-19mode
   # - jruby-18mode
   # - rbx
@@ -13,12 +13,11 @@ env:
   - "RAILS_VERSION=3.2"
   - "RAILS_VERSION=4.0"
   - "RAILS_VERSION=4.1"
-  - "RAILS_VERSION=master"
+  - "RAILS_VERSION=4.2"
 
 matrix:
-  allow_failures:
-    - rvm: ruby-head
-    - env: "RAILS_VERSION=master"
-  include:
-    - rvm: ruby-head
-      env: "RAILS_VERSION=4.1"
+  exclude:
+    - rvm: 2.2.3
+      env: "RAILS_VERSION=3.1"
+    - rvm: 2.2.3
+      env: "RAILS_VERSION=3.2"
