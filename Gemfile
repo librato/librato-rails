@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 gemspec
 
-rails_version = ENV["RAILS_VERSION"] || '4.1'
+rails_version = ENV["RAILS_VERSION"] || '4.2'
 if rails_version == "master"
   rails = {github: "rails/rails"}
 else
