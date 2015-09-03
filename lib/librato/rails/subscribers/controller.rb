@@ -26,13 +26,13 @@ module Librato
         collector.group "rails.request" do |r|
 
           r.increment 'total'
-          r.timing    'time', event.duration
+          r.timing    'time', event.duration, percentile: 95
 
           if exception
             r.increment 'exceptions'
           else
-            r.timing 'time.db', event.payload[:db_runtime] || 0
-            r.timing 'time.view', event.payload[:view_runtime] || 0
+            r.timing 'time.db', event.payload[:db_runtime] || 0, percentile: 95
+            r.timing 'time.view', event.payload[:view_runtime] || 0, percentile: 95
           end
 
           if http_method
@@ -61,13 +61,13 @@ module Librato
 
             r.increment 'total', source: source
             r.increment 'slow', source: source if event.duration > 200.0
-            r.timing    'time', event.duration, source: source
+            r.timing    'time', event.duration, source: source, percentile: 95
 
             if exception
               r.increment 'exceptions', source: source
             else
-              r.timing 'time.db', event.payload[:db_runtime] || 0, source: source
-              r.timing 'time.view', event.payload[:view_runtime] || 0, source: source
+              r.timing 'time.db', event.payload[:db_runtime] || 0, source: source, percentile: 95
+              r.timing 'time.view', event.payload[:view_runtime] || 0, source: source, percentile: 95
             end
 
           end

@@ -133,6 +133,9 @@ Like `Librato.measure` this is per-request, but specialized for timing informati
 
 ```ruby
 Librato.timing 'twitter.lookup.time', 21.2
+
+# report from a custom source
+Librato.measure 'api.response.time', time, source: node_name
 ```
 
 The block form auto-submits the time it took for its contents to execute as the measurement value:
@@ -142,6 +145,22 @@ Librato.timing 'twitter.lookup.time' do
   @twitter = Twitter.lookup(user)
 end
 ```
+
+###### percentiles (beta)
+
+By defaults timings will send the average, sum, max and min for every minute. If you want to send percentiles as well you can specify them inline while instrumenting:
+
+    # track a single percentile
+    Librato.timing 'api.request.time', time, percentile: 95
+
+    # track multiple percentiles
+    Librato.timing 'api.request.time', time, percentile: [95, 99]
+
+You can also use percentiles with the block form of timings:
+
+    Librato.timing 'my.important.event', percentile: 95 do
+      # do work
+    end
 
 #### group
 
