@@ -1,3 +1,7 @@
+###
+* Add percentile support for timings
+* Start reporting 95th percentile for key ActionController metrics
+
 ### Version 0.11.1
 * Use controller/action as source for instrument_action metrics
 
