@@ -13,6 +13,7 @@ env:
   - "RAILS_VERSION=3.2"
   - "RAILS_VERSION=4.0"
   - "RAILS_VERSION=4.1"
+  - "RAILS_VERSION=4.2"
   - "RAILS_VERSION=master"
 
 matrix:
@@ -21,4 +22,4 @@ matrix:
     - env: "RAILS_VERSION=master"
   include:
     - rvm: ruby-head
-      env: "RAILS_VERSION=4.1"
+      env: "RAILS_VERSION=4.2"
