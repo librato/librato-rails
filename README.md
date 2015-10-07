@@ -146,21 +146,25 @@ Librato.timing 'twitter.lookup.time' do
 end
 ```
 
-###### percentiles (beta)
+#### percentiles
 
 By defaults timings will send the average, sum, max and min for every minute. If you want to send percentiles as well you can specify them inline while instrumenting:
 
-    # track a single percentile
-    Librato.timing 'api.request.time', time, percentile: 95
+```ruby
+# track a single percentile
+Librato.timing 'api.request.time', time, percentile: 95
 
-    # track multiple percentiles
-    Librato.timing 'api.request.time', time, percentile: [95, 99]
+# track multiple percentiles
+Librato.timing 'api.request.time', time, percentile: [95, 99]
+```
 
 You can also use percentiles with the block form of timings:
 
-    Librato.timing 'my.important.event', percentile: 95 do
-      # do work
-    end
+```ruby
+Librato.timing 'my.important.event', percentile: 95 do
+  # do work
+end
+```
 
 #### group
 
