@@ -1,4 +1,4 @@
-###
+### Version 0.12.0
 * Add percentile support for timings
 * Start reporting 95th percentile for key ActionController metrics
 
