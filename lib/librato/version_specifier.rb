@@ -1,7 +1,11 @@
 module VersionSpecifier
   def self.supported(opts={})
     return unless block_given?
-    return if !opts.key?(:min) && !opts.key?(:max)
+
+    if !opts.key?(:min) && !opts.key?(:max)
+      raise ArgumentError, ':min and/or :max arguments required'
+    end
+
     return yield if version >= opts[:min].to_s && !opts.key?(:max)
     return yield if version <= opts[:max].to_s && !opts.key?(:min)
     return yield if version.between?(opts[:min].to_s, opts[:max].to_s)
