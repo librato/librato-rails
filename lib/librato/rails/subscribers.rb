@@ -20,3 +20,7 @@ require_relative 'subscribers/controller'
 require_relative 'subscribers/render'
 require_relative 'subscribers/sql'
 require_relative 'subscribers/mail'
+
+VersionSpecifier.supported(min: '4.2') do
+  require_relative 'subscribers/job'
+end

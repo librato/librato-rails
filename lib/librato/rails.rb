@@ -1,4 +1,5 @@
 require 'librato/rack'
+require_relative 'version_specifier'
 require_relative 'rails/configuration'
 require_relative 'rails/tracker'
 require_relative 'rails/version'

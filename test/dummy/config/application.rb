@@ -11,8 +11,11 @@ module Dummy
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    # Custom directories with classes and modules you want to be autoloadable.
-    # config.autoload_paths += %W(#{config.root}/extras)
+    VersionSpecifier.supported(min: '4.2') do
+      # Custom directories with classes and modules you want to be autoloadable.
+      # config.autoload_paths += %W(#{config.root}/extras)
+      config.autoload_paths += %W(#{config.root}/extras)
+    end
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -43,7 +46,7 @@ module Dummy
     # like if you have constraints or database-specific column types
     # config.active_record.schema_format = :sql
 
-    if Rails.version[0] == '3'
+    VersionSpecifier.supported(min: '3.0', max: '3.2') do
       # Enforce whitelist mode for mass assignment.
       # This will create an empty whitelist of attributes available for mass-assignment for all models
       # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
