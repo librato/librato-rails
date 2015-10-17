@@ -26,4 +26,8 @@ class VersionSpecifierTest < MiniTest::Unit::TestCase
   def test_supported_no_args
     assert_raises(ArgumentError) { VersionSpecifier.supported { @yielded = true } }
   end
+
+  def test_supported_no_block
+    assert_raises(LocalJumpError) { VersionSpecifier.supported(min: '3.1') }
+  end
 end

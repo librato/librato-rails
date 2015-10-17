@@ -1,6 +1,8 @@
 module VersionSpecifier
   def self.supported(opts={})
-    return unless block_given?
+    unless block_given?
+      raise LocalJumpError, 'version specific code block required'
+    end
 
     if !opts.key?(:min) && !opts.key?(:max)
       raise ArgumentError, ':min and/or :max arguments required'
