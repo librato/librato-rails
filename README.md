@@ -80,7 +80,7 @@ Note that if Heroku idles your application measurements will not be sent until i
 
 ## Automatic Measurements
 
-After installing `librato-rails` and restarting your app and you will see a number of new metrics appear in your Librato account. These track request performance, sql queries, mail handling, and other key stats.
+After installing `librato-rails` and restarting your app you will see a number of new metrics appear in your Librato account. These track request performance, sql queries, mail handling, and other key stats.
 
 Built-in performance metrics will start with either `rack` or `rails`, depending on the level they are being sampled from. For example: `rails.request.total` is the total number of requests rails has received each minute.
 
