@@ -5,8 +5,10 @@ module Librato
 
       hooks.each do |hook|
         ActiveSupport::Notifications.subscribe "#{hook}.active_job" do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
           collector.group 'rails.job' do |c|
             c.increment hook
+            c.timing "#{hook}.time", event.duration, source: event.payload[:job].class
           end
         end
       end

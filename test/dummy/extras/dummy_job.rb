@@ -2,6 +2,6 @@ class DummyJob < ActiveJob::Base
   queue_as :default
 
   def perform
-    # Do something later
+    sleep 1
   end
 end
