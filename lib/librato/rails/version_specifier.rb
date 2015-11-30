@@ -18,9 +18,7 @@ module Librato
           raise VersionSpecifierError, ':min and/or :max arguments required'
         end
 
-        return yield if version >= opts[:min].to_s && !opts.key?(:max)
-        return yield if version <= opts[:max].to_s && !opts.key?(:min)
-        return yield if version.between?(opts[:min].to_s, opts[:max].to_s)
+        yield if is_supported?(opts)
       end
 
       private
@@ -28,9 +26,20 @@ module Librato
       def version
         [@env::VERSION::MAJOR, @env::VERSION::MINOR].compact.join('.')
       end
+
+      def is_supported?(opts={})
+        if version >= opts[:min].to_s && !opts.key?(:max)
+          return true
+        elsif version <= opts[:max].to_s && !opts.key?(:min)
+          return true
+        elsif version.between?(opts[:min].to_s, opts[:max].to_s)
+          return true
+        else
+          return false
+        end
+      end
     end
 
-    class VersionSpecifierError < StandardError
-    end
+    class VersionSpecifierError < StandardError; end
   end
 end
