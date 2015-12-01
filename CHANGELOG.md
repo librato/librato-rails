@@ -1,3 +1,6 @@
+### master
+* Add Active Job support for job counters and timings
+
 ### Version 0.12.0
 * Add percentile support for timings
 * Start reporting 95th percentile for key ActionController metrics
