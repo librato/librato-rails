@@ -1,4 +1,4 @@
-### Version 0.12.1.beta
+### master
 * Add Active Job support for job counters and timings
 
 ### Version 0.12.0
