@@ -1,5 +1,6 @@
-### master
+### Version 1.0.0
 * Add Active Job support for job counters and timings
+* Add `VersionSpecifier` to manage Rails version runtime dependencies
 
 ### Version 0.12.0
 * Add percentile support for timings
