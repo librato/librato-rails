@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "railties", ">= 3.0"
   s.add_dependency "activesupport", ">= 3.0"
-  s.add_dependency "librato-rack", "0.5.0"
+  s.add_dependency "librato-rack", "0.6.0"
 
   s.add_development_dependency "sqlite3", ">= 1.3"
   s.add_development_dependency "capybara", "~> 2.0.3"

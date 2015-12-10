@@ -1,3 +1,6 @@
+### Master
+* Add proxy configuration support
+
 ### Version 1.0.0
 * Add Active Job support for job counters and timings
 * Add `VersionSpecifier` to manage Rails version runtime dependencies

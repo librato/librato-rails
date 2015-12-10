@@ -44,6 +44,7 @@ module Librato
         assert_equal 30, config.flush_interval
         assert_equal 'custom-1', config.source
         assert_equal false, config.source_pids
+        assert_equal 'http://localhost:8080', config.proxy
         assert config.explicit_source?, 'source is explicit'
       end
 
