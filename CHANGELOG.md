@@ -1,5 +1,5 @@
-### Master
-* Add proxy configuration support
+### Version 1.1.0
+* Add HTTP proxy support
 
 ### Version 1.0.0
 * Add Active Job support for job counters and timings
