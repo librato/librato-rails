@@ -8,7 +8,7 @@ module Librato
     # https://github.com/librato/librato-rack/blob/master/lib/librato/rack/configuration.rb
     #
     class Configuration < Rack::Configuration
-      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids}
+      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids proxy}
 
       attr_accessor :config_by, :config_file
 
