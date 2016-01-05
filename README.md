@@ -76,7 +76,9 @@ If you are using a config file, add your source entry to that instead.
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
 
-Note that if Heroku idles your application measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic this is the most likely cause.
+If Heroku idles your application, measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic, this is the most likely cause.
+
+Please note that a Paid Plan is required for tracking Custom Metrics in Heroku. Choose a Librato add-on plan here (https://elements.heroku.com/addons/librato#pricing).  
 
 ## Automatic Measurements
 
