@@ -11,6 +11,8 @@ Verified combinations of Ruby/Rails are available in our [build matrix](http://t
 
 ## Quick Start
 
+>Note: If you have not yet enabled Rails on the [Librato integrations page](https://metrics.librato.com/integrations) within your account, do this first. This will automatically set up a Rails and Rack Space, displaying many useful performance metrics.
+
 Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Librato account.
 
 After installation `librato-rails` will detect your environment and start reporting available performance information for your application.
@@ -78,7 +80,7 @@ Full information on configuration options is available on the [configuration wik
 
 If Heroku idles your application, measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic, this is the most likely cause.
 
-Please note that a Paid Plan is required for tracking Custom Metrics in Heroku. Choose a Librato add-on plan here (https://elements.heroku.com/addons/librato#pricing).  
+Please note that a Paid Plan is required for tracking Custom Metrics in Heroku. Choose a Librato add-on plan here (https://elements.heroku.com/addons/librato#pricing).
 
 ## Automatic Measurements
 
