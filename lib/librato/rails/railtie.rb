@@ -5,15 +5,14 @@ module Librato
       # don't have any custom http vars anymore, check if hostname is UUID
       on_heroku = Socket.gethostname =~ /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i
 
-      # make configuration proxy for config inside Rails
-      config.librato_rails = Configuration.new
-
-      # set up tracker
-      tracker = Tracker.new(config.librato_rails)
-      config.librato_rails.tracker = tracker
-      Librato.register_tracker(tracker)
-
       initializer 'librato_rails.setup' do |app|
+        # make configuration proxy for config inside Rails
+        app.config.librato_rails = Configuration.new
+
+        # set up tracker
+        tracker = Tracker.new(app.config.librato_rails)
+        app.config.librato_rails.tracker = tracker
+        Librato.register_tracker(tracker)
 
         ActiveSupport.on_load :action_controller do
           extend Librato::Rails::Helpers::Controller
