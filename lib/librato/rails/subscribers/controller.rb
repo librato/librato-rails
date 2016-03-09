@@ -4,6 +4,11 @@ module Librato
 
       # Controllers
 
+      def self.watch_controller(controller)
+        @watches ||= []
+        @watches << "#{controller}".freeze
+      end
+
       def self.watch_controller_action(controller, action)
         @watches ||= []
         @watches << "#{controller}##{action}".freeze
@@ -55,7 +60,7 @@ module Librato
           r.increment 'slow' if event.duration > 200.0
         end # end group
 
-        if @watches && @watches.index("#{controller}##{action}")
+        if @watches && (@watches.index("#{controller}##{action}") || @watches.index("#{controller}"))
           source = "#{controller}.#{action}.#{format}"
           collector.group 'rails.action.request' do |r|
 
