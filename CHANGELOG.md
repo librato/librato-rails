@@ -1,3 +1,6 @@
+### Version 1.2.0
+* Allow use of Rails.application.secrets in the librato.yaml (Zack Siri)
+
 ### Version 1.1.0
 * Add HTTP proxy support
 
