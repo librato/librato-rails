@@ -66,6 +66,48 @@ Note that if a config file is present, _all environment variables will be ignore
 
 For more information on combining config files and environment variables, see the [full configuration docs](https://github.com/librato/librato-rails/wiki/Configuration).
 
+##### Metric Suites
+
+The metrics recorded by `librato-rails` are organized into named metric suites that can be selectively enabled/disabled:
+
+* `rack`: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
+* `rack_status`: All of the `rack.request.status.*` metrics
+* `rack_method`: All of the `rack.request.method.*` metrics
+* `rails_action`: All of the `rails.action.*` metrics reported by the `instrument_action` helper
+* `rails_cache`: All of the `rails.cache.*` metrics
+* `rails_controller`: The `rails.request.total`, `rails.request.exceptions`, `rails.request.slow` and `rails.request.time.*` metrics
+* `rails_job`: All of the `rails.job.*` metrics
+* `rails_mail`: All of the `rails.mail.*` metrics
+* `rails_method`: All of the `rails.request.method.*` metrics
+* `rails_render`: All of the `rails.view.*` metrics
+* `rails_sql`: All of the `rails.sql.*` metrics
+* `rails_status`: All of the `rails.request.status.*` metrics
+
+All of the metric suites listed above are enabled by default.
+
+The metric suites can be configured via either the `LIBRATO_SUITES` environment variable or the `config/librato.yml` configuration file. The configuration syntax is the same regardless of which configuration method you use.
+
+```bash
+  LIBRATO_SUITES="rails_controller,rails_sql"  # use ONLY the rails_controller and rails_sql suites
+  LIBRATO_SUITES="+foo,+bar"                   # + prefix indicates that you want the default suites plus foo and bar
+  LIBRATO_SUITES="-rails_render"               # - prefix indicates that you want the default suites removing rails_render
+  LIBRATO_SUITES="+foo,-rack_status"           # Use all default suites except for rack_status while also adding foo
+  LIBRATO_SUITES="all"                         # Enable all suites
+  LIBRATO_SUITES="none"                        # Disable all suites
+  LIBRATO_SUITES=""                            # Use only the default suites (same as if env var is absent)
+```
+
+Note that you should EITHER specify an explict list of suites to enable OR add/subtract individual suites from the default list (using the +/- prefixes). If you try to mix these two forms a `Librato::Rack::InvalidSuiteConfiguration` error will be raised.
+
+Configuring the metric suites via the `config/librato.yml` file would look like this:
+
+```yaml
+production:
+  user: name@example.com
+  token: abc123
+  suites: 'all'
+```
+
 ##### Running on Heroku
 
 If you are using the Librato Heroku addon, your user and token environment variables will already be set in your Heroku environment. If you are running without the addon you will need to provide them yourself.

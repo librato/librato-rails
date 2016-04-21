@@ -1,3 +1,6 @@
+### Version X.X.X
+* Add support for configurable metric suites
+
 ### Version 1.2.0
 * Allow use of Rails.application.secrets in the librato.yaml (Zack Siri)
 
