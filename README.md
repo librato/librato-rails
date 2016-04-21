@@ -90,30 +90,36 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 
 #### Rails Suites
 
-_Request Metrics_
+###### Request Metrics
 
-* `rails_controller`: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time.*`, and `rails.request.slow`
-* `rails_method`: `rails.request.method.*` metrics (GET, HEAD, etc)
-* `rails_status`: `rails.request.status.*` metrics broken out by individual status codes and class (200, 2xx, etc)
-* `rails_action`: `rails.action.*` metrics specific to individual controller actions via the [instrument_action](#instrument_action-experimental) helper
+* *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time.*`, and `rails.request.slow`
+* *rails_method*: `rails.request.method.*` metrics (GET, HEAD, etc)
+* *rails_status*: `rails.request.status.*` metrics broken out by individual status codes and class (200, 2xx, etc)
+* *rails_action*: `rails.action.*` metrics specific to individual controller actions via the [instrument_action](#instrument_action-experimental) helper
 
-_System-Specific Metrics_
+###### System-Specific Metrics
 
-* `rails_cache`: `rails.cache.*` metrics including reads, writes, hits & deletes
-* `rails_job`: `rails.job.*` metrics including jobs queued, started & performed
-* `rails_mail`: `rails.mail.*` metrics including mail sent / received
-* `rails_render`: `rails.view.*` metrics including time to render individual templates & partials
-* `rails_sql`: `rails.sql.*` metrics, including SELECT / INSERT / UPDATE / DELETEs as well as total query operations
+* *rails_cache*: `rails.cache.*` metrics including reads, writes, hits & deletes
+* *rails_job*: `rails.job.*` metrics including jobs queued, started & performed (Rails 4.2+)
+* *rails_mail*: `rails.mail.*` metrics including mail sent / received
+* *rails_render*: `rails.view.*` metrics including time to render individual templates & partials
+* *rails_sql*: `rails.sql.*` metrics, including SELECT / INSERT / UPDATE / DELETEs as well as total query operations
 
 #### Rack Suites
 
 Rack measurements are taken from the very beginning of your [rack middleware stack](http://guides.rubyonrails.org/rails_on_rack.html). They include all time spent in your ruby process (not just in Rails proper). They will also show requests that are handled entirely in middleware and don't appear in the `rails` suites above.
 
-* `rack`: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
-* `rack_method`: `rack.request.method.*` metrics (GET, HEAD, etc)
-* `rack_status`: `rack.request.status.*` metrics metrics broken out by individual status codes and class (200, 2xx, etc)
+* *rack*: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
+* *rack_method*: `rack.request.method.*` metrics (GET, HEAD, etc)
+* *rack_status*: `rack.request.status.*` metrics metrics broken out by individual status codes and class (200, 2xx, etc)
 
-All suites listed above are enabled by default.
+###### Queue Time
+
+The `rack.request.queue.time` metric will show you queuing time (the time between your load balancer receiving a request & your application process starting to work on it) if your load balancer sets `HTTP_X_REQUEST_START` or `HTTP_X_QUEUE_START`.
+
+#### Default Suites
+
+All of the rails & rack suites listed above are enabled by default.
 
 #### Suite Configuration
 
@@ -202,7 +208,7 @@ Librato.timing 'twitter.lookup.time' do
 end
 ```
 
-#### percentiles
+###### Percentiles
 
 By defaults timings will send the average, sum, max and min for every minute. If you want to send percentiles as well you can specify them inline while instrumenting:
 
