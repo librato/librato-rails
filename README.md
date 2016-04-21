@@ -93,7 +93,7 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 ###### Request Metrics
 
 * *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time`, `rails.request.time.db`, `rails.request.time.view`, and `rails.request.slow`
-* *rails_method*: `rails.request.method.*` metrics (GET, HEAD, etc)
+* *rails_method*: `rails.request.method.*` metrics (GET, POST, etc)
 * *rails_status*: `rails.request.status.*` metrics broken out by individual status codes and class (200, 2xx, etc)
 * *rails_action*: `rails.action.*` metrics specific to individual controller actions via the [instrument_action](#instrument_action-experimental) helper
 
@@ -110,7 +110,7 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 Rack measurements are taken from the very beginning of your [rack middleware stack](http://guides.rubyonrails.org/rails_on_rack.html). They include all time spent in your ruby process (not just in Rails proper). They will also show requests that are handled entirely in middleware and don't appear in the `rails` suites above.
 
 * *rack*: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
-* *rack_method*: `rack.request.method.*` metrics (GET, HEAD, etc)
+* *rack_method*: `rack.request.method.*` metrics (GET, POST, etc)
 * *rack_status*: `rack.request.status.*` metrics metrics broken out by individual status codes and class (200, 2xx, etc)
 
 ###### Queue Time
