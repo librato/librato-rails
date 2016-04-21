@@ -15,8 +15,6 @@ Verified combinations of Ruby/Rails are available in our [build matrix](http://t
 
 Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Librato account.
 
-After installation `librato-rails` will detect your environment and start reporting available performance information for your application.
-
 Custom metrics can also be added easily:
 
 ```ruby
