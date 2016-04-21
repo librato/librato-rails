@@ -8,6 +8,7 @@ else
   rails = "~> #{rails_version}.0"
 end
 
+gem "mime-types", (rails_version >= "4.0" ? "~> 2.9" : "~> 1.16")
 gem "railties", rails
 gem "activesupport", rails
 

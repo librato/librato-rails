@@ -18,21 +18,12 @@ module Librato
         ENV['LIBRATO_USER'] = 'foo@bar.com'
         ENV['LIBRATO_TOKEN'] = 'api_key'
         ENV['LIBRATO_SOURCE'] = 'source'
+        ENV['LIBRATO_SUITES'] = 'all'
         config = Configuration.new
         assert_equal 'foo@bar.com', config.user
         assert_equal 'api_key', config.token
         assert_equal 'source', config.source
-        assert config.explicit_source?, 'source is explicit'
-      end
-
-      def test_legacy_env_variable_config
-        ENV['LIBRATO_METRICS_USER'] = 'foo@bar.com'
-        ENV['LIBRATO_METRICS_TOKEN'] = 'api_key'
-        ENV['LIBRATO_METRICS_SOURCE'] = 'source'
-        config = Configuration.new
-        assert_equal 'foo@bar.com', config.user
-        assert_equal 'api_key', config.token
-        assert_equal 'source', config.source
+        assert_equal 'all', config.suites
         assert config.explicit_source?, 'source is explicit'
       end
 
@@ -45,6 +36,7 @@ module Librato
         assert_equal 'custom-1', config.source
         assert_equal false, config.source_pids
         assert_equal 'http://localhost:8080', config.proxy
+        assert_equal 'all', config.suites
         assert config.explicit_source?, 'source is explicit'
       end
 
@@ -69,6 +61,26 @@ module Librato
       def test_empty_config_file_doesnt_break_log_level
         config = fixture_config('empty')
         assert_equal :info, config.log_level, 'should be default'
+      end
+
+      def test_empty_config_file_doesnt_break_suites
+        config = fixture_config('empty')
+        assert_equal '', config.suites, 'should be default'
+      end
+
+      def test_default_suites
+        defaults = Configuration.new.send(:default_suites)
+        assert_includes defaults, :rack
+        assert_includes defaults, :rack_method
+        assert_includes defaults, :rack_status
+        assert_includes defaults, :rails_cache
+        assert_includes defaults, :rails_controller
+        assert_includes defaults, :rails_mail
+        assert_includes defaults, :rails_method
+        assert_includes defaults, :rails_render
+        assert_includes defaults, :rails_sql
+        assert_includes defaults, :rails_status
+        assert_includes defaults, :rails_job
       end
 
       def fixture_config(file='librato')

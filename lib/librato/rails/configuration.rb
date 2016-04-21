@@ -8,7 +8,9 @@ module Librato
     # https://github.com/librato/librato-rack/blob/master/lib/librato/rack/configuration.rb
     #
     class Configuration < Rack::Configuration
-      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids proxy}
+      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids proxy suites}
+
+      DEFAULT_SUITES = [:rails_action, :rails_cache, :rails_controller, :rails_mail, :rails_method, :rails_render, :rails_sql, :rails_status, :rails_job]
 
       attr_accessor :config_by, :config_file
 
@@ -33,6 +35,7 @@ module Librato
         # respect autorun and log_level env vars regardless of config method
         self.autorun = detect_autorun
         self.log_level = :info if log_level.blank?
+        self.suites = '' if suites.nil?
         self.log_level = ENV['LIBRATO_LOG_LEVEL'] if ENV['LIBRATO_LOG_LEVEL']
       end
 
@@ -45,6 +48,10 @@ module Librato
           settable = CONFIG_SETTABLE & env_specific.keys
           settable.each { |key| self.send("#{key}=", env_specific[key]) }
         end
+      end
+
+      def default_suites
+        super + DEFAULT_SUITES
       end
 
     end

@@ -11,16 +11,10 @@ module Librato
         @collector ||= Librato.tracker.collector
       end
 
+      def self.watch_controller_action(controller, action)
+        @watches ||= []
+        @watches << "#{controller}##{action}".freeze
+      end
     end
   end
-end
-
-require_relative 'subscribers/cache'
-require_relative 'subscribers/controller'
-require_relative 'subscribers/render'
-require_relative 'subscribers/sql'
-require_relative 'subscribers/mail'
-
-Librato::Rails::VersionSpecifier.supported(min: '4.2') do
-  require_relative 'subscribers/job'
 end
