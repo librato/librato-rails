@@ -1,4 +1,4 @@
-### Version X.X.X
+### Version 1.3.0
 * Add support for configurable metric suites
 
 ### Version 1.2.0
