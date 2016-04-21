@@ -13,9 +13,9 @@ Verified combinations of Ruby/Rails are available in our [build matrix](http://t
 
 > Note: If you have not yet enabled Rails on the [Librato integrations page](https://metrics.librato.com/integrations) within your account, do this first. This will automatically set up Rails and Rack Spaces, displaying many useful performance metrics.
 
-Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Librato account.
+Installing `librato-rails` and relaunching your application will automatically start the reporting of built-in performance metrics to your Librato account.
 
-Custom metrics can also be added easily:
+Once installed, custom metrics can also be added easily:
 
 ```ruby
 # keep counts of key events
