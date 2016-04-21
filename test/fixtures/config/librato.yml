@@ -6,6 +6,7 @@ test:
   source: 'custom-1'
   source_pids: false
   proxy: 'http://localhost:8080'
+  suites: all
   
 production:
   user: 'live@bar.com'
