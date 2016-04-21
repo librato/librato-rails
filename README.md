@@ -62,7 +62,7 @@ Alternately you can provide `LIBRATO_USER` and `LIBRATO_TOKEN` environment varia
 
 Note that if a config file is present, _all environment variables will be ignored_.
 
-For more information on combining config files and environment variables, see the [full configuration docs](https://github.com/librato/librato-rails/wiki/Configuration).
+To see all config options or for information on combining config files and environment variables see the [full configuration docs](https://github.com/librato/librato-rails/wiki/Configuration).
 
 ##### Running on Heroku
 
@@ -78,7 +78,7 @@ Full information on configuration options is available on the [configuration wik
 
 If Heroku idles your application, measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic, this is the most likely cause.
 
-Please note that a Paid Plan is required for tracking Custom Metrics in Heroku. Choose a Librato add-on plan here (https://elements.heroku.com/addons/librato#pricing).
+If you are using Librato as a Heroku addon, [a paid plan](https://elements.heroku.com/addons/librato#pricing) is required for reporting custom metrics with librato-rails. You can view more about available addon levels [here](https://elements.heroku.com/addons/librato#pricing).
 
 ## Automatic Measurements
 
