@@ -92,7 +92,7 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 
 ###### Request Metrics
 
-* *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time.*`, and `rails.request.slow`
+* *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time`, `rails.request.time.db`, `rails.request.time.view`, and `rails.request.slow`
 * *rails_method*: `rails.request.method.*` metrics (GET, HEAD, etc)
 * *rails_status*: `rails.request.status.*` metrics broken out by individual status codes and class (200, 2xx, etc)
 * *rails_action*: `rails.action.*` metrics specific to individual controller actions via the [instrument_action](#instrument_action-experimental) helper
@@ -143,7 +143,7 @@ Configuring the metric suites via the `config/librato.yml` file would look like 
 production:
   user: name@example.com
   token: abc123
-  suites: 'rails_controller,rails_status,rails_sql'
+  suites: 'rails_controller,rails_status,rails_sql,rack'
 ```
 
 ## Custom Measurements
