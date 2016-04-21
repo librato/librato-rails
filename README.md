@@ -110,10 +110,10 @@ The suites listed above are enabled by default.
 Suites can be configured via either the `LIBRATO_SUITES` environment variable or the `suites` setting in a `config/librato.yml` configuration file. The configuration syntax is the same regardless of which configuration method.
 
 ```bash
-  LIBRATO_SUITES="rails_controller,rails_sql"  # use ONLY the rails_controller and rails_sql suites
-  LIBRATO_SUITES="+foo,+bar"                   # + prefix indicates that you want the default suites plus foo and bar
-  LIBRATO_SUITES="-rails_render"               # - prefix indicates that you want the default suites removing rails_render
-  LIBRATO_SUITES="+foo,-rack_status"           # Use all default suites except for rack_status while also adding foo
+  LIBRATO_SUITES="rails_controller,rails_sql"  # use ONLY the rails_controller & rails_sql suites
+  LIBRATO_SUITES="+foo,+bar"                   # + prefix: default suites plus foo & bar
+  LIBRATO_SUITES="-rails_render"               # - prefix: default suites removing rails_render
+  LIBRATO_SUITES="+foo,-rack_status"           # Default suites except for rack_status, also add foo
   LIBRATO_SUITES="all"                         # Enable all suites
   LIBRATO_SUITES="none"                        # Disable all suites
   LIBRATO_SUITES=""                            # Use only the default suites (same as if env var is absent)
