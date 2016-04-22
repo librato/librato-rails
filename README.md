@@ -5,19 +5,17 @@ librato-rails
 
 `librato-rails` will report key statistics for your Rails app to [Librato](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
 
-Rails versions 3.0 or greater are supported on Ruby 1.9.2 and above.
+Rails versions 3.0 or greater are supported on Ruby 1.9.3 and above.
 
 Verified combinations of Ruby/Rails are available in our [build matrix](http://travis-ci.org/librato/librato-rails).
 
 ## Quick Start
 
->Note: If you have not yet enabled Rails on the [Librato integrations page](https://metrics.librato.com/integrations) within your account, do this first. This will automatically set up a Rails and Rack Space, displaying many useful performance metrics.
+> Note: If you have not yet enabled Rails on the [Librato integrations page](https://metrics.librato.com/integrations) within your account, do this first. This will automatically set up Rails and Rack Spaces, displaying many useful performance metrics.
 
-Installing `librato-rails` and relaunching your application will automatically start the reporting of metrics to your Librato account.
+Installing `librato-rails` and relaunching your application will automatically start the reporting of built-in performance metrics to your Librato account.
 
-After installation `librato-rails` will detect your environment and start reporting available performance information for your application.
-
-Custom metrics can also be added easily:
+Once installed, custom metrics can also be added easily:
 
 ```ruby
 # keep counts of key events
@@ -64,49 +62,7 @@ Alternately you can provide `LIBRATO_USER` and `LIBRATO_TOKEN` environment varia
 
 Note that if a config file is present, _all environment variables will be ignored_.
 
-For more information on combining config files and environment variables, see the [full configuration docs](https://github.com/librato/librato-rails/wiki/Configuration).
-
-##### Metric Suites
-
-The metrics recorded by `librato-rails` are organized into named metric suites that can be selectively enabled/disabled:
-
-* `rack`: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
-* `rack_status`: All of the `rack.request.status.*` metrics
-* `rack_method`: All of the `rack.request.method.*` metrics
-* `rails_action`: All of the `rails.action.*` metrics reported by the `instrument_action` helper
-* `rails_cache`: All of the `rails.cache.*` metrics
-* `rails_controller`: The `rails.request.total`, `rails.request.exceptions`, `rails.request.slow` and `rails.request.time.*` metrics
-* `rails_job`: All of the `rails.job.*` metrics
-* `rails_mail`: All of the `rails.mail.*` metrics
-* `rails_method`: All of the `rails.request.method.*` metrics
-* `rails_render`: All of the `rails.view.*` metrics
-* `rails_sql`: All of the `rails.sql.*` metrics
-* `rails_status`: All of the `rails.request.status.*` metrics
-
-All of the metric suites listed above are enabled by default.
-
-The metric suites can be configured via either the `LIBRATO_SUITES` environment variable or the `config/librato.yml` configuration file. The configuration syntax is the same regardless of which configuration method you use.
-
-```bash
-  LIBRATO_SUITES="rails_controller,rails_sql"  # use ONLY the rails_controller and rails_sql suites
-  LIBRATO_SUITES="+foo,+bar"                   # + prefix indicates that you want the default suites plus foo and bar
-  LIBRATO_SUITES="-rails_render"               # - prefix indicates that you want the default suites removing rails_render
-  LIBRATO_SUITES="+foo,-rack_status"           # Use all default suites except for rack_status while also adding foo
-  LIBRATO_SUITES="all"                         # Enable all suites
-  LIBRATO_SUITES="none"                        # Disable all suites
-  LIBRATO_SUITES=""                            # Use only the default suites (same as if env var is absent)
-```
-
-Note that you should EITHER specify an explict list of suites to enable OR add/subtract individual suites from the default list (using the +/- prefixes). If you try to mix these two forms a `Librato::Rack::InvalidSuiteConfiguration` error will be raised.
-
-Configuring the metric suites via the `config/librato.yml` file would look like this:
-
-```yaml
-production:
-  user: name@example.com
-  token: abc123
-  suites: 'all'
-```
+To see all config options or for information on combining config files and environment variables see the [full configuration docs](https://github.com/librato/librato-rails/wiki/Configuration).
 
 ##### Running on Heroku
 
@@ -122,13 +78,73 @@ Full information on configuration options is available on the [configuration wik
 
 If Heroku idles your application, measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic, this is the most likely cause.
 
-Please note that a Paid Plan is required for tracking Custom Metrics in Heroku. Choose a Librato add-on plan here (https://elements.heroku.com/addons/librato#pricing).
+If you are using Librato as a Heroku addon, [a paid plan](https://elements.heroku.com/addons/librato#pricing) is required for reporting custom metrics with librato-rails. You can view more about available addon levels [here](https://elements.heroku.com/addons/librato#pricing).
 
 ## Automatic Measurements
 
 After installing `librato-rails` and restarting your app you will see a number of new metrics appear in your Librato account. These track request performance, sql queries, mail handling, and other key stats.
 
-Built-in performance metrics will start with either `rack` or `rails`, depending on the level they are being sampled from. For example: `rails.request.total` is the total number of requests rails has received each minute.
+Built-in performance metrics will start with either `rails` or `rack`, depending on the level they are being sampled from. For example: `rails.request.total` is the total number of requests rails has received each minute.
+
+The metrics automatically recorded by `librato-rails` are organized into named metric suites that can be selectively enabled/disabled:
+
+#### Rails Suites
+
+###### Request Metrics
+
+* *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time`, `rails.request.time.db`, `rails.request.time.view`, and `rails.request.slow`
+* *rails_method*: `rails.request.method.*` metrics (GET, POST, etc)
+* *rails_status*: `rails.request.status.*` metrics broken out by individual status codes and class (200, 2xx, etc)
+* *rails_action*: `rails.action.*` metrics specific to individual controller actions via the [instrument_action](#instrument_action-experimental) helper
+
+###### System-Specific Metrics
+
+* *rails_cache*: `rails.cache.*` metrics including reads, writes, hits & deletes
+* *rails_job*: `rails.job.*` metrics including jobs queued, started & performed (Rails 4.2+)
+* *rails_mail*: `rails.mail.*` metrics including mail sent / received
+* *rails_render*: `rails.view.*` metrics including time to render individual templates & partials
+* *rails_sql*: `rails.sql.*` metrics, including SELECT / INSERT / UPDATE / DELETEs as well as total query operations
+
+#### Rack Suites
+
+Rack measurements are taken from the very beginning of your [rack middleware stack](http://guides.rubyonrails.org/rails_on_rack.html). They include all time spent in your ruby process (not just in Rails proper). They will also show requests that are handled entirely in middleware and don't appear in the `rails` suites above.
+
+* *rack*: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
+* *rack_method*: `rack.request.method.*` metrics (GET, POST, etc)
+* *rack_status*: `rack.request.status.*` metrics metrics broken out by individual status codes and class (200, 2xx, etc)
+
+###### Queue Time
+
+The `rack.request.queue.time` metric will show you queuing time (the time between your load balancer receiving a request & your application process starting to work on it) if your load balancer sets `HTTP_X_REQUEST_START` or `HTTP_X_QUEUE_START`.
+
+#### Default Suites
+
+All of the rails & rack suites listed above are enabled by default.
+
+#### Suite Configuration
+
+Suites can be configured via either the `LIBRATO_SUITES` environment variable or the `suites` setting in a `config/librato.yml` configuration file. The syntax is the same regardless of configuration method.
+
+```bash
+  LIBRATO_SUITES="rails_controller,rails_sql"  # use ONLY the rails_controller & rails_sql suites
+  LIBRATO_SUITES="+foo,+bar"                   # + prefix: default suites plus foo & bar
+  LIBRATO_SUITES="-rails_render"               # - prefix: default suites removing rails_render
+  LIBRATO_SUITES="+foo,-rack_status"           # Default suites except for rack_status, also add foo
+  LIBRATO_SUITES="all"                         # Enable all suites
+  LIBRATO_SUITES="none"                        # Disable all suites
+  LIBRATO_SUITES=""                            # Use only the default suites (same as if env var is absent)
+```
+
+Note that you should specify **either** an explict list of suites to enable **or** add/subtract individual suites from the default list (using the +/- prefixes). If you try to mix these two forms a `Librato::Rack::InvalidSuiteConfiguration` error will be raised.
+
+Configuring the metric suites via the `config/librato.yml` file would look like this:
+
+```yaml
+production:
+  user: name@example.com
+  token: abc123
+  suites: 'rails_controller,rails_status,rails_sql,rack'
+```
 
 ## Custom Measurements
 
@@ -192,7 +208,7 @@ Librato.timing 'twitter.lookup.time' do
 end
 ```
 
-#### percentiles
+###### Percentiles
 
 By defaults timings will send the average, sum, max and min for every minute. If you want to send percentiles as well you can specify them inline while instrumenting:
 
@@ -238,7 +254,8 @@ Symbols can be used interchangably with strings for metric names.
 
 `librato-rails` also has special helpers which are available inside your controllers:
 
-#### instrument_action (experimental)
+#### instrument_action
+_experimental_, this interface may change:
 
 Use when you want to profile execution time or request volume for a specific controller action:
 
@@ -366,4 +383,4 @@ If you are debugging setting up `librato-rails` locally you can set `flush_inter
 
 ## Copyright
 
-Copyright (c) 2012-2014 [Librato Inc.](http://librato.com) See LICENSE for details.
+Copyright (c) 2012-2016 [Librato Inc.](http://librato.com) See LICENSE for details.
