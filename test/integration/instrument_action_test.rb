@@ -19,4 +19,16 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
     assert_equal 1, counters.fetch("#{base}.total", source: source)
   end
 
+  test 'instrument all controller actions' do
+    2.times { visit custom_path }
+    visit slow_path
+
+    metric   = 'rails.action.request.time'
+    action_1 = 'custom'
+    action_2 = 'slow'
+
+    assert_equal 2, aggregate.fetch(metric, source: "HomeController.#{action_1}.html")[:count]
+    assert_equal 1, aggregate.fetch(metric, source: "HomeController.#{action_2}.html")[:count]
+  end
+
 end

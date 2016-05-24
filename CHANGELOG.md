@@ -1,3 +1,6 @@
+### master
+* Add support to instrument all controller actions, e.g., `instrument_action :all`.
+
 ### Version 1.3.0
 * Add support for configurable metric suites
 

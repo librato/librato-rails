@@ -13,7 +13,11 @@ module Librato
 
       def self.watch_controller_action(controller, action)
         @watches ||= []
-        @watches << "#{controller}##{action}".freeze
+        if action == :all
+          @watches << "#{controller}".freeze
+        else
+          @watches << "#{controller}##{action}".freeze
+        end
       end
     end
   end
