@@ -20,6 +20,12 @@ Dummy::Application.routes.draw do
   get 'instrument/inst' => 'instrument_action#inst', :as => :instrument_action
   get 'instrument/not'  => 'instrument_action#not',  :as => :not_instrumented
 
+  get 'base/action_1'         => 'base#action_1',         :as => :base_action_1
+  get 'base/action_2'         => 'base#action_2',         :as => :base_action_2
+  get 'intermediate/action_1' => 'intermediate#action_1', :as => :intermediate_action_1
+  get 'derived/action_1'      => 'derived#action_1',      :as => :derived_action_1
+  get 'derived/action_2'      => 'derived#action_2',      :as => :derived_action_2
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

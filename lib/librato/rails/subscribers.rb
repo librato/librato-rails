@@ -13,11 +13,33 @@ module Librato
 
       def self.watch_controller_action(controller, action)
         @watches ||= []
-        if action == :all
-          @watches << "#{controller}".freeze
-        else
-          @watches << "#{controller}##{action}".freeze
+
+        watch =
+          if action == :all
+            "#{controller}".freeze
+          else
+            "#{controller}##{action}".freeze
+          end
+
+        return @watches if @watches.include?(watch)
+        @watches << watch
+      end
+
+      def self.watch_controller_descendants_for(controller)
+        klass = controller.is_a?(String) ? controller.constantize : controller
+        return @watches if klass.descendants.empty? # base case
+
+        klass.descendants.each do |descendant|
+          Subscribers.watch_controller_action(descendant, :all)
+          Subscribers.watch_controller_descendants_for(descendant)
         end
+
+        @watches
+      end
+
+      def self.track_controller_descendants
+        controllers = @watches.reject { |c| c.include?('#') } # specific controller actions do not have descendants
+        controllers.each { |c| Subscribers.watch_controller_descendants_for(c) }
       end
     end
   end
