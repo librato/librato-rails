@@ -255,7 +255,6 @@ Symbols can be used interchangably with strings for metric names.
 `librato-rails` also has special helpers which are available inside your controllers:
 
 #### instrument_action
-_experimental_, this interface may change:
 
 Use when you want to profile execution time or request volume for a specific controller action:
 
@@ -264,6 +263,22 @@ class CommentController < ApplicationController
   instrument_action :create # can accept a list
 
   def create
+    # ...
+  end
+end
+```
+
+Optionally, you can instrument all controller actions:
+
+```ruby
+class ArticlesController < ApplicationController
+  instrument_action :all
+
+  def create
+    # ...
+  end
+
+  def show
     # ...
   end
 end
