@@ -10,6 +10,11 @@ module Librato
           end
         end
 
+        def inherited(other)
+          super
+          Subscribers.inherit_watches(self.to_s, other.to_s)
+        end
+
       end
     end
   end
