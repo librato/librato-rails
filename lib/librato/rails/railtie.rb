@@ -15,8 +15,6 @@ module Librato
         Librato.register_tracker(tracker)
       end
 
-      config.after_initialize { Librato::Rails::Subscribers.track_controller_descendants }
-
       initializer 'librato_rails.setup' do |app|
 
         ActiveSupport.on_load :action_controller do
