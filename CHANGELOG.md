@@ -1,4 +1,4 @@
-### master
+### Version 1.4.0.beta
 * Add support to instrument all controller actions, e.g., `instrument_action :all`.
 
 ### Version 1.3.0
