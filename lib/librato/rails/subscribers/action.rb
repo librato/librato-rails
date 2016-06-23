@@ -14,7 +14,7 @@ module Librato
         format = "all" if format == "*/*"
         exception = event.payload[:exception]
 
-        if @watches && @watches.index("#{controller}##{action}")
+        if @watches && (@watches.index(controller) || @watches.index("#{controller}##{action}"))
           source = "#{controller}.#{action}.#{format}"
           collector.group 'rails.action.request' do |r|
 

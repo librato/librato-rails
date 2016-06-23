@@ -269,6 +269,22 @@ class CommentController < ApplicationController
 end
 ```
 
+Optionally, you can instrument all controller actions:
+
+```ruby
+class ArticlesController < ApplicationController
+  instrument_action :all
+
+  def create
+    # ...
+  end
+
+  def show
+    # ...
+  end
+end
+```
+
 Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including:
 
 * rails.action.request.total     (# of requests)

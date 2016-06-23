@@ -19,4 +19,34 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
     assert_equal 1, counters.fetch("#{base}.total", source: source)
   end
 
+  test 'instrument all controller actions' do
+    visit base_action_1_path
+    visit base_action_2_path
+
+    metric = 'rails.action.request.time'
+
+    assert_equal 1, aggregate.fetch(metric, source: 'BaseController.action_1.html')[:count]
+    assert_equal 1, aggregate.fetch(metric, source: 'BaseController.action_2.html')[:count]
+  end
+
+  test 'instrument all controller actions for inherited controllers' do
+    visit intermediate_action_1_path
+    visit derived_action_1_path
+    visit derived_action_2_path
+
+    metric = 'rails.action.request.time'
+
+    assert_equal 1, aggregate.fetch(metric, source: 'IntermediateController.action_1.html')[:count]
+    assert_equal 1, aggregate.fetch(metric, source: 'DerivedController.action_1.html')[:count]
+    assert_equal 1, aggregate.fetch(metric, source: 'DerivedController.action_2.html')[:count]
+  end
+
+  test 'instrument all controller actions for all controllers' do
+    visit not_instrumented_path
+
+    metric = 'rails.action.request.time'
+
+    assert_equal 1, aggregate.fetch(metric, source: 'InstrumentActionController.not.html')[:count]
+  end
+
 end
