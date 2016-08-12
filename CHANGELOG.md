@@ -1,4 +1,4 @@
-### Version X.X.X
+### Version 1.4.1
 * Bump librato-rack dependency to fix missing p95 for rack.request.time
 * Loosen librato-rack dependency to any 1.0.x versions
 
