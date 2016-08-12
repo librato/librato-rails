@@ -1,3 +1,7 @@
+### Version X.X.X
+* Bump librato-rack dependency to fix missing p95 for rack.request.time
+* Loosen librato-rack dependency to any 1.0.x versions
+
 ### Version 1.4.0
 * Add support to instrument all controller actions, e.g., `instrument_action :all`.
 
