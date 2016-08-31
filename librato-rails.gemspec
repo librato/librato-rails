@@ -25,7 +25,9 @@ Gem::Specification.new do |s|
 
   s.add_dependency "railties", ">= 3.0"
   s.add_dependency "activesupport", ">= 3.0"
-  s.add_dependency "librato-rack", "~> 1.0.1"
+  # Dependency temporarily moved to Gemfile until merged:
+  # https://github.com/librato/librato-rack/pull/54
+  # s.add_dependency "librato-rack", "~> 1.0.1"
 
   s.add_development_dependency "sqlite3", ">= 1.3"
   s.add_development_dependency "capybara", "~> 2.0.3"
