@@ -15,9 +15,10 @@ module Librato
             identifier = path[1].gsub('/', ':')
             # trim leading underscore for partials
             identifier.gsub!(':_', ':') if metric == "partial"
+            tags = { view: metric, identifier: identifier }
             collector.group "rails.view" do |c|
-              c.increment "render_#{metric}", tags: { identifier: identifier }, sporadic: true
-              c.timing "render_#{metric}.time", event.duration, tags: { identifier: identifier }, sporadic: true
+              c.increment "render", tags: tags, sporadic: true
+              c.timing "render.time", event.duration, tags: tags, sporadic: true
             end # end group
           end
 
