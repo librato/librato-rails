@@ -7,54 +7,58 @@ module Librato
       def teardown
         ENV.delete('LIBRATO_USER')
         ENV.delete('LIBRATO_TOKEN')
-        ENV.delete('LIBRATO_SOURCE')
+        ENV.delete("LIBRATO_TAGS")
         # legacy
         ENV.delete('LIBRATO_METRICS_USER')
         ENV.delete('LIBRATO_METRICS_TOKEN')
-        ENV.delete('LIBRATO_METRICS_SOURCE')
+        ENV.delete("LIBRATO_METRICS_TAGS")
       end
 
       def test_environmental_variable_config
         ENV['LIBRATO_USER'] = 'foo@bar.com'
         ENV['LIBRATO_TOKEN'] = 'api_key'
-        ENV['LIBRATO_SOURCE'] = 'source'
+        ENV["LIBRATO_TAGS"] = "hostname=metrics-web-stg-1"
         ENV['LIBRATO_SUITES'] = 'all'
+        expected_tags = { hostname: "metrics-web-stg-1" }
         config = Configuration.new
         assert_equal 'foo@bar.com', config.user
         assert_equal 'api_key', config.token
-        assert_equal 'source', config.source
+        assert_equal expected_tags, config.tags
         assert_equal 'all', config.suites
-        assert config.explicit_source?, 'source is explicit'
+        assert config.has_tags?, "tags are explicit"
       end
 
       def test_config_file_config
+        expected_tags = { hostname: "metrics-web-stg-1", region: "us-east-1" }
         config = fixture_config
         assert_equal 'test@bar.com', config.user
         assert_equal 'test api key', config.token
         assert_equal 'rails-test', config.prefix
         assert_equal 30, config.flush_interval
-        assert_equal 'custom-1', config.source
-        assert_equal false, config.source_pids
+        assert_equal expected_tags, config.tags
+        assert_equal false, config.report_pids
         assert_equal 'http://localhost:8080', config.proxy
         assert_equal 'all', config.suites
-        assert config.explicit_source?, 'source is explicit'
+        assert config.has_tags?, "tags are not explicit"
       end
 
-      def test_implicit_source
+      def test_implicit_tags
         config = fixture_config('simple')
         assert_equal 'test@bar.com', config.user
         assert_equal 'test api key', config.token
-        assert !config.explicit_source?, 'source is not explicit'
+        assert !config.has_tags?, "tags are not explicit"
       end
 
       def test_environmental_and_config_file_config
         ENV['LIBRATO_METRICS_USER'] = 'foo@bar.com'
         ENV['LIBRATO_METRICS_TOKEN'] = 'api_key'
-        ENV['LIBRATO_METRICS_SOURCE'] = 'source'
+        ENV["LIBRATO_METRICS_TAGS"] = "region=us-tirefire-1"
+        expected_tags = { hostname: "metrics-web-stg-1", region: "us-east-1" }
         config = fixture_config
         assert_equal 'test@bar.com', config.user # from config file
         assert_equal 'test api key', config.token # from config file
         assert_equal 'rails-test', config.prefix # from config file
+        assert_equal expected_tags, config.tags # from config file
         assert_equal 30, config.flush_interval # from config file
       end
 

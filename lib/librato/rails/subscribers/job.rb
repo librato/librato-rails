@@ -1,17 +1,26 @@
 module Librato
   module Rails
     module Subscribers
-      hooks = %w{enqueue_at enqueue perform_start perform}
 
-      hooks.each do |hook|
-        ActiveSupport::Notifications.subscribe "#{hook}.active_job" do |*args|
+      # ActionJob
+
+      %w{enqueue_at enqueue perform_start perform}.each do |metric|
+
+        ActiveSupport::Notifications.subscribe "#{metric}.active_job" do |*args|
+
           event = ActiveSupport::Notifications::Event.new(*args)
+          tags = {
+            adapter: event.payload[:adapter].to_s,
+            job: event.payload[:job].class.to_s
+          }
 
-          collector.group 'rails.job' do |c|
-            c.increment hook
-            c.timing "#{hook}.time", event.duration, source: event.payload[:job].class
-          end
-        end
+          collector.group "rails.job" do |c|
+            c.increment metric, tags: tags
+            c.timing "#{metric}.time", event.duration, tags: tags
+          end # end group
+
+        end # end subscribe
+
       end
     end
   end

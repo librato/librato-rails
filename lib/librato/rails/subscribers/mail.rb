@@ -4,13 +4,19 @@ module Librato
 
       # ActionMailer
 
-      ActiveSupport::Notifications.subscribe 'deliver.action_mailer' do |*args|
-        # payload[:mailer] => 'UserMailer'
-        collector.increment "rails.mail.sent"
-      end
+      %w{sent received}.each do |metric|
 
-      ActiveSupport::Notifications.subscribe 'receive.action_mailer' do |*args|
-        collector.increment "rails.mail.received"
+        ActiveSupport::Notifications.subscribe "deliver.action_mailer" do |*args|
+
+          event = ActiveSupport::Notifications::Event.new(*args)
+          tags = {
+            mailer: event.payload[:mailer]
+          }
+
+          collector.increment "rails.mail.#{metric}", tags: tags
+
+        end # end subscribe
+
       end
 
     end

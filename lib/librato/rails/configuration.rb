@@ -8,9 +8,9 @@ module Librato
     # https://github.com/librato/librato-rack/blob/master/lib/librato/rack/configuration.rb
     #
     class Configuration < Rack::Configuration
-      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids proxy suites}
+      CONFIG_SETTABLE = %w{flush_interval log_level prefix proxy report_pids suites tags token user}
 
-      DEFAULT_SUITES = [:rails_action, :rails_cache, :rails_controller, :rails_mail, :rails_method, :rails_render, :rails_sql, :rails_status, :rails_job]
+      DEFAULT_SUITES = [:rails_cache, :rails_controller, :rails_mail, :rails_method, :rails_render, :rails_sql, :rails_status, :rails_job]
 
       attr_accessor :config_by, :config_file
 
@@ -46,7 +46,15 @@ module Librato
         env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
         if env_specific
           settable = CONFIG_SETTABLE & env_specific.keys
-          settable.each { |key| self.send("#{key}=", env_specific[key]) }
+          settable.each do |key|
+            value =
+              if key == "tags"
+                env_specific[key].symbolize_keys!
+              else
+                env_specific[key]
+              end
+            self.send("#{key}=", value)
+          end
         end
       end
 
