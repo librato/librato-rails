@@ -34,7 +34,7 @@ class RequestTest < ActiveSupport::IntegrationCase
   end
 
   test 'request times' do
-    expected_tags = {
+    tags = {
       controller: "HomeController",
       action: "index",
       format: "html"
@@ -43,11 +43,11 @@ class RequestTest < ActiveSupport::IntegrationCase
     visit root_path
 
     # common for all paths
-    assert_equal 1, aggregate.fetch("rails.request.time", tags: expected_tags)[:count],
+    assert_equal 1, aggregate.fetch("rails.request.time", tags: tags)[:count],
       'should record total time'
-    assert_equal 1, aggregate.fetch("rails.request.time.db", tags: expected_tags)[:count],
+    assert_equal 1, aggregate.fetch("rails.request.time.db", tags: tags)[:count],
       'should record db time'
-    assert_equal 1, aggregate.fetch("rails.request.time.view", tags: expected_tags)[:count],
+    assert_equal 1, aggregate.fetch("rails.request.time.view", tags: tags)[:count],
       'should record view time'
 
     # status specific
@@ -58,14 +58,14 @@ class RequestTest < ActiveSupport::IntegrationCase
   end
 
   test 'track slow requests' do
-    expected_tags = {
+    tags = {
       controller: "HomeController",
       action: "slow",
       format: "html"
     }
 
     visit slow_path
-    assert_equal 1, counters.fetch("rails.request.slow", tags: expected_tags)
+    assert_equal 1, counters.fetch("rails.request.slow", tags: tags)
   end
 
 end

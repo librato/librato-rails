@@ -9,9 +9,7 @@ module Librato
         ActiveSupport::Notifications.subscribe "deliver.action_mailer" do |*args|
 
           event = ActiveSupport::Notifications::Event.new(*args)
-          tags = {
-            mailer: event.payload[:mailer]
-          }
+          tags = { mailer: event.payload[:mailer] }
 
           collector.increment "rails.mail.#{metric}", tags: tags
 

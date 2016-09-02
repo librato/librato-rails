@@ -7,9 +7,7 @@ module Librato
       ActiveSupport::Notifications.subscribe "process_action.action_controller" do |*args|
 
         event = ActiveSupport::Notifications::Event.new(*args)
-        tags = {
-          method: event.payload[:method].to_s.downcase
-        }
+        tags = { method: event.payload[:method].to_s.downcase }
 
         if tags[:method]
           collector.group "rails.request" do |m|
