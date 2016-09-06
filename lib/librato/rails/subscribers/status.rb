@@ -7,10 +7,7 @@ module Librato
       ActiveSupport::Notifications.subscribe "process_action.action_controller" do |*args|
 
         event = ActiveSupport::Notifications::Event.new(*args)
-        tags = {
-          status: event.payload[:status],
-          status_message: ::Rack::Utils::HTTP_STATUS_CODES[event.payload[:status]]
-        }
+        tags = { status: event.payload[:status] }
 
         unless tags[:status].blank?
           collector.group "rails.request" do |s|
