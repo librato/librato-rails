@@ -80,4 +80,21 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
       })[:count]
   end
 
+  test "instrument invalid format" do
+    Capybara.current_session.driver.header "Accept", "*/*"
+
+    visit "/invalid_format"
+
+    metric = "rails.request.time"
+
+    assert_equal 1, aggregate.fetch(metric,
+      tags: {
+        controller: "InstrumentActionController",
+        action: "invalid_format",
+        format: "all"
+      })[:count]
+
+    Capybara.current_session.driver.header "Accept", nil
+  end
+
 end

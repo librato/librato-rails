@@ -8,10 +8,12 @@ module Librato
 
         event = ActiveSupport::Notifications::Event.new(*args)
         exception = event.payload[:exception]
+        format = event.payload[:format].to_s || "all"
+        format = "all" if format == "*/*"
         tags = {
           controller: event.payload[:controller],
           action: event.payload[:action],
-          format: event.payload[:format].to_s,
+          format: format,
         }
 
         collector.group "rails.request" do |r|
