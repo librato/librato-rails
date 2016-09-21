@@ -135,7 +135,7 @@ Suites can be configured via either the `LIBRATO_SUITES` environment variable or
   LIBRATO_SUITES=""                            # Use only the default suites (same as if env var is absent)
 ```
 
-Note that you should specify **either** an explict list of suites to enable **or** add/subtract individual suites from the default list (using the +/- prefixes). If you try to mix these two forms a `Librato::Rack::InvalidSuiteConfiguration` error will be raised.
+Note that you should specify **either** an explicit list of suites to enable **or** add/subtract individual suites from the default list (using the +/- prefixes). If you try to mix these two forms a `Librato::Rack::InvalidSuiteConfiguration` error will be raised.
 
 Configuring the metric suites via the `config/librato.yml` file would look like this:
 
