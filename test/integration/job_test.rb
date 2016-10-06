@@ -10,7 +10,7 @@ class JobTest < ActiveSupport::IntegrationCase
 
       DummyJob.perform_now
 
-      assert_equal 1, counters.fetch("rails.job.perform", tags: tags)
+      assert_equal 1, counters.fetch("rails.job.perform", tags: tags)[:value]
       assert_equal 1, aggregate.fetch("rails.job.perform.time", tags: tags)[:count]
     end
 
@@ -22,7 +22,7 @@ class JobTest < ActiveSupport::IntegrationCase
 
       DummyJob.perform_later
 
-      assert_equal 1, counters.fetch("rails.job.enqueue", tags: tags)
+      assert_equal 1, counters.fetch("rails.job.enqueue", tags: tags)[:value]
     end
   end
 end

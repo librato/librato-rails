@@ -8,7 +8,7 @@ module Librato
     # https://github.com/librato/librato-rack/blob/master/lib/librato/rack/configuration.rb
     #
     class Configuration < Rack::Configuration
-      CONFIG_SETTABLE = %w{flush_interval log_level prefix proxy report_pids suites tags token user}
+      CONFIG_SETTABLE = %w{flush_interval log_level prefix proxy suites tags token user}
 
       DEFAULT_SUITES = [:rails_cache, :rails_controller, :rails_mail, :rails_method, :rails_render, :rails_sql, :rails_status, :rails_job]
 
@@ -47,12 +47,8 @@ module Librato
         if env_specific
           settable = CONFIG_SETTABLE & env_specific.keys
           settable.each do |key|
-            value =
-              if key == "tags"
-                env_specific[key].symbolize_keys!
-              else
-                env_specific[key]
-              end
+            value = env_specific[key]
+            value.symbolize_keys! if key == "tags"
             self.send("#{key}=", value)
           end
         end

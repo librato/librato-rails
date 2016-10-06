@@ -6,7 +6,6 @@ test:
   tags:
     hostname: "metrics-web-stg-1"
     region: "us-east-1"
-  report_pids: false
   proxy: 'http://localhost:8080'
   suites: all
 

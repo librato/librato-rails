@@ -17,7 +17,7 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
       assert_equal 1, aggregate.fetch("#{base}.#{t}", tags: tags)[:count]
     end
 
-    assert_equal 1, counters.fetch("#{base}.total", tags: tags)
+    assert_equal 1, counters.fetch("#{base}.total", tags: tags)[:value]
   end
 
   test "instrument all controller actions" do

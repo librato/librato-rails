@@ -13,13 +13,13 @@ class RequestTest < ActiveSupport::IntegrationCase
 
     visit root_path
 
-    assert_equal 1, counters.fetch("rails.request.total", tags: tags_1)
-    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 })
-    assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" })
+    assert_equal 1, counters.fetch("rails.request.total", tags: tags_1)[:value]
+    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 })[:value]
+    assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" })[:value]
 
     visit root_path
 
-    assert_equal 2, counters.fetch("rails.request.total", tags: tags_1)
+    assert_equal 2, counters.fetch("rails.request.total", tags: tags_1)[:value]
 
     tags_2 = {
       controller: "StatusController",
@@ -29,8 +29,8 @@ class RequestTest < ActiveSupport::IntegrationCase
 
     visit '/status/204'
 
-    assert_equal 1, counters.fetch("rails.request.total", tags: tags_2)
-    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 204 })
+    assert_equal 1, counters.fetch("rails.request.total", tags: tags_2)[:value]
+    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 204 })[:value]
   end
 
   test 'request times' do
@@ -65,7 +65,7 @@ class RequestTest < ActiveSupport::IntegrationCase
     }
 
     visit slow_path
-    assert_equal 1, counters.fetch("rails.request.slow", tags: tags)
+    assert_equal 1, counters.fetch("rails.request.slow", tags: tags)[:value]
   end
 
 end

@@ -36,7 +36,6 @@ module Librato
         assert_equal 'rails-test', config.prefix
         assert_equal 30, config.flush_interval
         assert_equal expected_tags, config.tags
-        assert_equal false, config.report_pids
         assert_equal 'http://localhost:8080', config.proxy
         assert_equal 'all', config.suites
         assert config.has_tags?, "tags are not explicit"
