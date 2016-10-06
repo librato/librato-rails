@@ -10,8 +10,8 @@ module Librato
 
           event = ActiveSupport::Notifications::Event.new(*args)
           tags = {
-            adapter: event.payload[:adapter].to_s.demodulize,
-            job: event.payload[:job].class.to_s.demodulize
+            adapter: event.payload[:adapter].to_s.demodulize.underscore,
+            job: event.payload[:job].class.to_s.demodulize.underscore
           }
 
           collector.group "rails.job" do |c|

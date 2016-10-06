@@ -4,8 +4,8 @@ class JobTest < ActiveSupport::IntegrationCase
   Librato::Rails::VersionSpecifier.supported(min: '4.2') do
     test 'jobs performed' do
       tags = {
-        adapter: "InlineAdapter",
-        job: "DummyJob"
+        adapter: "inline_adapter",
+        job: "dummy_job"
       }
 
       DummyJob.perform_now
@@ -16,8 +16,8 @@ class JobTest < ActiveSupport::IntegrationCase
 
     test 'jobs enqueued' do
       tags = {
-        adapter: "InlineAdapter",
-        job: "DummyJob"
+        adapter: "inline_adapter",
+        job: "dummy_job"
       }
 
       DummyJob.perform_later
