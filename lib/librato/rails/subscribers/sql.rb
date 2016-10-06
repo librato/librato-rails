@@ -6,8 +6,8 @@ module Librato
 
       ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
 
-        event = ActiveSupport::Notifications::Event.new(*args)
-        sql = event.payload[:sql].strip
+        payload = args.last
+        sql = payload[:sql].strip
 
         collector.group "rails.sql" do |s|
           s.increment "queries"
