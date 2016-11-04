@@ -22,11 +22,6 @@ gem 'mocha', require: false
 gem 'benchmark_suite'
 
 # Dependency temporarily moved to Gemfile until merged:
-# https://github.com/librato/librato-metrics/pull/121
-gem 'librato-metrics',
-  git: 'https://github.com/librato/librato-metrics.git',
-  branch: 'feature/md'
-# Dependency temporarily moved to Gemfile until merged:
 # https://github.com/librato/librato-rack/pull/54
 gem 'librato-rack',
   git: 'https://github.com/librato/librato-rack.git',
