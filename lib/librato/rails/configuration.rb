@@ -63,7 +63,7 @@ module Librato
 
       def default_tags
         {
-          service: ::Rails.application.class.parent_name.underscore,
+          service: ::Rails.application.class.parent.to_s.underscore,
           environment: ::Rails.env,
           host: Socket.gethostname.downcase
         }
