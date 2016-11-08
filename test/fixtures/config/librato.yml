@@ -4,8 +4,8 @@ test:
   prefix: 'rails-test'
   flush_interval: 30
   tags:
-    hostname: "metrics-web-stg-1"
     region: "us-east-1"
+    az: "b"
   proxy: 'http://localhost:8080'
   suites: all
 

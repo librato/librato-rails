@@ -1,3 +1,4 @@
+require "socket"
 require "yaml"
 
 module Librato
@@ -32,6 +33,8 @@ module Librato
           super
         end
 
+        self.tags = detect_tags
+
         # respect autorun and log_level env vars regardless of config method
         self.autorun = detect_autorun
         self.log_level = :info if log_level.blank?
@@ -56,6 +59,18 @@ module Librato
 
       def default_suites
         super + DEFAULT_SUITES
+      end
+
+      def default_tags
+        {
+          service: ::Rails.application.class.parent_name.underscore,
+          environment: ::Rails.env,
+          host: Socket.gethostname.downcase
+        }
+      end
+
+      def detect_tags
+        has_tags? ? default_tags.merge(self.tags) : default_tags
       end
 
     end
