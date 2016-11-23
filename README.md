@@ -82,7 +82,7 @@ Librato Metrics supports tagged measurements that are associated with a metric, 
 
 By default, `service`, `environment` and `host` are detected and applied as top-level tags for submitted measurements. Optionally, you can override the detected values in your configuration file:
 
-```ruby
+```yaml
 production:
   user: <your-email>
   token: <your-api-key>
