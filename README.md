@@ -68,17 +68,39 @@ To see all config options or for information on combining config files and envir
 
 If you are using the Librato Heroku addon, your user and token environment variables will already be set in your Heroku environment. If you are running without the addon you will need to provide them yourself.
 
-In either case you will need to specify a custom source for your app to track properly. If `librato-rails` does not detect an explicit source it will not start. You can set the source in your environment:
-
-    heroku config:add LIBRATO_SOURCE=myappname
-
-If you are using a config file, add your source entry to that instead.
-
-Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
-
 If Heroku idles your application, measurements will not be sent until it receives another request and is restarted. If you see intermittent gaps in your measurements during periods of low traffic, this is the most likely cause.
 
 If you are using Librato as a Heroku addon, [a paid plan](https://elements.heroku.com/addons/librato#pricing) is required for reporting custom metrics with librato-rails. You can view more about available addon levels [here](https://elements.heroku.com/addons/librato#pricing).
+
+## Top-level tags
+
+**Tagged measurements are only available in the Tags Beta. Please [contact Librato support](mailto:support@librato.com) to join the beta.**
+
+Librato Metrics supports tagged measurements that are associated with a metric, one or more tag pairs, and a point in time.
+
+##### Default tags
+
+By default, `service`, `environment` and `host` are detected and applied as top-level tags for submitted measurements:
+
+```ruby
+{ service: 'myapp', environment: 'production', host: 'myapp-prod-1' }
+```
+
+Optionally, you can override the detected values in your configuration file.
+
+##### Custom tags
+
+In addition to the default tags, you can also provide custom tags:
+
+```yaml
+production:
+  user: <your-email>
+  token: <your-api-key>
+  tags:
+    region: us-east-1
+```
+
+Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
 
 ## Automatic Measurements
 
@@ -93,9 +115,8 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 ###### Request Metrics
 
 * *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time`, `rails.request.time.db`, `rails.request.time.view`, and `rails.request.slow`
-* *rails_method*: `rails.request.method.*` metrics (GET, POST, etc)
-* *rails_status*: `rails.request.status.*` metrics broken out by individual status codes and class (200, 2xx, etc)
-* *rails_action*: `rails.action.*` metrics specific to individual controller actions via the [instrument_action](#instrument_action-experimental) helper
+* *rails_method*: `rails.request.method` metrics (GET, POST, etc)
+* *rails_status*: `rails.request.status` metrics (200, 500, etc)
 
 ###### System-Specific Metrics
 
@@ -110,8 +131,8 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 Rack measurements are taken from the very beginning of your [rack middleware stack](http://guides.rubyonrails.org/rails_on_rack.html). They include all time spent in your ruby process (not just in Rails proper). They will also show requests that are handled entirely in middleware and don't appear in the `rails` suites above.
 
 * *rack*: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
-* *rack_method*: `rack.request.method.*` metrics (GET, POST, etc)
-* *rack_status*: `rack.request.status.*` metrics metrics broken out by individual status codes and class (200, 2xx, etc)
+* *rack_method*: `rack.request.method` metrics (GET, POST, etc)
+* *rack_status*: `rack.request.status` metrics (200, 500, etc)
 
 ###### Queue Time
 
@@ -161,8 +182,8 @@ Librato.increment 'sales_completed'
 # increment by five
 Librato.increment 'items_purchased', by: 5
 
-# increment with a custom source
-Librato.increment 'user.purchases', source: user.id
+# increment with custom tags
+Librato.increment 'user.purchases', tags: { user: user.id, amount: '20' }
 ```
 
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
@@ -175,7 +196,7 @@ Especially with custom sources you may want the opposite behavior - reporting a 
 
 ```ruby
 # report a value for 'user.uploaded_file' only during non-zero intervals
-Librato.increment 'user.uploaded_file', source: user.id, sporadic: true
+Librato.increment 'user.uploaded_file', tags: { user: user.id, file_size: '390MB' }, sporadic: true
 ```
 
 #### measure
@@ -185,8 +206,8 @@ Use when you want to track an average value _per_-request. Examples:
 ```ruby
 Librato.measure 'user.social_graph.nodes', 212
 
-# report from a custom source
-Librato.measure 'jobs.queued', 3, source: 'worker.12'
+# report from custom tags
+Librato.measure 'jobs.queued', 3, tags: { queue: 'high', worker: 'worker.12' }
 ```
 
 #### timing
@@ -196,8 +217,8 @@ Like `Librato.measure` this is per-request, but specialized for timing informati
 ```ruby
 Librato.timing 'twitter.lookup.time', 21.2
 
-# report from a custom source
-Librato.measure 'api.response.time', time, source: node_name
+# report from custom tags
+Librato.measure 'api.response.time', time, tags: { node: node_name }
 ```
 
 The block form auto-submits the time it took for its contents to execute as the measurement value:
@@ -254,50 +275,6 @@ Symbols can be used interchangably with strings for metric names.
 
 `librato-rails` also has special helpers which are available inside your controllers:
 
-#### instrument_action
-_experimental_, this interface may change:
-
-Use when you want to profile execution time or request volume for a specific controller action:
-
-```ruby
-class CommentController < ApplicationController
-  instrument_action :create # can accept a list
-
-  def create
-    # ...
-  end
-end
-```
-
-Optionally, you can instrument all controller actions:
-
-```ruby
-class ArticlesController < ApplicationController
-  instrument_action :all
-
-  def create
-    # ...
-  end
-
-  def show
-    # ...
-  end
-end
-```
-
-Once you instrument an action, `librato-rails` will start reporting a set of metrics specific to that action including:
-
-* rails.action.request.total     (# of requests)
-* rails.action.request.slow      (requests >= 200ms to produce)
-* rails.action.request.exceptions
-* rails.action.request.time      (total time spent in action)
-* rails.action.request.time.db   (db interaction time)
-* rails.action.request.time.view (view rendering time)
-
-Each instrumented action will appear as a source for the `rails.action.*` metrics, for example `mycontroller.action.html`.
-
-IMPORTANT NOTE: Metrics from `instrument_action` take into account all time spent in the ActionController stack for that action, including before/after filters and any global processing. They are _not_ equivalent to using a `Librato.timing` block inside the method body.
-
 ## Use with ActiveSupport::Notifications
 
 `librato-rails` and [ActiveSupport::Notifications](http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html) work great together. In fact, many of the Rails metrics provided are produced by subscribing to the [instrumentation events](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) built into Rails.
@@ -324,7 +301,7 @@ ActiveSupport::Notifications.subscribe 'my.event' do |*args|
   Librato.timing 'my.event.time', event.duration
 
   # use payload data to do user-specific tracking
-  Librato.increment 'user.did.event', source: user.id, sporadic: true
+  Librato.increment 'user.did.event', tags: { user: user.id }, sporadic: true
 
   # do conditional tracking
   if user.feature_on?(:sample_group)
@@ -357,13 +334,10 @@ Never fear, [we have some guidelines](https://github.com/librato/librato-rails/w
 
 ## Cross-Process Aggregation
 
-`librato-rails` submits measurements back to the Librato platform on a _per-process_ basis. By default these measurements are then combined into a single measurement per source (default is your hostname) before persisting the data.
+`librato-rails` submits measurements back to the Librato platform on a _per-process_ basis. By default these measurements are then combined into a single measurement per top-level tags (default is `service`, `environment`, `host`) before persisting the data.
 
 For example if you have 4 hosts with 8 unicorn instances each (i.e. 32 processes total), on the Librato site you'll find 4 data streams (1 per host) instead of 32.
 Current pricing applies after aggregation, so in this case you will be charged for 4 streams instead of 32.
-
-If you want to report per-process instead, you can set `source_pids` to `true` in
-your config, which will append the process id to the source name used by each thread.
 
 ## Troubleshooting
 
