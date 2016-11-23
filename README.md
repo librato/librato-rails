@@ -72,23 +72,27 @@ If Heroku idles your application, measurements will not be sent until it receive
 
 If you are using Librato as a Heroku addon, [a paid plan](https://elements.heroku.com/addons/librato#pricing) is required for reporting custom metrics with librato-rails. You can view more about available addon levels [here](https://elements.heroku.com/addons/librato#pricing).
 
-## Top-level tags
+## Top-level Tags
 
 **Tagged measurements are only available in the Tags Beta. Please [contact Librato support](mailto:support@librato.com) to join the beta.**
 
-Librato Metrics supports tagged measurements that are associated with a metric, one or more tag pairs, and a point in time.
+Librato Metrics supports tagged measurements that are associated with a metric, one or more tag pairs, and a point in time. For more information on tagged measurements, visit our [API documentation](https://www.librato.com/docs/api/#measurements-beta).
 
-##### Default tags
+##### Default Tags
 
-By default, `service`, `environment` and `host` are detected and applied as top-level tags for submitted measurements:
+By default, `service`, `environment` and `host` are detected and applied as top-level tags for submitted measurements. Optionally, you can override the detected values in your configuration file:
 
 ```ruby
-{ service: 'myapp', environment: 'production', host: 'myapp-prod-1' }
+production:
+  user: <your-email>
+  token: <your-api-key>
+  tags:
+    service: 'myapp'
+    environment: 'prod'
+    host: 'myapp-prod-1'
 ```
 
-Optionally, you can override the detected values in your configuration file.
-
-##### Custom tags
+##### Custom Tags
 
 In addition to the default tags, you can also provide custom tags:
 
@@ -97,7 +101,7 @@ production:
   user: <your-email>
   token: <your-api-key>
   tags:
-    region: us-east-1
+    region: 'us-east-1'
 ```
 
 Full information on configuration options is available on the [configuration wiki page](https://github.com/librato/librato-rails/wiki/Configuration).
@@ -182,7 +186,7 @@ Librato.increment 'sales_completed'
 # increment by five
 Librato.increment 'items_purchased', by: 5
 
-# increment with custom tags
+# increment with custom per-measurement tags
 Librato.increment 'user.purchases', tags: { user: user.id, amount: '20' }
 ```
 
@@ -206,8 +210,8 @@ Use when you want to track an average value _per_-request. Examples:
 ```ruby
 Librato.measure 'user.social_graph.nodes', 212
 
-# report from custom tags
-Librato.measure 'jobs.queued', 3, tags: { queue: 'high', worker: 'worker.12' }
+# report from custom per-measurement tags
+Librato.measure 'jobs.queued', 3, tags: { priority: 'high', worker: 'worker.12' }
 ```
 
 #### timing
@@ -217,8 +221,8 @@ Like `Librato.measure` this is per-request, but specialized for timing informati
 ```ruby
 Librato.timing 'twitter.lookup.time', 21.2
 
-# report from custom tags
-Librato.measure 'api.response.time', time, tags: { node: node_name }
+# report from custom per-measurement tags
+Librato.measure 'api.response.time', time, tags: { node: node_name, db: 'rr1' }
 ```
 
 The block form auto-submits the time it took for its contents to execute as the measurement value:
@@ -270,10 +274,6 @@ end
 ```
 
 Symbols can be used interchangably with strings for metric names.
-
-## Controller Helpers
-
-`librato-rails` also has special helpers which are available inside your controllers:
 
 ## Use with ActiveSupport::Notifications
 
