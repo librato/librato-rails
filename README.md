@@ -119,8 +119,8 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 ###### Request Metrics
 
 * *rails_controller*: Metrics which provide a high level overview of request performance including `rails.request.total`, `rails.request.time`, `rails.request.time.db`, `rails.request.time.view`, and `rails.request.slow`
-* *rails_method*: `rails.request.method` metrics (GET, POST, etc)
-* *rails_status*: `rails.request.status` metrics (200, 500, etc)
+* *rails_method*: `rails.request.method` metric with `method` tag name and HTTP method tag value, e.g. `method=POST`
+* *rails_status*: `rails.request.status` metric with `status` tag name and HTTP status code tag value, e.g. `status=200`
 
 ###### System-Specific Metrics
 
@@ -135,8 +135,8 @@ The metrics automatically recorded by `librato-rails` are organized into named m
 Rack measurements are taken from the very beginning of your [rack middleware stack](http://guides.rubyonrails.org/rails_on_rack.html). They include all time spent in your ruby process (not just in Rails proper). They will also show requests that are handled entirely in middleware and don't appear in the `rails` suites above.
 
 * *rack*: The `rack.request.total`, `rack.request.time`, `rack.request.slow`, and `rack.request.queue.time` metrics
-* *rack_method*: `rack.request.method` metrics (GET, POST, etc)
-* *rack_status*: `rack.request.status` metrics (200, 500, etc)
+* *rack_method*: `rack.request.method` metric with `method` tag name and HTTP method tag value, e.g. `method=POST`
+* *rack_status*: `rack.request.status` metric with `status` tag name and HTTP status code tag value, e.g. `status=200`
 
 ###### Queue Time
 
@@ -187,7 +187,7 @@ Librato.increment 'sales_completed'
 Librato.increment 'items_purchased', by: 5
 
 # increment with custom per-measurement tags
-Librato.increment 'user.purchases', tags: { user: user.id, amount: '20' }
+Librato.increment 'user.purchases', tags: { user: user.id, currency: 'USD', amount: '20' }
 ```
 
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
