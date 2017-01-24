@@ -7,7 +7,7 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
       controller: "InstrumentActionController",
       action: "inst",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit instrument_action_path
 
@@ -31,13 +31,13 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
         controller: "BaseController",
         action: "action_1",
         format: "html"
-      })[:count]
+      }.merge(default_tags))[:count]
     assert_equal 1, aggregate.fetch(metric,
       tags: {
         controller: "BaseController",
         action: "action_2",
         format: "html"
-      })[:count]
+      }.merge(default_tags))[:count]
   end
 
   test "instrument all controller actions for inherited controllers" do
@@ -52,19 +52,19 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
         controller: "IntermediateController",
         action: "action_1",
         format: "html"
-      })[:count]
+      }.merge(default_tags))[:count]
     assert_equal 1, aggregate.fetch(metric,
       tags: {
         controller: "DerivedController",
         action: "action_1",
         format: "html"
-      })[:count]
+      }.merge(default_tags))[:count]
     assert_equal 1, aggregate.fetch(metric,
       tags: {
         controller: "DerivedController",
         action: "action_2",
         format: "html"
-      })[:count]
+      }.merge(default_tags))[:count]
   end
 
   test "instrument all controller actions for all controllers" do
@@ -77,7 +77,7 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
         controller: "InstrumentActionController",
         action: "not",
         format: "html"
-      })[:count]
+      }.merge(default_tags))[:count]
   end
 
   test "instrument invalid format" do
@@ -92,7 +92,7 @@ class InstrumentActionTest < ActiveSupport::IntegrationCase
         controller: "InstrumentActionController",
         action: "invalid_format",
         format: "all"
-      })[:count]
+      }.merge(default_tags))[:count]
 
     Capybara.current_session.driver.header "Accept", nil
   end

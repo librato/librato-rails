@@ -9,7 +9,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "HomeController",
       action: "index",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit root_path
 
@@ -25,7 +25,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "StatusController",
       action: "index",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit '/status/204'
 
@@ -38,7 +38,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "HomeController",
       action: "index",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit root_path
 
@@ -62,7 +62,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "HomeController",
       action: "slow",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit slow_path
     assert_equal 1, counters.fetch("rails.request.slow", tags: tags)[:value]
