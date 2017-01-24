@@ -25,7 +25,7 @@ gem 'benchmark_suite'
 # https://github.com/librato/librato-rack/pull/54
 gem 'librato-rack',
   git: 'https://github.com/librato/librato-rack.git',
-  branch: 'feature/inherit-tags'
+  branch: 'feature/md'
 
 # platforms :rbx do
 #   gem 'rubysl', '~> 2.0'
