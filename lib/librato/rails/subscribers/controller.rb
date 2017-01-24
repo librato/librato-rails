@@ -17,13 +17,13 @@ module Librato
         }
 
         collector.group "rails.request" do |r|
-          r.increment "total", tags: tags
-          r.timing    "time", event.duration, tags: tags, percentile: 95
-          r.timing "time.db", event.payload[:db_runtime] || 0, tags: tags, percentile: 95
-          r.timing "time.view", event.payload[:view_runtime] || 0, tags: tags, percentile: 95
+          r.increment "total", tags: tags, inherit_tags: true
+          r.timing    "time", event.duration, tags: tags, inherit_tags: true, percentile: 95
+          r.timing "time.db", event.payload[:db_runtime] || 0, tags: tags, inherit_tags: true, percentile: 95
+          r.timing "time.view", event.payload[:view_runtime] || 0, tags: tags, inherit_tags: true, percentile: 95
 
           if event.duration > 200.0
-            r.increment "slow", tags: tags
+            r.increment "slow", tags: tags, inherit_tags: true
           end
         end # end group
 

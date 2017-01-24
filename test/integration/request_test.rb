@@ -9,13 +9,13 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "HomeController",
       action: "index",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit root_path
 
     assert_equal 1, counters.fetch("rails.request.total", tags: tags_1)[:value]
-    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 })[:value]
-    assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" })[:value]
+    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 }.merge(default_tags))[:value]
+    assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" }.merge(default_tags))[:value]
 
     visit root_path
 
@@ -25,12 +25,12 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "StatusController",
       action: "index",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit '/status/204'
 
     assert_equal 1, counters.fetch("rails.request.total", tags: tags_2)[:value]
-    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 204 })[:value]
+    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 204 }.merge(default_tags))[:value]
   end
 
   test 'request times' do
@@ -38,7 +38,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "HomeController",
       action: "index",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit root_path
 
@@ -51,10 +51,10 @@ class RequestTest < ActiveSupport::IntegrationCase
       'should record view time'
 
     # status specific
-    assert_equal 1, aggregate.fetch("rails.request.status.time", tags: { status: 200 })[:count]
+    assert_equal 1, aggregate.fetch("rails.request.status.time", tags: { status: 200 }.merge(default_tags))[:count]
 
     # http method specific
-    assert_equal 1, aggregate.fetch("rails.request.method.time", tags: { method: "get" })[:count]
+    assert_equal 1, aggregate.fetch("rails.request.method.time", tags: { method: "get" }.merge(default_tags))[:count]
   end
 
   test 'track slow requests' do
@@ -62,7 +62,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       controller: "HomeController",
       action: "slow",
       format: "html"
-    }
+    }.merge(default_tags)
 
     visit slow_path
     assert_equal 1, counters.fetch("rails.request.slow", tags: tags)[:value]

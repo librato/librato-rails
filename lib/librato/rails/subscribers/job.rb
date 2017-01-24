@@ -15,8 +15,8 @@ module Librato
           }
 
           collector.group "rails.job" do |c|
-            c.increment metric, tags: tags
-            c.timing "#{metric}.time", event.duration, tags: tags
+            c.increment metric, tags: tags, inherit_tags: true
+            c.timing "#{metric}.time", event.duration, tags: tags, inherit_tags: true
           end # end group
 
         end # end subscribe

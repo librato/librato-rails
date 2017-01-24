@@ -11,8 +11,8 @@ module Librato
 
         unless tags[:status].blank?
           collector.group "rails.request" do |s|
-            s.increment "status", tags: tags
-            s.timing "status.time", event.duration, tags: tags
+            s.increment "status", tags: tags, inherit_tags: true
+            s.timing "status.time", event.duration, tags: tags, inherit_tags: true
           end # end group
         end
 

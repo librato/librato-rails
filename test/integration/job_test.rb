@@ -6,7 +6,7 @@ class JobTest < ActiveSupport::IntegrationCase
       tags = {
         adapter: "inline_adapter",
         job: "dummy_job"
-      }
+      }.merge(default_tags)
 
       DummyJob.perform_now
 
@@ -18,7 +18,7 @@ class JobTest < ActiveSupport::IntegrationCase
       tags = {
         adapter: "inline_adapter",
         job: "dummy_job"
-      }
+      }.merge(default_tags)
 
       DummyJob.perform_later
 
