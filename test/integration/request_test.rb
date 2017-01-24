@@ -15,7 +15,7 @@ class RequestTest < ActiveSupport::IntegrationCase
 
     assert_equal 1, counters.fetch("rails.request.total", tags: tags_1)[:value]
     assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 }.merge(default_tags))[:value]
-    assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" })[:value]
+    assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" }.merge(default_tags))[:value]
 
     visit root_path
 
@@ -54,7 +54,7 @@ class RequestTest < ActiveSupport::IntegrationCase
     assert_equal 1, aggregate.fetch("rails.request.status.time", tags: { status: 200 }.merge(default_tags))[:count]
 
     # http method specific
-    assert_equal 1, aggregate.fetch("rails.request.method.time", tags: { method: "get" })[:count]
+    assert_equal 1, aggregate.fetch("rails.request.method.time", tags: { method: "get" }.merge(default_tags))[:count]
   end
 
   test 'track slow requests' do

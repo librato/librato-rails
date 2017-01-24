@@ -11,8 +11,8 @@ module Librato
 
         if tags[:method]
           collector.group "rails.request" do |m|
-            m.increment "method", tags: tags
-            m.timing "method.time", event.duration, tags: tags
+            m.increment "method", tags: tags, inherit_tags: true
+            m.timing "method.time", event.duration, tags: tags, inherit_tags: true
           end # end group
         end
 
