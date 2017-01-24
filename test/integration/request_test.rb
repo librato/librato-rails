@@ -14,7 +14,7 @@ class RequestTest < ActiveSupport::IntegrationCase
     visit root_path
 
     assert_equal 1, counters.fetch("rails.request.total", tags: tags_1)[:value]
-    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 })[:value]
+    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 200 }.merge(default_tags))[:value]
     assert_equal 1, counters.fetch("rails.request.method", tags: { method: "get" })[:value]
 
     visit root_path
@@ -30,7 +30,7 @@ class RequestTest < ActiveSupport::IntegrationCase
     visit '/status/204'
 
     assert_equal 1, counters.fetch("rails.request.total", tags: tags_2)[:value]
-    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 204 })[:value]
+    assert_equal 1, counters.fetch("rails.request.status", tags: { status: 204 }.merge(default_tags))[:value]
   end
 
   test 'request times' do
@@ -51,7 +51,7 @@ class RequestTest < ActiveSupport::IntegrationCase
       'should record view time'
 
     # status specific
-    assert_equal 1, aggregate.fetch("rails.request.status.time", tags: { status: 200 })[:count]
+    assert_equal 1, aggregate.fetch("rails.request.status.time", tags: { status: 200 }.merge(default_tags))[:count]
 
     # http method specific
     assert_equal 1, aggregate.fetch("rails.request.method.time", tags: { method: "get" })[:count]
