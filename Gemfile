@@ -27,6 +27,10 @@ gem 'librato-rack',
   git: 'https://github.com/librato/librato-rack.git',
   branch: 'feature/md'
 
+platforms :ruby_19 do
+  gem 'nokogiri', '~> 1.6.0' # 1.7+ requires ruby 2.1
+end
+
 # platforms :rbx do
 #   gem 'rubysl', '~> 2.0'
 #   gem 'racc'

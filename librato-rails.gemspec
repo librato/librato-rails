@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Librato::Rails::VERSION
 
   s.authors     = ["Matt Sanders"]
-  s.email       = ["matt@librato.com"]
+  s.email       = ["matt@librato.com", "ruby@librato.com"]
   s.homepage    = "https://github.com/librato/librato-rails"
   s.license     = 'BSD 3-clause'
 
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport", ">= 3.0"
   # Dependency temporarily moved to Gemfile until merged:
   # https://github.com/librato/librato-rack/pull/54
-  # s.add_dependency "librato-rack", "~> 1.0.1"
+  # s.add_dependency "librato-rack", "~> 1.1.0"
 
   s.add_development_dependency "sqlite3", ">= 1.3"
   s.add_development_dependency "capybara", "~> 2.0.3"
