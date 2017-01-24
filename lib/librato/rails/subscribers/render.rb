@@ -10,15 +10,16 @@ module Librato
 
           event = ActiveSupport::Notifications::Event.new(*args)
           path = event.payload[:identifier].split('/views/', 2)
+          metric = metric.to_sym
 
           if path[1]
             identifier = path[1].gsub('/', ':')
             # trim leading underscore for partials
-            identifier.gsub!(':_', ':') if metric == "partial"
+            identifier.gsub!(':_', ':') if metric == :partial
             tags = { metric => identifier }
             collector.group "rails.view.render" do |c|
-              c.increment metric, tags: tags, sporadic: true
-              c.timing "#{metric}.time", event.duration, tags: tags, sporadic: true
+              c.increment metric, tags: tags, inherit_tags: true, sporadic: true
+              c.timing "#{metric}.time", event.duration, tags: tags, inherit_tags: true, sporadic: true
             end # end group
           end
 
