@@ -1,4 +1,4 @@
-### master
+### Version 2.0.0
 * Add support for tagged measurements (#123)
 
 ### Version 1.4.2
