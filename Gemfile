@@ -21,12 +21,6 @@ gem 'mocha', require: false
 # benchmarking
 gem 'benchmark_suite'
 
-# Dependency temporarily moved to Gemfile until merged:
-# https://github.com/librato/librato-rack/pull/54
-gem 'librato-rack',
-  git: 'https://github.com/librato/librato-rack.git',
-  branch: 'feature/md'
-
 platforms :ruby_19 do
   gem 'nokogiri', '~> 1.6.0' # 1.7+ requires ruby 2.1
 end
