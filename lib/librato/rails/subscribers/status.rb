@@ -2,19 +2,17 @@ module Librato
   module Rails
     module Subscribers
 
-      # Controller Status
+      # ActionController Status
 
-      ActiveSupport::Notifications.subscribe 'process_action.action_controller' do |*args|
+      ActiveSupport::Notifications.subscribe "process_action.action_controller" do |*args|
 
         event = ActiveSupport::Notifications::Event.new(*args)
-        status = event.payload[:status]
+        tags = { status: event.payload[:status] }
 
-        unless status.blank?
-          collector.group "rails.request.status" do |s|
-            s.increment status
-            s.increment "#{status.to_s[0]}xx"
-            s.timing "#{status}.time", event.duration
-            s.timing "#{status.to_s[0]}xx.time", event.duration
+        unless tags[:status].blank?
+          collector.group "rails.request" do |s|
+            s.increment "status", tags: tags, inherit_tags: true
+            s.timing "status.time", event.duration, tags: tags, inherit_tags: true
           end # end group
         end
 

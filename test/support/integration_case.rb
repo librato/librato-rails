@@ -20,4 +20,8 @@ class ActiveSupport::IntegrationCase < ActiveSupport::TestCase
   def counters
     collector.counters
   end
+
+  def default_tags
+    collector.tags
+  end
 end

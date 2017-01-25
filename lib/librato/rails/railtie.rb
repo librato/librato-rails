@@ -40,7 +40,6 @@ module Librato
         end
 
         tracker = config.librato_rails.tracker
-        require_relative 'subscribers/action' if tracker.suite_enabled?(:rails_action)
         require_relative 'subscribers/cache' if tracker.suite_enabled?(:rails_cache)
         require_relative 'subscribers/controller' if tracker.suite_enabled?(:rails_controller)
         require_relative 'subscribers/mail' if tracker.suite_enabled?(:rails_mail)
@@ -50,7 +49,7 @@ module Librato
         require_relative 'subscribers/status' if tracker.suite_enabled?(:rails_status)
 
         Librato::Rails::VersionSpecifier.supported(min: '4.2') do
-          require_relative 'subscribers/job'if tracker.suite_enabled?(:rails_job)
+          require_relative 'subscribers/job' if tracker.suite_enabled?(:rails_job)
         end
       end
 

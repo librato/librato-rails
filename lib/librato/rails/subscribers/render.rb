@@ -7,19 +7,23 @@ module Librato
       %w{partial template}.each do |metric|
 
         ActiveSupport::Notifications.subscribe "render_#{metric}.action_view" do |*args|
+
           event = ActiveSupport::Notifications::Event.new(*args)
           path = event.payload[:identifier].split('/views/', 2)
+          metric = metric.to_sym
 
           if path[1]
-            source = path[1].gsub('/', ':')
-            # trim leading underscore for partial sources
-            source.gsub!(':_', ':') if metric == 'partial'
-            collector.group "rails.view" do |c|
-              c.increment "render_#{metric}", source: source, sporadic: true
-              c.timing "render_#{metric}.time", event.duration, source: source, sporadic: true
-            end
+            identifier = path[1].gsub('/', ':')
+            # trim leading underscore for partials
+            identifier.gsub!(':_', ':') if metric == :partial
+            tags = { metric => identifier }
+            collector.group "rails.view.render" do |c|
+              c.increment metric, tags: tags, inherit_tags: true, sporadic: true
+              c.timing "#{metric}.time", event.duration, tags: tags, inherit_tags: true, sporadic: true
+            end # end group
           end
-        end
+
+        end # end subscribe
 
       end
 

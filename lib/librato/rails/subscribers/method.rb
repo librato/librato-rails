@@ -2,19 +2,17 @@ module Librato
   module Rails
     module Subscribers
 
-      # Controller Method
+      # ActionController Method
 
-      ActiveSupport::Notifications.subscribe 'process_action.action_controller' do |*args|
+      ActiveSupport::Notifications.subscribe "process_action.action_controller" do |*args|
 
         event = ActiveSupport::Notifications::Event.new(*args)
-        http_method = event.payload[:method]
+        tags = { method: event.payload[:method].to_s.downcase }
 
-        if http_method
-          verb = http_method.to_s.downcase
-
-          collector.group "rails.request.method" do |m|
-            m.increment verb
-            m.timing "#{verb}.time", event.duration
+        if tags[:method]
+          collector.group "rails.request" do |m|
+            m.increment "method", tags: tags, inherit_tags: true
+            m.timing "method.time", event.duration, tags: tags, inherit_tags: true
           end # end group
         end
 

@@ -3,11 +3,12 @@ test:
   token: <%= 'test api key' %>
   prefix: 'rails-test'
   flush_interval: 30
-  source: 'custom-1'
-  source_pids: false
+  tags:
+    region: "us-east-1"
+    az: "b"
   proxy: 'http://localhost:8080'
   suites: all
-  
+
 production:
   user: 'live@bar.com'
   token: 'live api key'
