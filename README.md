@@ -72,15 +72,13 @@ If Heroku idles your application, measurements will not be sent until it receive
 
 If you are using Librato as a Heroku addon, [a paid plan](https://elements.heroku.com/addons/librato#pricing) is required for reporting custom metrics with librato-rails. You can view more about available addon levels [here](https://elements.heroku.com/addons/librato#pricing).
 
-## Top-level Tags
+## Default Tags
 
-**Tagged measurements are only available in the Tags Beta. Please [contact Librato support](mailto:support@librato.com) to join the beta.**
+Librato Metrics supports tagged measurements that are associated with a metric, one or more tag pairs, and a point in time. For more information on tagged measurements, visit our [API documentation](https://www.librato.com/docs/api/#measurements).
 
-Librato Metrics supports tagged measurements that are associated with a metric, one or more tag pairs, and a point in time. For more information on tagged measurements, visit our [API documentation](https://www.librato.com/docs/api/#measurements-beta).
+##### Detected Tags
 
-##### Default Tags
-
-By default, `service`, `environment` and `host` are detected and applied as top-level tags for submitted measurements. Optionally, you can override the detected values in your configuration file:
+By default, `service`, `environment` and `host` are detected and applied as default tags for submitted measurements. Optionally, you can override the detected values in your configuration file:
 
 ```yaml
 production:
@@ -88,7 +86,7 @@ production:
   token: <your-api-key>
   tags:
     service: 'myapp'
-    environment: 'prod'
+    environment: 'production'
     host: 'myapp-prod-1'
 ```
 
@@ -181,13 +179,20 @@ Use for tracking a running total of something _across_ requests, examples:
 
 ```ruby
 # increment the 'sales_completed' metric by one
-Librato.increment 'sales_completed'
+Librato.increment 'sales.completed'
+# => {:service=>"myapp", :environment=>"production", :host=>"myapp-prod-1"}
 
 # increment by five
-Librato.increment 'items_purchased', by: 5
+Librato.increment 'items.purchased', by: 5
+# => {:service=>"myapp", :environment=>"production", :host=>"myapp-prod-1"}
 
 # increment with custom per-measurement tags
-Librato.increment 'user.purchases', tags: { user: user.id, currency: 'USD', amount: '20' }
+Librato.increment 'user.purchases', tags: { user_id: user.id, currency: 'USD' }
+# => {:user_id=>43, :currency=>"USD"}
+
+# increment with custom per-measurement tags and inherited default tags
+Librato.increment 'user.purchases', tags: { user_id: user.id, currency: 'USD' }, inherit_tags: true
+# => {:service=>"myapp", :environment=>"production", :host=>"myapp-prod-1", :user_id=>43, :currency=>"USD"}
 ```
 
 Other things you might track this way: user signups, requests of a certain type or to a certain route, total jobs queued or processed, emails sent or received
@@ -200,7 +205,7 @@ Especially with custom sources you may want the opposite behavior - reporting a 
 
 ```ruby
 # report a value for 'user.uploaded_file' only during non-zero intervals
-Librato.increment 'user.uploaded_file', tags: { user: user.id, file_size: '390MB' }, sporadic: true
+Librato.increment 'user.uploaded_file', tags: { user: user.id, bucket: bucket.name }, sporadic: true
 ```
 
 #### measure
@@ -334,7 +339,7 @@ Never fear, [we have some guidelines](https://github.com/librato/librato-rails/w
 
 ## Cross-Process Aggregation
 
-`librato-rails` submits measurements back to the Librato platform on a _per-process_ basis. By default these measurements are then combined into a single measurement per top-level tags (default is `service`, `environment`, `host`) before persisting the data.
+`librato-rails` submits measurements back to the Librato platform on a _per-process_ basis. By default these measurements are then combined into a single measurement per default tags (detects `service`, `environment` and `host`) before persisting the data.
 
 For example if you have 4 hosts with 8 unicorn instances each (i.e. 32 processes total), on the Librato site you'll find 4 data streams (1 per host) instead of 32.
 Current pricing applies after aggregation, so in this case you will be charged for 4 streams instead of 32.
