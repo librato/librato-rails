@@ -9,6 +9,10 @@ Rails versions 3.0 or greater are supported on Ruby 1.9.3 and above.
 
 Verified combinations of Ruby/Rails are available in our [build matrix](http://travis-ci.org/librato/librato-rails).
 
+## Upgrading
+
+Upgrading from version 1.x to 2.x introduces breaking changes for legacy sources. Please contact [support@librato.com](mailto:support@librato.com) to migrate an existing Librato account.
+
 ## Quick Start
 
 > Note: If you have not yet enabled Rails on the [Librato integrations page](https://metrics.librato.com/integrations) within your account, do this first. This will automatically set up Rails and Rack Spaces, displaying many useful performance metrics.
