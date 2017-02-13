@@ -9,10 +9,16 @@ module Librato
         ActiveSupport::Notifications.subscribe "#{metric}.active_job" do |*args|
 
           event = ActiveSupport::Notifications::Event.new(*args)
+
           tags = {
-            adapter: event.payload[:adapter].to_s.demodulize.underscore,
+            adapter: event.payload[:adapter].class.to_s.demodulize.underscore,
             job: event.payload[:job].class.to_s.demodulize.underscore
           }
+
+          Librato::Rails::VersionSpecifier.supported(max: '4.2') do
+            # :adapter is already a class in 4.2
+            tags[:adapter] = event.payload[:adapter].to_s.demodulize.underscore
+          end
 
           collector.group "rails.job" do |c|
             c.increment metric, tags: tags, inherit_tags: true

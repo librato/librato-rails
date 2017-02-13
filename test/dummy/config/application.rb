@@ -63,5 +63,10 @@ module Dummy
     # set librato_rails prefix
     # config.librato_rails.prefix = 'dummy'
     config.librato_rails.flush_interval = 5
+
+    Librato::Rails::VersionSpecifier.supported(min: '5.0') do
+      # https://github.com/rails/rails/commit/625baa69d14881ac49ba2e5c7d9cac4b222d7022
+      config.active_job.queue_adapter = :inline
+    end
   end
 end

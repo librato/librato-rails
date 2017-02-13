@@ -1,4 +1,5 @@
 require 'test_helper'
+Librato::Rails::VersionSpecifier.supported(min: '4.2') { require 'dummy_job' }
 
 class JobTest < ActiveSupport::IntegrationCase
   Librato::Rails::VersionSpecifier.supported(min: '4.2') do

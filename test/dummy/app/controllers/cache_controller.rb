@@ -1,5 +1,5 @@
 class CacheController < ApplicationController
-  before_filter :instrument_caching
+  Librato::Rails::VersionSpecifier.supported(max: '4.1') { before_filter :instrument_caching }
   after_filter  :clear_cache
 
   def read
