@@ -15,7 +15,7 @@ module Librato
             job: event.payload[:job].class.to_s.demodulize.underscore
           }
 
-          Librato::Rails::VersionSpecifier.supported(max: '4.2') do
+          VersionSpecifier.supported(max: '4.2') do
             # :adapter is already a class in 4.2
             tags[:adapter] = event.payload[:adapter].to_s.demodulize.underscore
           end
