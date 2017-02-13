@@ -1,5 +1,9 @@
 class CacheController < ApplicationController
-  Librato::Rails::VersionSpecifier.supported(max: '4.1') { before_filter :instrument_caching }
+  Librato::Rails::VersionSpecifier.supported(max: '4.1') do
+    # ActiveSupport::Cache.instrument= was removed in Rails 5.
+    # Instrumentation is now always on so you can safely stop using it.
+    before_filter :instrument_caching
+  end
   after_filter  :clear_cache
 
   def read

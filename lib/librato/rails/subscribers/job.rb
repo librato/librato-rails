@@ -2,7 +2,7 @@ module Librato
   module Rails
     module Subscribers
 
-      # ActionJob
+      # Active Job
 
       %w{enqueue_at enqueue perform_start perform}.each do |metric|
 
@@ -16,7 +16,8 @@ module Librato
           }
 
           VersionSpecifier.supported(max: '4.2') do
-            # :adapter is already a class in 4.2
+            # Active Support instrumentation payload for :adapter is already a class in Rails 4.2.
+            # It was changed to the QueueAdapter object processing the job in Rails 5.
             tags[:adapter] = event.payload[:adapter].to_s.demodulize.underscore
           end
 
