@@ -1,3 +1,6 @@
+### Version 2.1.0
+* Add Rails 5.0 support (#135)
+
 ### Version 2.0.0
 * Add support for tagged measurements (#123)
 
