@@ -3,6 +3,12 @@ librato-rails
 
 [![Gem Version](https://badge.fury.io/rb/librato-rails.png)](http://badge.fury.io/rb/librato-rails) [![Build Status](https://secure.travis-ci.org/librato/librato-rails.png?branch=master)](http://travis-ci.org/librato/librato-rails) [![Code Climate](https://codeclimate.com/github/librato/librato-rails.png)](https://codeclimate.com/github/librato/librato-rails)
 
+---
+
+**NOTE:** Starting with version 2.0.0 librato-rails requires a Librato account that [supports tagged metrics](https://www.librato.com/docs/kb/faq/account_questions/tags_or_sources/). If your Librato account doesn't yet support tagged metrics please use the [1.x.x version](https://rubygems.org/gems/librato-rails/versions/1.4.2).
+
+---
+
 `librato-rails` will report key statistics for your Rails app to [Librato](https://metrics.librato.com/) and allow you to easily track your own custom metrics. Metrics are delivered asynchronously behind the scenes so they won't affect performance of your requests.
 
 Rails versions 3.0 or greater are supported on Ruby 1.9.3 and above.
@@ -382,4 +388,4 @@ If you are debugging setting up `librato-rails` locally you can set `flush_inter
 
 ## Copyright
 
-Copyright (c) 2012-2016 [Librato Inc.](http://librato.com) See LICENSE for details.
+Copyright (c) 2012-2017 [Librato Inc.](http://librato.com) See LICENSE for details.
