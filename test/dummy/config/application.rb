@@ -63,5 +63,11 @@ module Dummy
     # set librato_rails prefix
     # config.librato_rails.prefix = 'dummy'
     config.librato_rails.flush_interval = 5
+
+    Librato::Rails::VersionSpecifier.supported(min: '5.0') do
+      # Default behavior for queue adapter was changed from :inline to :async in Rails 5.
+      # This encourages using a persistent queuing backend in production. In-process queuing will suffice for tests.
+      config.active_job.queue_adapter = :inline
+    end
   end
 end
