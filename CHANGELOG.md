@@ -2,7 +2,7 @@
 * Add Rails 5.0 support (#135)
 
 ### Version 2.0.0
-* Add support for tagged measurements (#123)
+* Add support for tagged measurements (#123). **NOTE**: This version introduces breaking changes for legacy sources. Please contact support@librato.com to learn more.
 
 ### Version 1.4.2
 * Bump librato-rack dependency to fix warns with ruby 2.4
