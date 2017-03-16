@@ -5,7 +5,9 @@ librato-rails
 
 ---
 
-**NOTE:** Starting with version 2.0.0 librato-rails requires a Librato account that [supports tagged metrics](https://www.librato.com/docs/kb/faq/account_questions/tags_or_sources/). If your Librato account doesn't yet support tagged metrics please use the [1.x.x version](https://rubygems.org/gems/librato-rails/versions/1.4.2).
+**NOTE:** Starting with version 2.0.0 librato-rails requires a Librato account that [supports tagged metrics](https://www.librato.com/docs/kb/faq/account_questions/tags_or_sources/). 
+
+If your Librato account doesn't yet support tagged metrics or you are using [a heroku addon](https://devcenter.heroku.com/articles/librato#using-with-ruby), please use the [1.x.x version](https://rubygems.org/gems/librato-rails/versions/1.4.2).
 
 ---
 
