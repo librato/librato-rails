@@ -250,6 +250,8 @@ Librato.timing 'twitter.lookup.time' do
 end
 ```
 
+Block form timings are measured in milliseconds(ms).
+
 ###### Percentiles
 
 By defaults timings will send the average, sum, max and min for every minute. If you want to send percentiles as well you can specify them inline while instrumenting:
