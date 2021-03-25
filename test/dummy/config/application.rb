@@ -1,6 +1,23 @@
 require File.expand_path('../boot', __FILE__)
 
-require 'rails/all'
+require "rails"
+
+# exclude active_storage (snippet from https://github.com/rails/rails/blob/5-2-stable/railties/lib/rails/all.rb)
+%w(
+  active_record/railtie
+  action_controller/railtie
+  action_view/railtie
+  action_mailer/railtie
+  active_job/railtie
+  action_cable/engine
+  rails/test_unit/railtie
+  sprockets/railtie
+).each do |railtie|
+  begin
+    require railtie
+  rescue LoadError
+  end
+end
 
 Bundler.require
 require "librato-rails"
