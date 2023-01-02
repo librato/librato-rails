@@ -7,7 +7,7 @@ end
 
 task 'before_build' do
   signing_key = File.expand_path("~/.gem/librato-private_key.pem")
-  if File.exists?(signing_key)
+  if File.exist?(signing_key)
     puts "Key found: signing gem..."
     ENV['GEM_SIGNING_KEY'] = signing_key
   else
