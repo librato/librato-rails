@@ -26,7 +26,7 @@ module Librato
 
       # detect and load configuration from config file or env vars
       def load_configuration
-        if self.config_file && File.exists?(self.config_file)
+        if self.config_file && File.exist?(self.config_file)
           configure_with_config_file
         else
           self.config_by = :environment
