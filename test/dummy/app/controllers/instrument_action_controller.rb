@@ -14,6 +14,10 @@ class InstrumentActionController < ApplicationController
     render nothing: true
   end
 
+  def invalid_format
+    head :ok
+  end
+
   private
 
   def before

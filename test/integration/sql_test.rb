@@ -15,33 +15,43 @@ class SQLTest < ActiveSupport::IntegrationCase
 
     assert_increasing_queries do
       user = User.create!(email: 'foo@foo.com', password: 'wow')
-      assert_equal 1, counters["rails.sql.inserts"]
+      assert_equal 1, counters["rails.sql.inserts"][:value]
     end
 
     assert_increasing_queries do
-      prev = counters["rails.sql.selects"].to_i
+      prev =
+        if counters["rails.sql.selects"]
+          counters["rails.sql.selects"][:value].to_i
+        else
+          0
+        end
       foo = User.find_by_email('foo@foo.com')
-      assert_equal prev+1, counters["rails.sql.selects"]
+      assert_equal prev+1, counters["rails.sql.selects"][:value]
     end
 
     assert_increasing_queries do
       foo.password = 'new password'
       foo.save
-      assert_equal 1, counters["rails.sql.updates"]
+      assert_equal 1, counters["rails.sql.updates"][:value]
     end
 
     assert_increasing_queries do
       foo.destroy
-      assert_equal 1, counters["rails.sql.deletes"]
+      assert_equal 1, counters["rails.sql.deletes"][:value]
     end
   end
 
   private
 
   def assert_increasing_queries
-    previous = counters["rails.sql.queries"].to_i
+    previous =
+      if counters["rails.sql.queries"]
+        counters["rails.sql.queries"][:value].to_i
+      else
+        0
+      end
     yield
-    assert counters["rails.sql.queries"].to_i > previous
+    assert counters["rails.sql.queries"][:value].to_i > previous
   end
 
 end

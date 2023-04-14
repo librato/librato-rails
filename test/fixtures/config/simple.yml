@@ -1,5 +1,3 @@
 test:
   user: 'test@bar.com'
   token: <%= 'test api key' %>
-
-

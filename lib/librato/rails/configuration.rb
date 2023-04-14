@@ -1,3 +1,4 @@
+require "socket"
 require "yaml"
 
 module Librato
@@ -8,9 +9,9 @@ module Librato
     # https://github.com/librato/librato-rack/blob/master/lib/librato/rack/configuration.rb
     #
     class Configuration < Rack::Configuration
-      CONFIG_SETTABLE = %w{user token flush_interval log_level prefix source source_pids proxy suites}
+      CONFIG_SETTABLE = %w{flush_interval log_level prefix proxy suites tags token user}
 
-      DEFAULT_SUITES = [:rails_action, :rails_cache, :rails_controller, :rails_mail, :rails_method, :rails_render, :rails_sql, :rails_status, :rails_job]
+      DEFAULT_SUITES = [:rails_cache, :rails_controller, :rails_mail, :rails_method, :rails_render, :rails_sql, :rails_status, :rails_job]
 
       attr_accessor :config_by, :config_file
 
@@ -32,6 +33,8 @@ module Librato
           super
         end
 
+        self.tags = detect_tags
+
         # respect autorun and log_level env vars regardless of config method
         self.autorun = detect_autorun
         self.log_level = :info if log_level.blank?
@@ -46,12 +49,28 @@ module Librato
         env_specific = YAML.load(ERB.new(File.read(config_file)).result)[::Rails.env]
         if env_specific
           settable = CONFIG_SETTABLE & env_specific.keys
-          settable.each { |key| self.send("#{key}=", env_specific[key]) }
+          settable.each do |key|
+            value = env_specific[key]
+            value.symbolize_keys! if key == "tags"
+            self.send("#{key}=", value)
+          end
         end
       end
 
       def default_suites
         super + DEFAULT_SUITES
+      end
+
+      def default_tags
+        {
+          service: ::Rails.application.class.to_s.split("::").first.underscore,
+          environment: ::Rails.env,
+          host: Socket.gethostname.downcase
+        }
+      end
+
+      def detect_tags
+        has_tags? ? default_tags.merge(self.tags) : default_tags
       end
 
     end

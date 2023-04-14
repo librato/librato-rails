@@ -1,3 +1,9 @@
+### Version 2.1.0
+* Add Rails 5.0 support (#135)
+
+### Version 2.0.0
+* Add support for tagged measurements (#123). **NOTE**: This version introduces breaking changes for legacy sources. Please contact support@librato.com to learn more.
+
 ### Version 1.4.2
 * Remove calls to `File#exists?` as that method is removed in ruby 3.2
 

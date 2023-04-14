@@ -19,6 +19,7 @@ Dummy::Application.routes.draw do
 
   get 'instrument/inst' => 'instrument_action#inst', :as => :instrument_action
   get 'instrument/not'  => 'instrument_action#not',  :as => :not_instrumented
+  get '/invalid_format' => 'instrument_action#invalid_format'
 
   get 'base/action_1'         => 'base#action_1',         :as => :base_action_1
   get 'base/action_2'         => 'base#action_2',         :as => :base_action_2

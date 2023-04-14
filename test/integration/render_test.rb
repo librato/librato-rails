@@ -5,23 +5,23 @@ class RenderTest < ActiveSupport::IntegrationCase
   test 'render partial' do
     visit render_partial_path
 
-    assert_equal 1, counters.fetch("rails.view.render_partial",
-                                      source: 'render:first.html.erb')
-    assert_equal 1, counters.fetch("rails.view.render_partial",
-                                      source: 'render:second.html.erb')
-    assert_equal 1, aggregate.fetch("rails.view.render_partial.time",
-                                      source: 'render:first.html.erb')[:count]
-    assert_equal 1, aggregate.fetch("rails.view.render_partial.time",
-                                      source: 'render:second.html.erb')[:count]
+    assert_equal 1, counters.fetch("rails.view.render.partial",
+                                      tags: { partial: "render:first.html.erb" }.merge(default_tags))[:value]
+    assert_equal 1, counters.fetch("rails.view.render.partial",
+                                      tags: { partial: "render:second.html.erb" }.merge(default_tags))[:value]
+    assert_equal 1, aggregate.fetch("rails.view.render.partial.time",
+                                      tags: { partial: "render:first.html.erb" }.merge(default_tags))[:count]
+    assert_equal 1, aggregate.fetch("rails.view.render.partial.time",
+                                      tags: { partial: "render:second.html.erb" }.merge(default_tags))[:count]
   end
 
   test 'render template' do
     visit render_template_path
 
-    assert_equal 1, counters.fetch("rails.view.render_template",
-                                      source: 'render:template.html.erb')
-    assert_equal 1, aggregate.fetch("rails.view.render_template.time",
-                                      source: 'render:template.html.erb')[:count]
+    assert_equal 1, counters.fetch("rails.view.render.template",
+                                      tags: { template: "render:template.html.erb" }.merge(default_tags))[:value]
+    assert_equal 1, aggregate.fetch("rails.view.render.template.time",
+                                      tags: { template: "render:template.html.erb" }.merge(default_tags))[:count]
   end
 
 end

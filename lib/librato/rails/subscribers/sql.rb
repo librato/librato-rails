@@ -4,20 +4,20 @@ module Librato
 
       # SQL
 
-      ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
+      ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
+
         payload = args.last
+        sql = payload[:sql].strip
 
         collector.group "rails.sql" do |s|
-          # puts (payload[:name] || 'nil') + ":" + payload[:sql] + "\n\n"
-          s.increment 'queries'
+          s.increment "queries"
+          s.increment "selects" if sql.starts_with?("SELECT")
+          s.increment "inserts" if sql.starts_with?("INSERT")
+          s.increment "updates" if sql.starts_with?("UPDATE")
+          s.increment "deletes" if sql.starts_with?("DELETE")
+        end # end group
 
-          sql = payload[:sql].strip
-          s.increment 'selects' if sql.starts_with?('SELECT')
-          s.increment 'inserts' if sql.starts_with?('INSERT')
-          s.increment 'updates' if sql.starts_with?('UPDATE')
-          s.increment 'deletes' if sql.starts_with?('DELETE')
-        end
-      end
+      end # end subscribe
 
     end
   end
